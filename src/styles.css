@@ -1,1 +1,300 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global Styles */
+.min-vh-100 {
+    min-height: 100vh;
+    position: relative; 
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    /* height: 100vh;  */
+}
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.parent-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; 
+    align-items: center; 
+}
+.scrolling-text {
+    width: 75%;
+    height: 5rem;
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+}
+.scrolling-text p {
+    font-size: 18px; 
+    color: white; 
+}
+.scroll-left{
+    animation: scroll-left-right 30s ease-in-out infinite;
+}
+.scroll-right{
+    animation: scroll-right-left 10s ease-in infinite;
+}
+@keyframes scroll-left-right {
+    0% {
+      transform: translateX(100%); /* Start position (off-screen to the right) */
+    }
+    100% {
+      transform: translateX(-100%); /* End position (off-screen to the left) */
+    }
+}
+@keyframes scroll-right-left {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%); 
+    }
+}
+
+.middle-child {
+    margin-top: 25vh;
+}
+.bottom-child {
+    margin-top: auto;
+    margin-bottom: 3rem;
+}
+
+.bottom-align {
+    position: absolute;
+    bottom: 0;
+}
+
+.thick-border {
+    border-width: 4rem;
+}
+
+.simple-line {
+    height: 2px; 
+    background-color: black; 
+    border: none;
+}
+
+.navbar-bottom-border {
+    border-bottom: 2px solid #dee2e6; /* Grey border at the bottom */
+}
+
+.row-spacing {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+.custom-btn {
+    background-color: #237aa2;
+    border-color: #237aa2;
+    color: white;
+    font-size: 14px;
+    border-radius: 14px;
+    width: 310px; 
+    height: 40px;
+    font-weight: bold;
+}
+
+.custom-btn:hover {
+    background-color: darken(#237aa2, 10%); 
+    border-color: darken(#237aa2, 10%);
+}
+
+.btn-orange{
+    color: white;
+    background-color: #fb971f;
+}
+
+.thead-band-it{
+    color: white;
+    background-color: #237aa2;
+}
+
+.custom-label {
+    /* color: #0000; */
+    font-weight: bold; 
+}
+
+.title-label {
+    color: #237aa2;
+    font-weight: bold;
+    letter-spacing: 1px;
+    font-size: 3rem;
+}
+
+input::placeholder {
+    color: #fb971f; 
+    font-size: 14px; 
+}
+
+.custom-input {
+    border-radius: 12px; 
+    border-color: #fb971f;
+}
+
+.image-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.centered-div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white; 
+    font-size: 2rem;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5); 
+    padding: 10px; 
+    border-radius: 10px;
+}
+
+.centered-text {
+    margin: 20px 0 0 0;
+}
+
+.centered-form {
+    width: 23rem; 
+    margin-left: 110px;
+}
+
+.centered-small {
+    font-size: 12px;
+    margin: 0 0 10px 0;
+    text-align: center;
+}
+
+.gain-height-s {
+    margin: -40px 0 0 0;
+}
+
+.img-div{
+    background-image: url('assets/images/Salla1.jpg'); /* Set the background image */
+    background-size: cover; /* Scale the image to cover the entire div */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    overflow: hidden;
+}
+
+.icon-img{
+    height: 25px;
+    width: 25px;
+    margin-left: 0.5rem;
+}
+
+.logo-img{
+    height: 50px;
+    width: 40px;
+    margin: 0 2rem 0 2rem;
+}
+
+
+/* Responsive Styles */
+@media only screen and (max-width: 768px) {
+    .col-sm-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .centered-form {
+        width: 100%;
+        margin-left: 0;
+        padding: 0 15px;
+    }
+
+    .custom-btn {
+        width: 100%;
+    }
+
+    .title-label {
+        font-size: 2.5rem;
+    }
+
+    .centered-div {
+        font-size: 1.5rem;
+    }
+
+    .gain-height-s {
+        margin-top: 0;
+    }
+
+    .centered-small {
+        font-size: 10px;
+    }
+
+    .image-container img {
+        object-position: center;
+    }
+}
+
+@media only screen and (max-width: 576px) {
+    .title-label {
+        font-size: 2rem;
+    }
+
+    .centered-div {
+        font-size: 1.2rem;
+        padding: 5px;
+    }
+
+    .centered-text {
+        margin: 10px 0 0 0;
+    }
+
+    .centered-form {
+        padding: 0 10px;
+    }
+}
+
+.navbar-nav .nav-item {
+    margin-right: 1em;
+  }
+  
+  @media (min-width: 768px) {
+    .navbar-nav .nav-item {
+      margin-right: 1.5em; /* Increase spacing on medium screens and up */
+    }
+  }
+  
+  @media (min-width: 1200px) {
+    .navbar-nav .nav-item {
+      margin-right: 2em; /* Increase spacing on large screens and up */
+    }
+  }
+
+.underline-bold {
+    text-decoration: underline;
+    /* font-weight: bold; */
+}
+
+.input-black-border {
+    border: 2px solid black; 
+    border-radius: .375rem; 
+}
+
+.footer-note{
+    margin-top: 20px;
+}
+
+.file-upload{display:block;text-align:center;font-family: Helvetica, Arial, sans-serif;font-size: 12px;}
+.file-upload .file-select{display:block;border: 2px solid #dce4ec;color: #34495e;cursor:pointer;height:40px;line-height:40px;text-align:left;background:#FFFFFF;overflow:hidden;position:relative;}
+.file-upload .file-select .file-select-button{background:#dce4ec;padding:0 10px;display:inline-block;height:40px;line-height:40px;}
+.file-upload .file-select .file-select-name{line-height:40px;display:inline-block;padding:0 10px;}
+.file-upload .file-select:hover{border-color:#34495e;transition:all .2s ease-in-out;-moz-transition:all .2s ease-in-out;-webkit-transition:all .2s ease-in-out;-o-transition:all .2s ease-in-out;}
+.file-upload .file-select:hover .file-select-button{background:#34495e;color:#FFFFFF;transition:all .2s ease-in-out;-moz-transition:all .2s ease-in-out;-webkit-transition:all .2s ease-in-out;-o-transition:all .2s ease-in-out;}
+.file-upload.active .file-select{border-color:#3fa46a;transition:all .2s ease-in-out;-moz-transition:all .2s ease-in-out;-webkit-transition:all .2s ease-in-out;-o-transition:all .2s ease-in-out;}
+.file-upload.active .file-select .file-select-button{background:#3fa46a;color:#FFFFFF;transition:all .2s ease-in-out;-moz-transition:all .2s ease-in-out;-webkit-transition:all .2s ease-in-out;-o-transition:all .2s ease-in-out;}
+.file-upload .file-select input[type=file]{z-index:100;cursor:pointer;position:absolute;height:100%;width:100%;top:0;left:0;opacity:0;filter:alpha(opacity=0);}
+.file-upload .file-select.file-select-disabled{opacity:0.65;}
+.file-upload .file-select.file-select-disabled:hover{cursor:default;display:block;border: 2px solid #dce4ec;color: #34495e;cursor:pointer;height:40px;line-height:40px;margin-top:5px;text-align:left;background:#FFFFFF;overflow:hidden;position:relative;}
+.file-upload .file-select.file-select-disabled:hover .file-select-button{background:#dce4ec;color:#666666;padding:0 10px;display:inline-block;height:40px;line-height:40px;}
+.file-upload .file-select.file-select-disabled:hover .file-select-name{line-height:40px;display:inline-block;padding:0 10px;}
+  

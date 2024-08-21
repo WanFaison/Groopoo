@@ -1,0 +1,43 @@
+<div class="container-fluid min-vh-100">
+    <app-nav></app-nav>
+    
+    <div class="mt-5 row justify-content-center align-items-center h-100">
+        <div class="flex-center my-3">
+            <h4 class="underline-bold">Liste des groupes deja crees</h4>
+        </div>
+
+        <div class="flex-center my-3">
+            <input type="text" class="form-control input-black-border col-md-3" placeholder="Rechercher...">
+            <div class="input-group col-md-3">
+                <input type="text" class="form-control input-black-border datepicker" id="datePicker" placeholder="Choisir une date...">
+                <span class="input-group-text datepicker-icon"><i class="fas fa-calendar-alt"></i></span>
+            </div>
+            <a class="btn btn-orange col-md-1 me-5" href="#" role="button">
+                Filtrer
+            </a>
+            <a class="btn btn-secondary col-md-1" href="#" role="button">
+                Reinitialiser
+            </a>
+        </div>
+        
+        <div class="flex-center">
+            <table class="table col-md-9">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">Nom de la liste</th>
+                    <th scope="col">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Mark John Doe Ben Dover</th>
+                    <td>20/05/2024</td>
+                  </tr>
+                </tbody>
+              </table>
+        </div>    
+    </div>
+</div>
+
+<app-foot></app-foot>
+

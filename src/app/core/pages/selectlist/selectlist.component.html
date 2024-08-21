@@ -1,0 +1,42 @@
+<div class="container-fluid min-vh-100">
+    <app-nav></app-nav>
+
+    <div class="mt-5 row justify-content-center align-items-center h-100">
+        <div class="flex-center">
+            <h3 class="underline-bold">Creer une liste de groupe</h3>
+        </div>
+        <div class="flex-column w-75">
+            <h5 class="mt-5">Televerser un fichier excel</h5>
+            <div class="file-upload w-50 my-2">
+                <div class="file-select">
+                  <div class="file-select-button" id="fileName">Choose File</div>
+                  <div class="file-select-name" id="noFile">No file chosen...</div> 
+                  <input type="file" name="chooseFile" id="chooseFile">
+                </div>
+            </div>
+            <a class="btn btn-orange col-md-1" href="#" role="button">
+                Televerser
+            </a>
+        </div>
+
+        <hr class="w-75 mx-auto simple-line mt-3">
+
+        <div class="flex-column w-75">
+            <h5 class="mt-20">Choisir une liste existante</h5>
+            <div class="dropdown my-2">
+                <button class="btn btn-white border border-secondary dropdown-toggle w-50 text-start" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    Selectionner une liste
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <li><a class="dropdown-item" href="#">Liste 1</a></li>
+                </ul>
+            </div>
+            <a class="btn btn-orange col-md-1" href="#" role="button">
+                Valider
+            </a>
+        </div>
+    </div>
+
+</div>
+
+<app-foot></app-foot>

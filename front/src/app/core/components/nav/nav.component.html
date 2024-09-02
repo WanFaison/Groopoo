@@ -1,0 +1,39 @@
+<nav class="navbar navbar-expand-md navbar-light bg-white navbar-bottom-border">
+    <a class="navbar-brand" href="#"><img src="assets/images/Logo Band-it.png" alt="logo" class="logo-img"></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarsExample04">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" [routerLink]="['/app/home']" routerLinkActive="active">Acceuil <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-dark" [routerLink]="['/app/liste-membre']" routerLinkActive="active">Creer une liste de membres</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-dark" [routerLink]="['/app/liste-select']" routerLinkActive="active">Creer une liste des groupes</a>
+        </li>
+        <div class="dropdown">
+            <button class="btn btn-white border border-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                Tous les batiments
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <li><a class="dropdown-item" href="#">Management</a></li>
+              <li><a class="dropdown-item" href="#">Madiba</a></li>
+              <li><a class="dropdown-item" href="#">Ingenieur</a></li>
+              <li><a class="dropdown-item" href="#">Droit</a></li>
+            </ul>
+        </div>
+      </ul>
+      
+    </div>
+
+    <div>
+        <a (click)="onLogout()" class="btn btn-danger" 
+          role="button" style="color: white;">
+            Deconnexion
+        </a>
+    </div>
+</nav>

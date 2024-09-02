@@ -3,6 +3,7 @@ import { LoginComponent } from './core/pages/login/login.component';
 import { HomeComponent } from './core/pages/home/home.component';
 import { MembresComponent } from './core/pages/membres/membres.component';
 import { SelectlistComponent } from './core/pages/selectlist/selectlist.component';
+import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
     {
@@ -11,15 +12,18 @@ export const routes: Routes = [
     },
     {
         path:"app/home",
-        component:HomeComponent
+        component:HomeComponent,
+        canActivate: [AuthGuard]
     },
     {
         path:"app/liste-membre",
-        component:MembresComponent
+        component:MembresComponent,
+        canActivate: [AuthGuard]
     },
     {
         path:"app/liste-select",
-        component:SelectlistComponent
+        component:SelectlistComponent,
+        canActivate: [AuthGuard]
     },
     {
         path:"",

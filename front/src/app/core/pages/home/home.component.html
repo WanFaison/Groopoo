@@ -33,8 +33,39 @@
                     <th scope="row">Mark John Doe Ben Dover</th>
                     <td>20/05/2024</td>
                   </tr>
+                  @for (item of response?.results; track $index){
+                   <tr>
+                      <th scope="row">{{item.libelle}}</th>
+                      <td>{{item.date}}</td>
+                   </tr> 
+                  }
                 </tbody>
               </table>
+        </div>
+        <div>
+          <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              <li *ngIf="response && response.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': response.currentPage === 1}">
+                <a class="page-link" (click)="paginate(response.currentPage - 1)" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                  <span class="sr-only">Previous</span>
+                </a>
+              </li>
+
+              @for (item of pages(1,response?.totalPages); track $index){
+                <li class="page-item" [ngClass]="{'active':item==response?.currentPage}">
+                  <a (click)="paginate(item)" class="page-link">{{item}}</a>
+                </li>
+              }
+              
+              <li *ngIf="response && response.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': response.totalPages === 1}">
+                <a class="page-link" (click)="paginate(response.currentPage + 1)" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                  <span class="sr-only">Next</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
         </div>    
     </div>
 </div>

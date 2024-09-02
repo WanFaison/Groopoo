@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { NavComponent } from '../nav/nav.component';
-import { FootComponent } from '../foot/foot.component';
+import { NavComponent } from '../../components/nav/nav.component';
+import { FootComponent } from '../../components/foot/foot.component';
 
 @Component({
   selector: 'app-selectlist',

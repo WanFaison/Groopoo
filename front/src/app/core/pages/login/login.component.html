@@ -15,27 +15,32 @@
             <div class="w-75 position-relative">
                 <div class="d-flex bg-slate-500">
                     <div class="w-75 mt-5 ml-5">
-                        <form class="centered-form mt-5 w-50 bg-slate-800">
+                        <form (ngSubmit)="onLogin()" #loginForm="ngForm" class="centered-form mt-5 w-50 bg-slate-800">
                             <div class="ms-n2">
                                 <h4 class="title-label mb-3 pb-3 fs-2">Se connecter à Band<span style="color: #fb971f;">-it</span></h4>
                             </div>
                 
                             <div data-mdb-input-init class="form-outline mb-4">
-                                <label class="form-label custom-label" for="form2Example18">Nom d'utilisateur ou Email</label>
-                                <input type="email" id="form2Example18" class="form-control form-control-lg custom-input" placeholder="mail@simple.com" />
+                                <label class="form-label custom-label" for="username">Nom d'utilisateur ou Email</label>
+                                <input required type="email" id="username" #usernameInput="ngModel" [(ngModel)]="username" name="username" class="form-control form-control-lg custom-input" placeholder="mail@simple.com" />
+                                <div *ngIf="usernameInput.invalid && usernameInput.touched" class="text-danger">
+                                    Le nom d'utilisateur ou l'email est requis.
+                                </div>
                             </div>
                 
                             <div data-mdb-input-init class="form-outline mb-4">
                                 <div class="d-flex" style="height: 2rem;">
-                                    <label class="form-label custom-label" for="form2Example28">Mot de passe</label>
+                                    <label class="form-label custom-label" for="password">Mot de passe</label>
                                     <p class="small mb-5 pb-lg-2 p-2 ms-auto"><a class="text-dark text-decoration-underline" href="#!">Oublié?</a></p>
                                 </div>
-                                <input type="password" id="form2Example28" class="form-control form-control-lg custom-input" placeholder="Min. 8 caracteres" />
+                                <input required type="password" id="password" #passwordInput="ngModel" [(ngModel)]="password" name="password" minlength="5" class="form-control form-control-lg custom-input" placeholder="Min. 8 caracteres" />
+                                <div *ngIf="passwordInput.invalid && passwordInput.touched" class="text-danger">
+                                    Le mot de passe doit comporter au moins 5 caractères.
+                                </div>
                             </div>
                 
                             <div class="pt-1 mb-4">
-                                <button [routerLink]="['/app/home']" routerLinkActive="active"
-                                data-mdb-button-init data-mdb-ripple-init class="custom-btn btn btn-info btn-lg btn-block" type="button">Se connecter</button>
+                                <button class="custom-btn btn btn-info btn-lg btn-block" type="submit" [disabled]="loginForm.invalid">Se connecter</button>
                             </div>
             
                         </form>

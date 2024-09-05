@@ -47,7 +47,7 @@ security:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
         # - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUS }
-        - { path: ^/api/login, roles: ROLE_ADMIN }
+        #- { path: ^/api/login, roles: ROLE_ADMIN }
         #- { path: ^/api/, roles: ROLE_ADMIN }
 
 when@test:

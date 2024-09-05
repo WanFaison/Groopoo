@@ -16,4 +16,13 @@ class RestResponse
                     'status' => $status
                 ]);
     }
+
+    public static function linearResponse($results, $totalItems, $status): JsonResponse
+    {
+        return new JsonResponse([
+                    'results' => $results,
+                    'totalItems' => $totalItems,
+                    'status' => $status
+        ]);
+    }
 }

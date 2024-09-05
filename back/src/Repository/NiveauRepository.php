@@ -16,6 +16,16 @@ class NiveauRepository extends ServiceEntityRepository
         parent::__construct($registry, Niveau::class);
     }
 
+    public function findAllUnarchived(): array
+    {
+        return $this->createQueryBuilder('n')
+            ->where('n.isArchived = :isArchived')
+            ->setParameter('isArchived', false)
+            ->orderBy('n.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Niveau[] Returns an array of Niveau objects
 //     */

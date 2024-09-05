@@ -12,11 +12,16 @@ import { environment } from "../../../../environments/environment.development";
 
 export class ListeServiceImpl implements ListeService{
     private apiUrl=`${environment.APIURL}/liste`;
+    private today:Date = new Date();
+    private todayString:string ='';
+    private testString:string='';
     constructor(private http:HttpClient) { 
+        this.todayString = this.today.toISOString().slice(0,10);
+        this.testString = new Date('2022-02-12').toISOString().slice(0,10);
     }
 
-    findAll(page:number=0, keyword:string=''): Observable<RestResponse<ListeModel[]>> {
-        return this.http.get<RestResponse<ListeModel[]>>(`${this.apiUrl}?page=${page}&keyword=${keyword}`);
+    findAll(page:number=0, keyword:string='', startDate:string='', endDate:string = this.todayString): Observable<RestResponse<ListeModel[]>> {
+        return this.http.get<RestResponse<ListeModel[]>>(`${this.apiUrl}?page=${page}&keyword=${keyword}&startDate=${startDate}&endDate=${endDate}`);
     }
 
 }

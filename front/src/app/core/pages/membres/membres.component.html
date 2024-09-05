@@ -10,7 +10,7 @@
                 <div class="file-select">
                   <div class="file-select-button" id="fileName">Choose File</div>
                   <div class="file-select-name" id="noFile">No file chosen...</div> 
-                  <input type="file" name="chooseFile" id="chooseFile">
+                  <input type="file" (change)="importExcel($event)" name="chooseFile" id="chooseFile">
                 </div>
             </div>
         </div>
@@ -18,7 +18,7 @@
         <div class="flex-center my-3">
             <p class="me-3 fs-5">Nom de la liste</p>
             <input type="text" class="me-5 form-control input-black-border col-md-3" placeholder="">
-            <a class="btn btn-orange col-md-1" href="#" role="button">
+            <a class="btn btn-orange col-md-1" href="#" role="button" style="color: white;">
                 Enregistrer
             </a>
         </div>
@@ -41,19 +41,35 @@
             </div>
         </div>
 
-        <div class="flex-center mt-2">
-            <input type="text" class="form-control input-black-border col-md-2 me-2" placeholder="Prenom">
-            <input type="text" class="form-control input-black-border col-md-2 me-2" placeholder="Nom">
-            <input type="text" class="form-control input-black-border col-md-1 me-5" placeholder="">
-            <a class="btn btn-danger" role="button">X</a>
+        <div class="mt-2 w-50 mx-auto" style="margin-bottom: 2rem;">
+            <a [routerLink]="['/app/form-critere']" class="btn btn-secondary text-white me-3" 
+            role="button">Modifier criteres</a>
         </div>
 
-        <div class="mt-2 w-50 mx-auto">
-            <a class="btn btn-success text-white me-3" role="button">Ajouter une ligne</a>
-            <a class="btn btn-secondary text-white" role="button">Ajouter une colonne</a>
+        <div class="flex-center">
+            <table class="table col-md-9">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">Matricule</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Prenom</th>
+                    <th scope="col">Niveau</th>
+                    <th scope="col">Filiere</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let etd of etudiants">
+                        <th scope="row">{{etd.matricule}}</th>
+                        <td>{{etd.nom}}</td>
+                        <td>{{etd.prenom}}</td>
+                        <td>{{etd.niveau}}</td>
+                        <td>{{etd.filiere}}</td>
+                    </tr>
+                </tbody>
+              </table>
         </div>
     </div>
 
+    <app-foot></app-foot>
 </div>
 
-<app-foot></app-foot>

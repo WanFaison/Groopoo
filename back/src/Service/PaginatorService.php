@@ -21,7 +21,7 @@ class PaginatorService
         $paginator = new Paginator($query);
         
         $paginator->getQuery()
-            ->setFirstResult($limit * ($page - 1)) 
+            ->setFirstResult($limit * $page) 
             ->setMaxResults($limit);
 
         return $paginator;

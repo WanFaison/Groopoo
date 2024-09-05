@@ -1,0 +1,67 @@
+<div class="container-fluid min-vh-100">
+    <app-nav></app-nav>
+
+    <div class="mt-5 row justify-content-center align-items-center h-100">
+        <div class="flex-center my-3">
+            <h4 class="underline-bold">Criteres Form</h4>
+        </div>
+
+        <div>
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                <div class="mx-auto w-50">
+                    <p class="me-3 fs-5">Niveau</p>
+                </div>
+                <div formArrayName="niveau">
+                    <div *ngFor="let pair of niveau.controls; let i = index" [formGroupName]="i" class="flex-center mt-2">
+                        <select formControlName="choix" class=" form-select form-select-sm col-md-2 me-2" aria-label=".form-select-sm example">
+                            <option selected value="1">...</option>
+                            <option *ngFor="let item of response?.results" [value]="item.id">{{ item.libelle }}</option>
+                        </select>
+                        <select formControlName="taille" class=" form-select form-select-sm col-md-2 me-2" aria-label=".form-select-sm example">
+                            <option selected value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                        <a (click)="removePair('niveau', i)" class="btn btn-danger text-white" role="button">X</a>
+                    </div>
+                    <div class="mt-2 w-50 mx-auto">
+                        <a (click)="addPair('niveau')" class="btn btn-success text-white me-3" role="button">Ajouter une ligne</a>
+                    </div>
+                </div> 
+
+                <div class="mx-auto w-50 mt-2">
+                    <p class="me-3 fs-5">Filiere</p>
+                </div>
+                <div formArrayName="filiere">
+                    <div *ngFor="let pair of filiere.controls; let i = index" [formGroupName]="i" class="flex-center mt-2">
+                        <select formControlName="choix" class=" form-select form-select-sm col-md-2 me-2" aria-label=".form-select-sm example">
+                            <option selected value="1">...</option>
+                        </select>
+                        <select formControlName="taille" class=" form-select form-select-sm col-md-2 me-2" aria-label=".form-select-sm example">
+                            <option selected value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                        <a (click)="removePair('filiere', i)" class="btn btn-danger text-white" role="button">X</a>
+                    </div>
+                    <div class="mt-2 w-50 mx-auto">
+                        <a (click)="addPair('filiere')" class="btn btn-success text-white me-3" role="button">Ajouter une ligne</a>
+                    </div>
+                </div> 
+
+                <div class="flex-center mt-2 w-50 mx-auto">
+                    <button type="submit" class="btn btn-info">Confirmer</button>
+                </div>
+            </form>
+        </div>
+
+        
+    </div>
+
+    <app-foot></app-foot>
+</div>
+

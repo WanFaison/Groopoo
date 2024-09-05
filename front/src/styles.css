@@ -107,7 +107,6 @@
 }
 
 .btn-orange{
-    color: white;
     background-color: #fb971f;
 }
 
@@ -194,6 +193,16 @@ input::placeholder {
     height: 50px;
     width: 40px;
     margin: 0 2rem 0 2rem;
+}
+
+.pagination-div{
+    position: relative;
+    display: flex;
+    width: auto;
+}
+.pagination-div nav{
+    position: absolute;
+    left: 0;
 }
 
 

@@ -4,6 +4,7 @@ import { HomeComponent } from './core/pages/home/home.component';
 import { MembresComponent } from './core/pages/membres/membres.component';
 import { SelectlistComponent } from './core/pages/selectlist/selectlist.component';
 import { AuthGuard } from './guards/auth.guard';
+import { FormCritereComponent } from './core/pages/form-critere/form-critere.component';
 
 export const routes: Routes = [
     {
@@ -13,17 +14,22 @@ export const routes: Routes = [
     {
         path:"app/home",
         component:HomeComponent,
-        canActivate: [AuthGuard]
+        // canActivate: [AuthGuard]
     },
     {
         path:"app/liste-membre",
         component:MembresComponent,
-        canActivate: [AuthGuard]
+        //canActivate: [AuthGuard]
+    },
+    {
+        path:"app/form-critere",
+        component:FormCritereComponent,
+        //canActivate: [AuthGuard]
     },
     {
         path:"app/liste-select",
         component:SelectlistComponent,
-        canActivate: [AuthGuard]
+        //canActivate: [AuthGuard]
     },
     {
         path:"",

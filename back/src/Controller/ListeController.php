@@ -21,8 +21,21 @@ class ListeController extends AbstractController
         $page = $request->query->getInt('page', 0);
         $limit = $request->query->getInt('limit', 10);
         $keyword = $request->query->getString('keyword', '');
+        $startDate = $request->query->getString('startDate', '');
+        $endDate = $request->query->getString('endDate', '');
 
-        $listes = $listeRepository->findAllPaginated($page, $limit, $keyword);
+        if(!empty($startDate)){
+            $startDate = $listeRepository->convertToDate($startDate);
+            if(!empty($endDate)){
+                $endDate = $listeRepository->convertToDate($endDate);
+                $listes = $listeRepository->findAllPaginated($page, $limit, $keyword, $startDate,$endDate);
+            }else{
+                $listes = $listeRepository->findAllPaginated($page, $limit, $keyword, $startDate);
+            }
+        }else{
+            $listes = $listeRepository->findAllPaginated($page, $limit, $keyword);
+        }
+        
         $dtos = [];
         foreach ($listes as $liste) {
             $dtos[] = (new ListeResponseDto())->toDto($liste);

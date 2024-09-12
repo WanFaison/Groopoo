@@ -6,6 +6,16 @@ import { EtudiantCreate, EtudiantModel } from '../../models/etudiant.model';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { EcoleModel } from '../../models/ecole.model';
+import { RestResponse } from '../../models/rest.response';
+import { EcoleServiceImpl } from '../../services/impl/ecole.service.impl';
+import { NiveauModel } from '../../models/niveau.model';
+import { ClasseModel } from '../../models/classe.model';
+import { FiliereModel } from '../../models/filiere.model';
+import { ApiService } from '../../services/api.service';
+import { ReturnResponse } from '../../models/return.model';
+import { AnneeModel } from '../../models/annee.model';
+import { AnneeServiceImpl } from '../../services/impl/annee.service.impl';
 
 
 @Component({
@@ -16,15 +26,58 @@ import { RouterLink } from '@angular/router';
   styleUrl: './membres.component.css'
 })
 export class MembresComponent implements OnInit{
+  ecoleResponse?: RestResponse<EcoleModel[]>;
   fileName: string = '';
   etudiants: EtudiantCreate[] = [];
+  criteres: any[] = [];
+  anneeResponse?: RestResponse<AnneeModel[]>;
+  annee: number = 0;
+  ecole: number = 0;
+  tailleGrp: number = 0;
+  error: boolean = false;
+  returnResponse?: ReturnResponse;
+  constructor(private ecoleService:EcoleServiceImpl, private apiService: ApiService, private anneeService:AnneeServiceImpl) { }
 
   ngOnInit(): void {
+    this.ecoleService.findAll().subscribe(data=>this.ecoleResponse=data);
+    this.anneeService.findAll().subscribe(data=>this.anneeResponse=data);
+    this.loadEtudiants();
+    this.loadCriteres();
+  }
+
+  saveEcole(value: any) {
+    localStorage.setItem('ecoleListe', value);
+  }
+  saveTaille(value: any) {
+    localStorage.setItem('tailleGrp', value);
+  }
+  saveNom(value: any) {
+    localStorage.setItem('nomGrp', value);
+  }
+  saveAnnee(value: any) {
+    localStorage.setItem('anneeListe', value);
+  }
+
+  loadEtudiants(){
+    if (typeof window !== 'undefined' && localStorage){
+      const existingData = localStorage.getItem('etudiants');
+      if (existingData) {
+        this.etudiants = JSON.parse(existingData);
+      }else {
+        console.error('localStorage is not available in this environment');
+      }
+    }
+    
   }
 
   importExcel(event: any): void {
     const file = event.target.files[0];
     if (file) {
+      const allowedTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'];
+      if (!allowedTypes.includes(file.type)) {
+        alert('Please upload a valid Excel file.');
+        return;
+      }
       this.fileName = file.name;
 
       const reader = new FileReader();
@@ -34,13 +87,122 @@ export class MembresComponent implements OnInit{
         const sheetName = workbook.SheetNames[0];
         const json = XLSX.utils.sheet_to_json<EtudiantCreate>(workbook.Sheets[sheetName]);
 
-        this.etudiants = json;
-        console.log(this.etudiants); //show on console
+        this.loadEtudiants();
+
+        this.etudiants = [...this.etudiants, ...json];
+        localStorage.setItem('etudiants', JSON.stringify(this.etudiants));
+        console.log(this.etudiants);
       };
       reader.readAsArrayBuffer(file);
     }
   }
 
+  deleteEtd(index:number){
+    this.etudiants.splice(index, 1);
+    localStorage.setItem('etudiants', JSON.stringify(this.etudiants));
+  }
 
+  loadCriteres(){
+    if (typeof window !== 'undefined' && localStorage.getItem('formData')){
+      const storedData = localStorage.getItem('formData');
+    
+      if (storedData) {
+        const parsedData = JSON.parse(storedData);
+
+        this.criteres = [
+          ...parsedData.niveau.map((item: any) => ({ choix: item.choix, taille: item.taille })),
+          ...parsedData.filiere.map((item: any) => ({ choix: item.choix, taille: item.taille })),
+          ...parsedData.classe.map((item: any) => ({ choix: item.choix, taille: item.taille })),
+          ...parsedData.sexe.map((item: any) => ({ choix: item.choix, taille: item.taille })),
+          ...parsedData.pays.map((item: any) => ({ choix: item.choix, taille: item.taille }))
+        ];
+        
+        console.log(this.criteres);
+      }else {
+        console.error('No data found in localStorage for the specified key.');
+      }
+    }
+    
+  }
+
+  checkCorrect():boolean{
+    const formData = localStorage.getItem('formData');
+    const ecoleNum = parseInt(localStorage.getItem('ecoleListe') || '0', 10);
+    const anneeListe = parseInt(localStorage.getItem('anneeListe') || '0', 10);
+    const taille = parseInt(localStorage.getItem('tailleGrp') || '0', 10);
+    const etds = localStorage.getItem('etudiants');
+    const nom = localStorage.getItem('nomGrp');
+
+    if ((!formData || formData === 'null' || formData === 'undefined' || formData === '') ||
+        (ecoleNum ==0) || (taille < 2) || (nom === '') || (anneeListe ==0) ||
+        (!etds || etds === 'null' || etds === 'undefined' || etds === '')) {
+      console.log('Error: formData, etudiants, ecole or taille');
+      return false;
+    } else {
+      const parsedData = JSON.parse(formData);
+      const etdData = JSON.parse(etds);
+      
+      if (((parsedData.niveau && parsedData.niveau.length < 1) && 
+          (parsedData.filiere && parsedData.filiere.length < 1) &&
+          (parsedData.classe && parsedData.classe.length < 1) &&
+          (parsedData.sexe && parsedData.sexe.length < 1) &&
+          (parsedData.pays && parsedData.pays.length < 1)) ||
+          (etdData.length < 1)) {
+        console.log('criteres or etudiant list is empty');
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  clearData(){
+    if (typeof window !== 'undefined' && localStorage){
+      localStorage.removeItem('formData');
+      localStorage.removeItem('ecoleListe');
+      localStorage.removeItem('tailleGrp')
+      localStorage.removeItem('etudiants')
+      localStorage.removeItem('nomGrp');
+      localStorage.removeItem('anneeListe');
+    }
+    
+  }
+
+  createGroups(){
+    if(this.checkCorrect()){
+      if (typeof window !== 'undefined' && localStorage.getItem('formData')){
+        const formData = localStorage.getItem('formData');
+        const ecoleNum = parseInt(localStorage.getItem('ecoleListe') || '0', 10);
+        const taille = parseInt(localStorage.getItem('tailleGrp') || '0', 10);
+        const anneeListe = parseInt(localStorage.getItem('anneeListe') || '0', 10);
+        const etds = localStorage.getItem('etudiants');
+        const nom = localStorage.getItem('nomGrp');
+
+        this.returnResponse = {
+          ecole: ecoleNum,
+          annee: anneeListe,
+          taille: taille, 
+          nom: nom? nom:'',  
+          etudiants: etds? JSON.parse(etds):[],  
+          criteres: formData? JSON.parse(formData) : [],  
+          status: 200
+        };
+  
+        this.apiService.sendDataToBackend(this.returnResponse).subscribe(
+          response => {
+            console.log('Data successfully sent', response);
+          },
+          error => {
+            console.error('Error sending data', error);
+            this.error = true;
+          }
+        );
+      }else{
+        this.error = true;
+      }
+    }else{
+      this.error = true;
+    }
+  }
 
 }

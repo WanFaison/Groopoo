@@ -26,6 +26,12 @@ class Etudiant extends AbstractEntity
     #[ORM\JoinColumn(nullable: false)]
     private ?Classe $classe = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $nationalite = null;
+
+    #[ORM\Column(length: 2, nullable: true)]
+    private ?string $sexe = null;
+
 
     public function getMatricule(): ?string
     {
@@ -83,6 +89,30 @@ class Etudiant extends AbstractEntity
     public function setClasse(?Classe $classe): static
     {
         $this->classe = $classe;
+
+        return $this;
+    }
+
+    public function getNationalite(): ?string
+    {
+        return $this->nationalite;
+    }
+
+    public function setNationalite(?string $nationalite): static
+    {
+        $this->nationalite = $nationalite;
+
+        return $this;
+    }
+
+    public function getSexe(): ?string
+    {
+        return $this->sexe;
+    }
+
+    public function setSexe(?string $sexe): static
+    {
+        $this->sexe = $sexe;
 
         return $this;
     }

@@ -25,4 +25,13 @@ class RestResponse
                     'status' => $status
         ]);
     }
+
+    public static function requestResponse(string $message, $data, $status): JsonResponse
+    {
+        return new JsonResponse([
+            'message' => $message,
+            'data' => $data,
+            'status' => $status
+        ]);
+    }
 }

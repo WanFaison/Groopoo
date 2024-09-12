@@ -2,8 +2,9 @@
     <app-nav></app-nav>
 
     <div class="mt-5 row justify-content-center align-items-center h-100">
-        <div class="flex-center my-3">
+        <div class="d-flex flex-column align-items-center my-3">
             <h4 class="underline-bold">Creer une liste des membres</h4>
+            <p class="fst-italic">Choisir l'ecole et taille des groupes avant de poser les criteres</p>
         </div>
         <div class="flex-center my-3">
             <div class="file-upload w-25">
@@ -13,57 +14,72 @@
                   <input type="file" (change)="importExcel($event)" name="chooseFile" id="chooseFile">
                 </div>
             </div>
+            <div class="input-group col-md-2">
+                <select [(ngModel)]="ecole" (ngModelChange)="saveEcole($event)" class="form-select col-md-10" aria-label=".form-select-sm example">
+                  <option selected value="0">Choisir l'ecole...</option>
+                  <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
+                </select>
+            </div>
+            <div>
+                <p>Taille des groupes:</p>
+                <input [(ngModel)]="tailleGrp" (ngModelChange)="saveTaille($event)" type="number" id="numberPicker" class="form-control" value="1" min="2" max="10">
+            </div>
+            <div class="input-group col-md-3">
+                <select [(ngModel)]="annee" (ngModelChange)="saveAnnee($event)" class="form-select col-md-6" aria-label=".form-select-sm example">
+                  <option selected value="0">Choisir l'annee...</option>
+                  <option *ngFor="let item of anneeResponse?.results" [value]="item.id">{{ item.libelle }}</option>
+                </select>
+            </div>
+        </div>
+
+        <div *ngIf="error" class="flex-center align-items-center">
+            <p class="fw-bold text-danger">Erreur de la liste d'etudiants, l'annee, les criteres, l'ecole ou nom de liste </p>
         </div>
 
         <div class="flex-center my-3">
             <p class="me-3 fs-5">Nom de la liste</p>
-            <input type="text" class="me-5 form-control input-black-border col-md-3" placeholder="">
-            <a class="btn btn-orange col-md-1" href="#" role="button" style="color: white;">
+            <input [(ngModel)]="fileName" (ngModelChange)="saveNom($event)" type="text" class="me-5 form-control input-black-border col-md-3" placeholder="">
+            <a (click)="createGroups()" class="btn btn-orange col-md-1" role="button">
                 Enregistrer
             </a>
         </div>
         <div class="flex-center">
-            <div class="bg-black d-flex me-2 align-items-center border-black thick-border">
-                <p class="text-white mb-0 me-4">Criteres 1</p>
-                <a class="btn btn-orange" role="button">X</a>
-            </div>
-            <div class="bg-black d-flex me-2 align-items-center border-black thick-border">
-                <p class="text-white mb-0 me-4">Criteres 2</p>
-                <a class="btn btn-orange" role="button">X</a>
-            </div>
-            <div class="bg-black d-flex me-2 align-items-center border-black thick-border">
-                <p class="text-white mb-0 me-4">Criteres 3</p>
-                <a class="btn btn-orange" role="button">X</a>
-            </div>
-            <div class="bg-black d-flex me-2 align-items-center border-black thick-border">
-                <p class="text-white mb-0 me-4">Criteres 4</p>
-                <a class="btn btn-orange" role="button">X</a>
-            </div>
+            <div *ngFor="let item of criteres" class="bg-black d-flex me-2 align-items-center border-black thick-border">
+                <p class="text-white mb-0 me-4">{{ item.choix }} {{ item.taille }}</p>
+                <a class="btn btn-orange text-white" role="button">X</a>
+              </div>
         </div>
 
-        <div class="mt-2 w-50 mx-auto" style="margin-bottom: 2rem;">
+        <div class="flex-center mt-2 w-50 mx-auto" style="margin-bottom: 2rem;">
             <a [routerLink]="['/app/form-critere']" class="btn btn-secondary text-white me-3" 
-            role="button">Modifier criteres</a>
+            role="button" [class.disabled]="ecole === 0 || tailleGrp < 2">Modifier criteres</a>
         </div>
 
-        <div class="flex-center">
-            <table class="table col-md-9">
+        <div class="flex-center mb-5">
+            <table class="table col-md-9 mb-5">
                 <thead class="thead-dark">
                   <tr>
                     <th scope="col">Matricule</th>
                     <th scope="col">Nom</th>
                     <th scope="col">Prenom</th>
+                    <th scope="col">Sexe</th>
                     <th scope="col">Niveau</th>
                     <th scope="col">Filiere</th>
+                    <th scope="col">Nationalite</th>
+                    <th scope="col">Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let etd of etudiants">
+                    <tr *ngFor="let etd of etudiants; let i = index">
                         <th scope="row">{{etd.matricule}}</th>
                         <td>{{etd.nom}}</td>
                         <td>{{etd.prenom}}</td>
                         <td>{{etd.niveau}}</td>
                         <td>{{etd.filiere}}</td>
+                        <td><a (click)="deleteEtd(i)" class="btn btn-danger" 
+                            role="button" style="color: white;">
+                              Retirer
+                          </a></td>
                     </tr>
                 </tbody>
               </table>

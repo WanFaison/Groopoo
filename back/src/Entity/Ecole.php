@@ -17,9 +17,23 @@ class Ecole extends AbstractEntity
     #[ORM\OneToMany(targetEntity: Liste::class, mappedBy: 'ecole')]
     private Collection $listes;
 
+    /**
+     * @var Collection<int, Filiere>
+     */
+    #[ORM\OneToMany(targetEntity: Filiere::class, mappedBy: 'ecole')]
+    private Collection $filieres;
+
+    /**
+     * @var Collection<int, Classe>
+     */
+    #[ORM\OneToMany(targetEntity: Classe::class, mappedBy: 'ecole')]
+    private Collection $classes;
+
     public function __construct()
     {
         $this->listes = new ArrayCollection();
+        $this->filieres = new ArrayCollection();
+        $this->classes = new ArrayCollection();
     }
 
     /**
@@ -46,6 +60,66 @@ class Ecole extends AbstractEntity
             // set the owning side to null (unless already changed)
             if ($liste->getEcole() === $this) {
                 $liste->setEcole(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Filiere>
+     */
+    public function getFilieres(): Collection
+    {
+        return $this->filieres;
+    }
+
+    public function addFiliere(Filiere $filiere): static
+    {
+        if (!$this->filieres->contains($filiere)) {
+            $this->filieres->add($filiere);
+            $filiere->setEcole($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFiliere(Filiere $filiere): static
+    {
+        if ($this->filieres->removeElement($filiere)) {
+            // set the owning side to null (unless already changed)
+            if ($filiere->getEcole() === $this) {
+                $filiere->setEcole(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Classe>
+     */
+    public function getClasses(): Collection
+    {
+        return $this->classes;
+    }
+
+    public function addClass(Classe $class): static
+    {
+        if (!$this->classes->contains($class)) {
+            $this->classes->add($class);
+            $class->setEcole($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClass(Classe $class): static
+    {
+        if ($this->classes->removeElement($class)) {
+            // set the owning side to null (unless already changed)
+            if ($class->getEcole() === $this) {
+                $class->setEcole(null);
             }
         }
 

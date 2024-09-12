@@ -18,6 +18,9 @@ class Filiere extends AbstractEntity
     #[ORM\OneToMany(targetEntity: Classe::class, mappedBy: 'filiere')]
     private Collection $classes;
 
+    #[ORM\ManyToOne(inversedBy: 'filieres')]
+    private ?Ecole $ecole = null;
+
     public function __construct()
     {
         $this->classes = new ArrayCollection();
@@ -49,6 +52,18 @@ class Filiere extends AbstractEntity
                 $class->setFiliere(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getEcole(): ?Ecole
+    {
+        return $this->ecole;
+    }
+
+    public function setEcole(?Ecole $ecole): static
+    {
+        $this->ecole = $ecole;
 
         return $this;
     }

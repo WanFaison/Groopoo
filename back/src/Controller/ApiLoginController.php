@@ -17,7 +17,6 @@ class ApiLoginController extends AbstractController
     #[Route('/api/login', name: 'api_login', methods: ['POST'])]
     public function login(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
-        // Retrieve username and password from the request JSON payload
         $data = json_decode($request->getContent(), true);
         $username = $data['username'] ?? '';
         $password = $data['password'] ?? '';

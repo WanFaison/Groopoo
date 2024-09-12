@@ -7,6 +7,8 @@ import { ListeServiceImpl } from '../../services/impl/list.service.impl';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AnneeModel } from '../../models/annee.model';
+import { AnneeServiceImpl } from '../../services/impl/annee.service.impl';
 
 @Component({
   selector: 'app-home',
@@ -17,11 +19,13 @@ import { FormsModule } from '@angular/forms';
 })
 export class HomeComponent implements OnInit{
   response?: RestResponse<ListeModel[]>;
+  anneeResponse?: RestResponse<AnneeModel[]>;
   keyword: string = '';
-  startDate: string = '';
-  endDate: string = '';
-  constructor(private listeService:ListeServiceImpl){}
+  annee: number = 0;
+  constructor(private listeService:ListeServiceImpl, private anneeService:AnneeServiceImpl){}
+  
   ngOnInit(): void {
+    this.anneeService.findAll().subscribe(data=>this.anneeResponse=data);
     this.filter()
   }
 
@@ -31,8 +35,8 @@ export class HomeComponent implements OnInit{
   paginate(page:number){
     this.refresh(page)
   }
-  filter(page:number=0, keyword:string=this.keyword, startDate:string='', endDate:string=this.endDate){
-    this.listeService.findAll(page,keyword,startDate,endDate).subscribe(data=>this.response=data);
+  filter(page:number=0, keyword:string=this.keyword, annee:number=0){
+    this.listeService.findAll(page,keyword,annee).subscribe(data=>this.response=data);
   }
 
   pages(start: number, end: number | undefined = 5): number[] {

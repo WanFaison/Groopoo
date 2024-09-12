@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Liste;
+use App\Entity\Annee;
 use App\Service\PaginatorService;
 use DateTime;
 use DateTimeInterface;
@@ -23,17 +24,16 @@ class ListeRepository extends ServiceEntityRepository
     }
 
 
-    public function findAllPaginated(int $page, int $limit, string $keyword, DateTimeInterface $startDate = null, DateTimeInterface $endDate = new DateTime()): Paginator
+    public function findAllPaginated(int $page, int $limit, string $keyword, ?Annee $annee = null): Paginator
     {
         $queryBuilder = $this->createQueryBuilder('r');
         if (!empty($keyword)) {
             $queryBuilder->andWhere('r.libelle LIKE :keyword')
                 ->setParameter('keyword', '%' . $keyword . '%');
         }
-        if ($startDate !== null) {
-            $queryBuilder->andWhere('r.date BETWEEN :startDate AND :endDate')
-            ->setParameter('startDate', $startDate)
-            ->setParameter('endDate', $endDate);
+        if ($annee) {
+            $queryBuilder->andWhere('r.annee = :annee')
+                         ->setParameter('annee', $annee);
         }
         $query = $queryBuilder->orderBy('r.id', 'ASC')
                             ->getQuery();

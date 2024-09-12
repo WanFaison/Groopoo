@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Controller\Dto\Response\ListeResponseDto;
 use App\Controller\Dto\RestResponse as DtoRestResponse;
 use App\Entity\Liste;
+use App\Repository\AnneeRepository;
 use App\Repository\ListeRepository;
 use RestResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,24 +17,18 @@ use Symfony\Component\Routing\Attribute\Route;
 class ListeController extends AbstractController
 {
     #[Route('/api/liste', name: 'api_liste', methods: ['GET'])]
-    public function listerListes(Request $request, ListeRepository $listeRepository): JsonResponse
+    public function listerListes(Request $request, ListeRepository $listeRepository, AnneeRepository $anneeRepository): JsonResponse
     {
         $page = $request->query->getInt('page', 0);
         $limit = $request->query->getInt('limit', 10);
         $keyword = $request->query->getString('keyword', '');
-        $startDate = $request->query->getString('startDate', '');
-        $endDate = $request->query->getString('endDate', '');
+        $annee = $request->query->getInt('annee', 0);
 
-        if(!empty($startDate)){
-            $startDate = $listeRepository->convertToDate($startDate);
-            if(!empty($endDate)){
-                $endDate = $listeRepository->convertToDate($endDate);
-                $listes = $listeRepository->findAllPaginated($page, $limit, $keyword, $startDate,$endDate);
-            }else{
-                $listes = $listeRepository->findAllPaginated($page, $limit, $keyword, $startDate);
-            }
-        }else{
+        if($annee == 0){
             $listes = $listeRepository->findAllPaginated($page, $limit, $keyword);
+        }else{
+            $yr = $anneeRepository->find($annee);
+            $listes = $listeRepository->findAllPaginated($page, $limit, $keyword, $yr);
         }
         
         $dtos = [];

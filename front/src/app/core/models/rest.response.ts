@@ -10,3 +10,8 @@ export interface AuthResponse{
     message: string,
     status: number
 }
+
+export interface Country {
+    nom: string;
+    code: string;
+  }

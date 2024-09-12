@@ -12,7 +12,7 @@ class ListeResponseDto
     private int $id;
     private string $libelle;
     private bool $isArchived;
-    private string $annee;
+    private int $annee;
     private string $ecole;
     private string $date;
 
@@ -50,12 +50,12 @@ class ListeResponseDto
         return $this;
     }
 
-    public function getAnnee(): ?string
+    public function getAnnee(): ?int
     {
         return $this->annee;
     }
 
-    public function setAnnee(string $annee): static
+    public function setAnnee(int $annee): static
     {
         $this->annee = $annee;
 
@@ -93,7 +93,7 @@ class ListeResponseDto
         $dto->setId($liste->getId());
         $dto->setLibelle($liste->getLibelle());
         $dto->setArchived($liste->isArchived());
-        $dto->setAnnee($liste->getAnnee()->getLibelle());
+        $dto->setAnnee($liste->getAnnee()->getId());
         $dto->setEcole($liste->getEcole()->getLibelle());
         $dto->setDate($liste->getDate()->format('d-m-Y'));
 

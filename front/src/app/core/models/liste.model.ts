@@ -2,7 +2,7 @@ export type ListeModel = {
     id: number,
     libelle: string,
     isArchived: boolean,
-    annee: string,
+    annee: number,
     ecole: string
     date: string
 }

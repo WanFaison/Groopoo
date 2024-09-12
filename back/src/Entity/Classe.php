@@ -29,6 +29,9 @@ class Classe extends AbstractEntity
     #[ORM\JoinColumn(nullable: false)]
     private ?Niveau $niveau = null;
 
+    #[ORM\ManyToOne(inversedBy: 'classes')]
+    private ?Ecole $ecole = null;
+
     public function __construct()
     {
         $this->etudiants = new ArrayCollection();
@@ -58,6 +61,7 @@ class Classe extends AbstractEntity
     {
         if (!$this->etudiants->contains($etudiant)) {
             $this->etudiants->add($etudiant);
+            $this->setEffectif($this->effectif+1);
             $etudiant->setClasse($this);
         }
 
@@ -70,6 +74,7 @@ class Classe extends AbstractEntity
             // set the owning side to null (unless already changed)
             if ($etudiant->getClasse() === $this) {
                 $etudiant->setClasse(null);
+                $this->setEffectif($this->effectif-1);
             }
         }
 
@@ -96,6 +101,18 @@ class Classe extends AbstractEntity
     public function setNiveau(?Niveau $niveau): static
     {
         $this->niveau = $niveau;
+
+        return $this;
+    }
+
+    public function getEcole(): ?Ecole
+    {
+        return $this->ecole;
+    }
+
+    public function setEcole(?Ecole $ecole): static
+    {
+        $this->ecole = $ecole;
 
         return $this;
     }

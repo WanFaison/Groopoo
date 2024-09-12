@@ -16,6 +16,16 @@ class EcoleRepository extends ServiceEntityRepository
         parent::__construct($registry, Ecole::class);
     }
 
+    public function findAllUnarchived(): array
+    {
+        return $this->createQueryBuilder('n')
+            ->where('n.isArchived = :isArchived')
+            ->setParameter('isArchived', false)
+            ->orderBy('n.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Ecole[] Returns an array of Ecole objects
 //     */

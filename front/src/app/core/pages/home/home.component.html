@@ -9,14 +9,12 @@
         <div class="flex-center my-3">
             <input type="text" [(ngModel)]="keyword" class="form-control input-black-border col-md-3" placeholder="Rechercher...">
             <div class="input-group col-md-2">
-                <input type="text" [(ngModel)]="startDate" class="form-control input-black-border datepicker" id="datePicker" placeholder="Choisir une 1ere date...">
-                <span class="input-group-text datepicker-icon"><i class="fas fa-calendar-alt"></i></span>
+              <select [(ngModel)]="annee" class="form-select col-md-6" aria-label=".form-select-sm example">
+                <option selected value="0">...</option>
+                <option *ngFor="let item of anneeResponse?.results" [value]="item.id">{{ item.libelle }}</option>
+              </select>
             </div>
-            <div class="input-group col-md-2">
-              <input type="text" [(ngModel)]="endDate" class="form-control input-black-border datepicker" id="datePicker" placeholder="Choisir une 2e date...">
-              <span class="input-group-text datepicker-icon"><i class="fas fa-calendar-alt"></i></span>
-            </div>
-            <a class="btn btn-orange col-md-1 me-5" (click)="filter(0, keyword, startDate, endDate)" role="button" style="color: white;">
+            <a class="btn btn-orange col-md-1 me-5" (click)="filter(0, keyword, annee)" role="button" style="color: white;">
                 Filtrer
             </a>
             <a class="btn btn-secondary col-md-1" (click)="refresh()" role="button" style="color: white;">

@@ -13,7 +13,7 @@ class NiveauFixtures extends Fixture
 
     public function  __construct(NiveauRepository $niveauRepository){
         $this->niveauRepository=$niveauRepository;
-  }
+    }
 
     public function load(ObjectManager $manager): void
     {

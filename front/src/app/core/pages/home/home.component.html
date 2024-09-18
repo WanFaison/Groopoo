@@ -10,7 +10,7 @@
             <input type="text" [(ngModel)]="keyword" class="form-control input-black-border col-md-3" placeholder="Rechercher...">
             <div class="input-group col-md-2">
               <select [(ngModel)]="annee" class="form-select col-md-6" aria-label=".form-select-sm example">
-                <option selected value="0">...</option>
+                <option selected value="0">annee...</option>
                 <option *ngFor="let item of anneeResponse?.results" [value]="item.id">{{ item.libelle }}</option>
               </select>
             </div>
@@ -52,7 +52,7 @@
 
               @for (item of pages(1,response?.totalPages); track $index){
                 <li class="page-item" [ngClass]="{'active':item==response?.currentPage}">
-                  <a (click)="paginate(item)" class="page-link">{{item}}</a>
+                  <a (click)="paginate(item - 1)" class="page-link">{{item}}</a>
                 </li>
               }
               

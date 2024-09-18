@@ -8,7 +8,7 @@ import { environment } from "../../../../environments/environment.development";
 
 @Injectable({
     providedIn: 'root'
-  })
+})
 
 export class ListeServiceImpl implements ListeService{
     private apiUrl=`${environment.APIURL}/liste`;

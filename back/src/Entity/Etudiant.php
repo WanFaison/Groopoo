@@ -89,6 +89,7 @@ class Etudiant extends AbstractEntity
     public function setClasse(?Classe $classe): static
     {
         $this->classe = $classe;
+        $classe->addEtudiant($this);
 
         return $this;
     }

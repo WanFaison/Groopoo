@@ -3,16 +3,18 @@ export type EtudiantModel = {
     matricule: string,
     nom: string,
     prenom: string,
-    isArchived: boolean,
-    niveau: string,
-    filiere: string,
-    groupe: string
+    sexe: string,
+    nationalite: string,
+    classe: string,
+    groupe: number
 }
 
 export interface EtudiantCreate{
     matricule: string,
     nom: string,
     prenom: string,
+    sexe: string,
     niveau: string,
     filiere: string,
+    nationalite: string
 }

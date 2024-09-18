@@ -33,6 +33,7 @@ export class FormCritereComponent implements OnInit{
   sexe: any = [];
   pays: any = [];
   ecole: number= 0;
+  tailleGrp: number = 0;
 
   constructor(private http: HttpClient, private fb: FormBuilder, private niveauService:NiveauServiceImpl, private filiereService:FiliereServiceImpl, private classeService:ClasseServiceImpl) {
     this.form = this.fb.group({
@@ -52,6 +53,7 @@ export class FormCritereComponent implements OnInit{
 
     if (typeof window !== 'undefined' && localStorage.getItem('ecoleListe')){
       this.ecole = Number(localStorage.getItem('ecoleListe'));
+      this.tailleGrp = Number(localStorage.getItem('tailleGrp'));
     }
     this.niveauService.findAll().subscribe(data=>this.nivResponse=data);
     this.filiereService.findAll(this.ecole).subscribe(data=>this.filResponse=data);
@@ -66,6 +68,10 @@ export class FormCritereComponent implements OnInit{
     });
     
     console.log(this.form.value);
+  }
+
+  getRange() {
+    return Array(this.tailleGrp).fill(0).map((_, i) => i + 1);
   }
 
   loadForm() {

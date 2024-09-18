@@ -5,15 +5,45 @@ namespace App\Repository;
 use App\Entity\Etudiant;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * @extends ServiceEntityRepository<Etudiant>
  */
 class EtudiantRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $entityManager;
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, Etudiant::class);
+        $this->entityManager = $entityManager;
+    }
+
+    public function addOrUpdate(Etudiant $entity): void
+    {
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush();
+    }
+
+    public function findByMatricule(string $matricule): ?Etudiant
+    {
+        return $this->createQueryBuilder('e')
+        ->where('e.matricule = :matricule') 
+        ->andWhere('e.isArchived = :isArchived') 
+        ->setParameter('matricule', $matricule)
+        ->setParameter('isArchived', false)
+        ->getQuery()
+        ->getOneOrNullResult();
+    }
+
+    public function checkExist(string $matricule): bool
+    {
+        $etd = $this->findByMatricule($matricule);
+        if($etd){
+            return true;
+        }
+
+        return false;
     }
 
 //    /**

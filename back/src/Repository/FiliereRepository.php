@@ -31,6 +31,17 @@ class FiliereRepository extends ServiceEntityRepository
                             ->getResult();
     }
 
+    public function findByLibelle(string $libelle): ?Filiere
+    {
+        return $this->createQueryBuilder('e')
+        ->where('e.libelle = :libelle') 
+        ->andWhere('e.isArchived = :isArchived') 
+        ->setParameter('libelle', $libelle)
+        ->setParameter('isArchived', false)
+        ->getQuery()
+        ->getOneOrNullResult();
+    }
+
 //    /**
 //     * @return Filiere[] Returns an array of Filiere objects
 //     */

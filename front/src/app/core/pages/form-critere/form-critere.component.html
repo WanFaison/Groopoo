@@ -18,11 +18,7 @@
                             <option *ngFor="let item of nivResponse?.results" [value]="item.id">{{ item.libelle }}</option>
                         </select>
                         <select formControlName="taille" class=" form-select form-select-sm col-md-2 me-2" aria-label=".form-select-sm example">
-                            <option selected value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
+                            <option *ngFor="let option of getRange()" [value]="option">{{ option }}</option>
                         </select>
                         <a (click)="removePair('niveau', i)" class="btn btn-danger text-white" role="button">X</a>
                     </div>
@@ -41,11 +37,7 @@
                             <option *ngFor="let item of filResponse?.results" [value]="item.id">{{ item.libelle }}</option>
                         </select>
                         <select formControlName="taille" class=" form-select form-select-sm col-md-2 me-2" aria-label=".form-select-sm example">
-                            <option selected value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
+                            <option *ngFor="let option of getRange()" [value]="option">{{ option }}</option>
                         </select>
                         <a (click)="removePair('filiere', i)" class="btn btn-danger text-white" role="button">X</a>
                     </div>
@@ -64,11 +56,7 @@
                             <option *ngFor="let item of classeResponse?.results" [value]="item.id">{{ item.libelle }}</option>
                         </select>
                         <select formControlName="taille" class=" form-select form-select-sm col-md-2 me-2" aria-label=".form-select-sm example">
-                            <option selected value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
+                            <option *ngFor="let option of getRange()" [value]="option">{{ option }}</option>
                         </select>
                         <a (click)="removePair('classe', i)" class="btn btn-danger text-white" role="button">X</a>
                     </div>
@@ -83,15 +71,11 @@
                 <div formArrayName="sexe">
                     <div *ngFor="let pair of sexe.controls; let i = index" [formGroupName]="i" class="flex-center mt-2">
                         <select formControlName="choix" class=" form-select form-select-sm col-md-2 me-2" aria-label=".form-select-sm example">
-                            <option selected value="1">M</option>
-                            <option selected value="2">F</option>
+                            <option selected value="M">M</option>
+                            <option selected value="F">F</option>
                         </select>
                         <select formControlName="taille" class=" form-select form-select-sm col-md-2 me-2" aria-label=".form-select-sm example">
-                            <option selected value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
+                            <option *ngFor="let option of getRange()" [value]="option">{{ option }}</option>
                         </select>
                         <a (click)="removePair('sexe', i)" class="btn btn-danger text-white" role="button">X</a>
                     </div>
@@ -109,11 +93,7 @@
                             <option *ngFor="let item of nations" [value]="item.code">{{ item.nom }}</option>
                         </select>
                         <select formControlName="taille" class=" form-select form-select-sm col-md-2 me-2" aria-label=".form-select-sm example">
-                            <option selected value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
+                            <option *ngFor="let option of getRange()" [value]="option">{{ option }}</option>
                         </select>
                         <a (click)="removePair('pays', i)" class="btn btn-danger text-white" role="button">X</a>
                     </div>

@@ -16,7 +16,7 @@ class PaginatorService
      *
      * @return Paginator The Doctrine Paginator object.
      */
-    public static function pageInator(Query $query, int $page = 1, int $limit = 10): Paginator
+    public static function pageInator(Query $query, int $page = 0, int $limit = 10): Paginator
     {
         $paginator = new Paginator($query);
         

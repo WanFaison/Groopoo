@@ -5,6 +5,7 @@ import { MembresComponent } from './core/pages/membres/membres.component';
 import { SelectlistComponent } from './core/pages/selectlist/selectlist.component';
 import { AuthGuard } from './guards/auth.guard';
 import { FormCritereComponent } from './core/pages/form-critere/form-critere.component';
+import { GroupsComponent } from './core/pages/groups/groups.component';
 
 export const routes: Routes = [
     {
@@ -24,6 +25,11 @@ export const routes: Routes = [
     {
         path:"app/form-critere",
         component:FormCritereComponent,
+        //canActivate: [AuthGuard]
+    },
+    {
+        path:"app/view-groups",
+        component:GroupsComponent,
         //canActivate: [AuthGuard]
     },
     {

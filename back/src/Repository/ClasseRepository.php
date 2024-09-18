@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Classe;
 use App\Entity\Ecole;
+use App\Entity\Filiere;
+use App\Entity\Niveau;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -29,6 +31,22 @@ class ClasseRepository extends ServiceEntityRepository
                             ->orderBy('r.id', 'ASC')
                             ->getQuery()
                             ->getResult();
+    }
+
+    public function findByNiveauFiliere(?Niveau $niveau = null, ?Filiere $filiere = null): Classe
+    {
+        $queryBuilder = $this->createQueryBuilder('r');
+        if (($niveau) && ($filiere)) {
+            $queryBuilder->andWhere('r.niveau = :niveau')
+                         ->setParameter('niveau', $niveau)
+                         ->andWhere('r.filiere = :filiere')
+                         ->setParameter('filiere', $filiere);
+        }
+        
+        return $queryBuilder->andWhere('r.isArchived = :isArchived') 
+                            ->setParameter('isArchived', false)
+                            ->getQuery()
+                            ->getOneOrNullResult();
     }
 
 //    /**

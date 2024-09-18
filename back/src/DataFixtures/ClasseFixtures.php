@@ -9,7 +9,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class ClasseFixtures extends Fixture
+class ClasseFixtures extends Fixture implements DependentFixtureInterface
 {
     private $niveauRepository;
     private $filiereRepository;
@@ -24,9 +24,9 @@ class ClasseFixtures extends Fixture
         $niveaux=$this->niveauRepository->findAll();
         $classeArray =[];
         for ($i = 0; $i < count($niveaux); $i++) {
-            $classe = new Classe();
-            $classe->setNiveau($niveaux[$i]);
             for ($j = 0; $j < count($filieres); $j++){
+                $classe = new Classe();
+                $classe->setNiveau($niveaux[$i]);
                 $classe->setFiliere($filieres[$j]);
                 $classe->setLibelle($classe->getNiveau()->getLibelle().''.$classe->getFiliere()->getLibelle());
                 $classe->setArchived(false);
@@ -44,5 +44,8 @@ class ClasseFixtures extends Fixture
         $manager->flush();
     }
 
-    
+    public function getDependencies()
+    {
+        return [FiliereFixtures::class];
+    }
 }

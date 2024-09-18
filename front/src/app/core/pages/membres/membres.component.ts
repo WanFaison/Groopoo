@@ -5,7 +5,7 @@ import * as XLSX from 'xlsx';
 import { EtudiantCreate, EtudiantModel } from '../../models/etudiant.model';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { EcoleModel } from '../../models/ecole.model';
 import { RestResponse } from '../../models/rest.response';
 import { EcoleServiceImpl } from '../../services/impl/ecole.service.impl';
@@ -27,7 +27,7 @@ import { AnneeServiceImpl } from '../../services/impl/annee.service.impl';
 })
 export class MembresComponent implements OnInit{
   ecoleResponse?: RestResponse<EcoleModel[]>;
-  fileName: string = '';
+  fileName: any = '';
   etudiants: EtudiantCreate[] = [];
   criteres: any[] = [];
   anneeResponse?: RestResponse<AnneeModel[]>;
@@ -36,13 +36,16 @@ export class MembresComponent implements OnInit{
   tailleGrp: number = 0;
   error: boolean = false;
   returnResponse?: ReturnResponse;
-  constructor(private ecoleService:EcoleServiceImpl, private apiService: ApiService, private anneeService:AnneeServiceImpl) { }
+  returnListe?: any = 0;
+  constructor(private router:Router, private ecoleService:EcoleServiceImpl, private apiService: ApiService, private anneeService:AnneeServiceImpl) { }
 
   ngOnInit(): void {
+    //this.clearData()
     this.ecoleService.findAll().subscribe(data=>this.ecoleResponse=data);
     this.anneeService.findAll().subscribe(data=>this.anneeResponse=data);
     this.loadEtudiants();
     this.loadCriteres();
+    this.loadProps();
   }
 
   saveEcole(value: any) {
@@ -56,6 +59,15 @@ export class MembresComponent implements OnInit{
   }
   saveAnnee(value: any) {
     localStorage.setItem('anneeListe', value);
+  }
+
+  loadProps(){
+    if (typeof window !== 'undefined' && localStorage){
+      this.fileName = localStorage.getItem('nomGrp');
+      this.tailleGrp = parseInt(localStorage.getItem('tailleGrp') || '0', 10);
+      this.annee = parseInt(localStorage.getItem('anneeListe') || '0', 10);
+      this.ecole = parseInt(localStorage.getItem('ecoleListe') || '0', 10);
+    }
   }
 
   loadEtudiants(){
@@ -191,6 +203,10 @@ export class MembresComponent implements OnInit{
         this.apiService.sendDataToBackend(this.returnResponse).subscribe(
           response => {
             console.log('Data successfully sent', response);
+            this.returnListe = response.data;
+            this.clearData();
+            localStorage.setItem('newListe', this.returnListe);
+            this.router.navigate(['/app/view-groups']);
           },
           error => {
             console.error('Error sending data', error);
@@ -202,7 +218,7 @@ export class MembresComponent implements OnInit{
       }
     }else{
       this.error = true;
-    }
+    } 
   }
 
 }

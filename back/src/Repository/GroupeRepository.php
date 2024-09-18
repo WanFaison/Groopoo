@@ -3,7 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Groupe;
+use App\Entity\Liste;
+use App\Service\PaginatorService;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -11,9 +15,32 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class GroupeRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $entityManager;
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, Groupe::class);
+        $this->entityManager = $entityManager;
+    }
+
+    public function addOrUpdate(Groupe $entity): void
+    {
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush();
+    }
+
+    public function findAllByListePaginated(int $page, int $limit, ?Liste $liste=null): Paginator
+    {
+        $queryBuilder = $this->createQueryBuilder('r');
+        if ($liste) {
+            $queryBuilder->andWhere('r.liste = :liste')
+                         ->setParameter('liste', $liste);
+        }
+        $query = $queryBuilder->andWhere('r.isArchived = :isArchived')
+                            ->setParameter('isArchived', false)
+                            ->orderBy('r.id', 'ASC')
+                            ->getQuery();
+
+        return PaginatorService::pageInator($query, $page, $limit);
     }
 
 //    /**

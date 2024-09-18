@@ -8,7 +8,7 @@ import { ReturnResponse } from '../models/return.model';
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = `${environment.APIURL}/liste-groupe`;
+  private apiUrl = `${environment.APIURL}/create-groupe`;
 
   constructor(private http: HttpClient) {}
 

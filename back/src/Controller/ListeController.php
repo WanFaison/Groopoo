@@ -52,4 +52,5 @@ class ListeController extends AbstractController
 
         return DtoRestResponse::paginateResponse($results, $page, $totalItems, $totalPages, JsonResponse::HTTP_OK);
     }
+
 }

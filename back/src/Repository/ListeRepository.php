@@ -8,6 +8,7 @@ use App\Service\PaginatorService;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use PHPUnit\Framework\MockObject\Rule\AnyParameters;
@@ -18,9 +19,11 @@ use Symfony\Component\Validator\Constraints\Date;
  */
 class ListeRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $entityManager;
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, Liste::class);
+        $this->entityManager = $entityManager;
     }
 
 
@@ -39,6 +42,23 @@ class ListeRepository extends ServiceEntityRepository
                             ->getQuery();
         
         return PaginatorService::pageInator($query, $page, $limit);
+    }
+
+    public function findByLibelle(string $libelle): ?Liste
+    {
+        return $this->createQueryBuilder('e')
+        ->where('e.libelle = :libelle') 
+        ->andWhere('e.isArchived = :isArchived') 
+        ->setParameter('libelle', $libelle)
+        ->setParameter('isArchived', false)
+        ->getQuery()
+        ->getOneOrNullResult();
+    }
+
+    public function addOrUpdate(Liste $entity): void
+    {
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush();
     }
 
     public function convertToDate(string $dateString): DateTime

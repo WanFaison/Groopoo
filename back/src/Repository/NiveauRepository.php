@@ -26,6 +26,17 @@ class NiveauRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findByLibelle(string $libelle): ?Niveau
+    {
+        return $this->createQueryBuilder('e')
+        ->where('e.libelle = :libelle') 
+        ->andWhere('e.isArchived = :isArchived') 
+        ->setParameter('libelle', $libelle)
+        ->setParameter('isArchived', false)
+        ->getQuery()
+        ->getOneOrNullResult();
+    }
+
 //    /**
 //     * @return Niveau[] Returns an array of Niveau objects
 //     */

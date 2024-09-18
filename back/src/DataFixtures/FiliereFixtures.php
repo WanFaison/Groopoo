@@ -20,9 +20,9 @@ class FiliereFixtures extends Fixture
         $filiereArray = []; 
 
         for ($i = 0; $i < count($ecoles); $i++) {
-            for ($j = 0; $j < 7; $j++) {
+            for ($j = 0; $j < 5; $j++) {
                 $filiere = new Filiere();
-                $filiere->setLibelle('Filiere ' . $j);
+                $filiere->setLibelle('Filiere ' .$i.$j);
                 $filiere->setArchived(false);
                 $filiere->setEcole($ecoles[$i]);
                 

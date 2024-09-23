@@ -124,9 +124,7 @@ export class MembresComponent implements OnInit{
         this.criteres = [
           ...parsedData.niveau.map((item: any) => ({ choix: item.choix, taille: item.taille })),
           ...parsedData.filiere.map((item: any) => ({ choix: item.choix, taille: item.taille })),
-          ...parsedData.classe.map((item: any) => ({ choix: item.choix, taille: item.taille })),
-          ...parsedData.sexe.map((item: any) => ({ choix: item.choix, taille: item.taille })),
-          ...parsedData.pays.map((item: any) => ({ choix: item.choix, taille: item.taille }))
+          ...parsedData.classe.map((item: any) => ({ choix: item.choix, taille: item.taille }))
         ];
         
         console.log(this.criteres);

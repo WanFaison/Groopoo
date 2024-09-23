@@ -306,6 +306,18 @@ input::placeholder {
     margin-top: 20px;
 }
 
+.parent-filiere {
+    position: relative;
+}
+
+.son-filiere{
+    position: absolute;
+    top: 0;
+    /* left: 0; */
+    /* margin-left: 25rem;
+    padding-right: 2rem; */
+}
+
 .file-upload{display:block;text-align:center;font-family: Helvetica, Arial, sans-serif;font-size: 12px;}
 .file-upload .file-select{display:block;border: 2px solid #dce4ec;color: #34495e;cursor:pointer;height:40px;line-height:40px;text-align:left;background:#FFFFFF;overflow:hidden;position:relative;}
 .file-upload .file-select .file-select-button{background:#dce4ec;padding:0 10px;display:inline-block;height:40px;line-height:40px;}

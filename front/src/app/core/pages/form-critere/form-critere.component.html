@@ -8,38 +8,38 @@
 
         <div>
             <form [formGroup]="form" (ngSubmit)="onSubmit()">
-                <div class="mx-auto w-50">
-                    <p class="me-3 fs-5">Niveau</p>
-                </div>
-                <div formArrayName="niveau">
-                    <div *ngFor="let pair of niveau.controls; let i = index" [formGroupName]="i" class="flex-center mt-2">
-                        <select formControlName="choix" class=" form-select form-select-sm col-md-2 me-2" aria-label=".form-select-sm example">
-                            <option selected value="0">...</option>
-                            <option *ngFor="let item of nivResponse?.results" [value]="item.id">{{ item.libelle }}</option>
-                        </select>
-                        <select formControlName="taille" class=" form-select form-select-sm col-md-2 me-2" aria-label=".form-select-sm example">
-                            <option *ngFor="let option of getRange()" [value]="option">{{ option }}</option>
-                        </select>
-                        <a (click)="removePair('niveau', i)" class="btn btn-danger text-white" role="button">X</a>
-                    </div>
-                    <div class="mt-2 w-50 mx-auto">
-                        <a (click)="addPair('niveau')" class="btn btn-success text-white me-3" role="button">Ajouter une ligne</a>
-                    </div>
-                </div> 
-
                 <div class="mx-auto w-50 mt-2">
                     <p class="me-3 fs-5">Filiere</p>
                 </div>
                 <div formArrayName="filiere">
-                    <div *ngFor="let pair of filiere.controls; let i = index" [formGroupName]="i" class="flex-center mt-2">
-                        <select formControlName="choix" class=" form-select form-select-sm col-md-2 me-2" aria-label=".form-select-sm example">
-                            <option selected value="0">...</option>
-                            <option *ngFor="let item of filResponse?.results" [value]="item.id">{{ item.libelle }}</option>
-                        </select>
-                        <select formControlName="taille" class=" form-select form-select-sm col-md-2 me-2" aria-label=".form-select-sm example">
-                            <option *ngFor="let option of getRange()" [value]="option">{{ option }}</option>
-                        </select>
-                        <a (click)="removePair('filiere', i)" class="btn btn-danger text-white" role="button">X</a>
+                    <div *ngFor="let pair of filiere.controls; let i = index" [formGroupName]="i" class="flex-center mt-2 parent-filiere">
+                        <div class="d-flex col-md-4">
+                            <select formControlName="choix" class=" form-select form-select-sm  me-2" aria-label=".form-select-sm example">
+                                <option value="-1">Tous</option>
+                                <option *ngFor="let item of filResponse?.results" [value]="item.id">{{ item.libelle }}</option>
+                            </select>
+                            <select formControlName="taille" (ngModelChange)="addNivPair(i, 'change')" class=" form-select form-select-sm me-2" aria-label=".form-select-sm example">
+                                <option *ngFor="let option of getRange('filiere', i)" [value]="option">{{ option }}</option>
+                            </select>
+                            <a (click)="removePair('filiere', i)" class="btn btn-danger text-white" role="button">X</a>
+                        </div>
+                        
+                        <div formArrayName="niveau" *ngIf="pair.get('niveau').controls?.length > 0" class="col-md-2">
+                            <div *ngFor="let niveau of pair.get('niveau').controls; let j = index" [formGroupName]="j" class="d-flex mt-1">
+                                <div class="d-flex ">
+                                    <select formControlName="choix" class="form-select form-select-sm me-2" aria-label="Choix select">
+                                        <option value="-1">Tous</option>
+                                        <option *ngFor="let item of nivResponse?.results" [value]="item.id">{{ item.libelle }}</option>
+                                    </select>
+                                    <select formControlName="taille" class="form-select form-select-sm me-2" aria-label="Taille select">
+                                        <option *ngFor="let option of getRange('niv', i, getTailleFiliere(pair, j))" [value]="option">{{ option }}</option>
+                                    </select>
+                                </div>
+                                <a (click)="addNivPair(i)" class="btn btn-success text-white" role="button">+</a>
+                                <a (click)="removeNivPair(i,j)" class="btn btn-danger text-white" role="button">x</a>
+                            </div>
+                        </div>
+                        
                     </div>
                     <div class="mt-2 w-50 mx-auto">
                         <a (click)="addPair('filiere')" class="btn btn-success text-white me-3" role="button">Ajouter une ligne</a>
@@ -52,11 +52,11 @@
                 <div formArrayName="classe">
                     <div *ngFor="let pair of classe.controls; let i = index" [formGroupName]="i" class="flex-center mt-2">
                         <select formControlName="choix" class=" form-select form-select-sm col-md-2 me-2" aria-label=".form-select-sm example">
-                            <option selected value="0">...</option>
+                            <option value="-1">Tous</option>
                             <option *ngFor="let item of classeResponse?.results" [value]="item.id">{{ item.libelle }}</option>
                         </select>
                         <select formControlName="taille" class=" form-select form-select-sm col-md-2 me-2" aria-label=".form-select-sm example">
-                            <option *ngFor="let option of getRange()" [value]="option">{{ option }}</option>
+                            <option *ngFor="let option of getRange('classe')" [value]="option">{{ option }}</option>
                         </select>
                         <a (click)="removePair('classe', i)" class="btn btn-danger text-white" role="button">X</a>
                     </div>
@@ -65,42 +65,24 @@
                     </div>
                 </div> 
 
-                <div class="mx-auto w-50 mt-2">
-                    <p class="me-3 fs-5">Sexe</p>
+                <div class="mx-auto w-50">
+                    <p class="me-3 fs-5">Niveau</p>
                 </div>
-                <div formArrayName="sexe">
-                    <div *ngFor="let pair of sexe.controls; let i = index" [formGroupName]="i" class="flex-center mt-2">
+                <div formArrayName="niveau">
+                    <div *ngFor="let pair of niveau.controls; let i = index" [formGroupName]="i" class="flex-center mt-2">
                         <select formControlName="choix" class=" form-select form-select-sm col-md-2 me-2" aria-label=".form-select-sm example">
-                            <option selected value="M">M</option>
-                            <option selected value="F">F</option>
+                            <option *ngIf="numNiv <= tailleGrp" value="-1">Tous</option>
+                            <option *ngFor="let item of nivResponse?.results" [value]="item.id">{{ item.libelle }}</option>
                         </select>
                         <select formControlName="taille" class=" form-select form-select-sm col-md-2 me-2" aria-label=".form-select-sm example">
-                            <option *ngFor="let option of getRange()" [value]="option">{{ option }}</option>
+                            <option *ngFor="let option of getRange('niveau')" [value]="option">{{ option }}</option>
                         </select>
-                        <a (click)="removePair('sexe', i)" class="btn btn-danger text-white" role="button">X</a>
+                        <a (click)="removePair('niveau', i)" class="btn btn-danger text-white" role="button">X</a>
                     </div>
                     <div class="mt-2 w-50 mx-auto">
-                        <a (click)="addPair('sexe')" class="btn btn-success text-white me-3" role="button">Ajouter une ligne</a>
+                        <a (click)="addPair('niveau')" class="btn btn-success text-white me-3" role="button">Ajouter une ligne</a>
                     </div>
-                </div>
-                
-                <div class="mx-auto w-50 mt-2">
-                    <p class="me-3 fs-5">Nationalite</p>
-                </div>
-                <div formArrayName="pays">
-                    <div *ngFor="let pair of pays.controls; let i = index" [formGroupName]="i" class="flex-center mt-2">
-                        <select formControlName="choix" class=" form-select form-select-sm col-md-2 me-2" aria-label=".form-select-sm example">
-                            <option *ngFor="let item of nations" [value]="item.code">{{ item.nom }}</option>
-                        </select>
-                        <select formControlName="taille" class=" form-select form-select-sm col-md-2 me-2" aria-label=".form-select-sm example">
-                            <option *ngFor="let option of getRange()" [value]="option">{{ option }}</option>
-                        </select>
-                        <a (click)="removePair('pays', i)" class="btn btn-danger text-white" role="button">X</a>
-                    </div>
-                    <div class="mt-2 w-50 mx-auto">
-                        <a (click)="addPair('pays')" class="btn btn-success text-white me-3" role="button">Ajouter une ligne</a>
-                    </div>
-                </div>
+                </div> 
 
                 <div class="flex-center mt-2 w-50 mx-auto mb-5">
                     <button type="submit" [routerLink]="['/app/liste-membre']" routerLinkActive="active" class="btn btn-info mb-5">Confirmer</button>

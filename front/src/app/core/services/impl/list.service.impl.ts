@@ -12,6 +12,7 @@ import { environment } from "../../../../environments/environment.development";
 
 export class ListeServiceImpl implements ListeService{
     private apiUrl=`${environment.APIURL}/liste`;
+    private apiUrl2=`${environment.APIURL}/liste-find`;
     private today:Date = new Date();
     // private todayString:string ='';
     // private testString:string='';
@@ -22,6 +23,10 @@ export class ListeServiceImpl implements ListeService{
 
     findAll(page:number=0, keyword:string='', annee:number=0): Observable<RestResponse<ListeModel[]>> {
         return this.http.get<RestResponse<ListeModel[]>>(`${this.apiUrl}?page=${page}&keyword=${keyword}&annee=${annee}`);
+    }
+
+    findById(liste:number): Observable<RestResponse<ListeModel>> {
+        return this.http.get<RestResponse<ListeModel>>(`${this.apiUrl2}?liste=${liste}`);
     }
 
 }

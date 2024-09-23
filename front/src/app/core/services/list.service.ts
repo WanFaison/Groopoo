@@ -4,4 +4,5 @@ import { RestResponse } from "../models/rest.response";
 
 export interface ListeService{
     findAll(page:number, keyword:string, annee:number):Observable<RestResponse<ListeModel[]>>;
+    findById(liste:number): Observable<RestResponse<ListeModel>>;
 }

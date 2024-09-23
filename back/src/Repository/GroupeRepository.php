@@ -43,6 +43,22 @@ class GroupeRepository extends ServiceEntityRepository
         return PaginatorService::pageInator($query, $page, $limit);
     }
 
+    public function findAllByListe(?Liste $liste=null):array
+    {
+        $queryBuilder = $this->createQueryBuilder('r');
+        if ($liste) {
+            $queryBuilder->andWhere('r.liste = :liste')
+                         ->setParameter('liste', $liste);
+        }
+        $query = $queryBuilder->andWhere('r.isArchived = :isArchived')
+                            ->setParameter('isArchived', false)
+                            ->orderBy('r.id', 'ASC')
+                            ->getQuery()
+                            ->getResult();
+
+        return $query;
+    }
+
 //    /**
 //     * @return Groupe[] Returns an array of Groupe objects
 //     */

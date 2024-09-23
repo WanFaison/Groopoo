@@ -9,6 +9,7 @@ import { ReturnResponse } from '../models/return.model';
 })
 export class ApiService {
   private apiUrl = `${environment.APIURL}/create-groupe`;
+  private apiUrlXls = `${environment.APIURL}/liste-export`;
 
   constructor(private http: HttpClient) {}
 
@@ -22,5 +23,9 @@ export class ApiService {
     });
     
     return this.http.post(`${this.apiUrl}`, data, {headers});
+  }
+
+  getExcelSheet(liste:number): Observable<any> {
+    return this.http.get(`${this.apiUrlXls}?liste=${liste}`, { responseType: 'blob' });
   }
 }

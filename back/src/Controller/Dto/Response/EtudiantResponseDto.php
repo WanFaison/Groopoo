@@ -13,6 +13,8 @@ class EtudiantResponseDto
     private string $sexe;
     private string $nationalite;
     private string $classe;
+    private string $niveau;
+    private string $filiere;
     private int $groupe;
 
     public function getId(): ?int
@@ -91,6 +93,28 @@ class EtudiantResponseDto
         return $this;
     }
 
+    public function getNiveau(): ?string
+    {
+        return $this->niveau;
+    }
+    public function setNiveau(string $niveau): static
+    {
+        $this->niveau = $niveau;
+
+        return $this;
+    }
+
+    public function getFiliere(): ?string
+    {
+        return $this->filiere;
+    }
+    public function setFiliere(string $filiere): static
+    {
+        $this->filiere = $filiere;
+
+        return $this;
+    }
+
     public function getGroupe(): ?int
     {
         return $this->groupe;
@@ -112,6 +136,8 @@ class EtudiantResponseDto
         $dto->setSexe($etudiant->getSexe());
         $dto->setNationalite($etudiant->getNationalite());
         $dto->setClasse($etudiant->getClasse()->getLibelle());
+        $dto->setNiveau($etudiant->getClasse()->getNiveau()->getLibelle());
+        $dto->setFiliere($etudiant->getClasse()->getFiliere()->getLibelle());
         $dto->setGroupe($etudiant->getGroupe()->getId());
 
         return $dto;

@@ -28,12 +28,14 @@ class EtudiantRepository extends ServiceEntityRepository
     public function findByMatricule(string $matricule): ?Etudiant
     {
         return $this->createQueryBuilder('e')
-        ->where('e.matricule = :matricule') 
-        ->andWhere('e.isArchived = :isArchived') 
-        ->setParameter('matricule', $matricule)
-        ->setParameter('isArchived', false)
-        ->getQuery()
-        ->getOneOrNullResult();
+                    ->where('e.matricule = :matricule') 
+                    ->andWhere('e.isArchived = :isArchived') 
+                    ->setParameter('matricule', $matricule)
+                    ->setParameter('isArchived', false)
+                    ->orderBy('e.id', 'DESC')  
+                    ->setMaxResults(1)         
+                    ->getQuery()
+                    ->getOneOrNullResult(); 
     }
 
     public function checkExist(string $matricule): bool

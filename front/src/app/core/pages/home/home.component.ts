@@ -4,11 +4,14 @@ import { FootComponent } from '../../components/foot/foot.component';
 import { RestResponse } from '../../models/rest.response';
 import { ListeModel } from '../../models/liste.model';
 import { ListeServiceImpl } from '../../services/impl/list.service.impl';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AnneeModel } from '../../models/annee.model';
 import { AnneeServiceImpl } from '../../services/impl/annee.service.impl';
+import { GroupeModel } from '../../models/groupe.model';
+import { EtudiantCreate, EtudiantCreateXlsx } from '../../models/etudiant.model';
+import { EtudiantServiceImpl } from '../../services/impl/etudiant.service.impl';
 
 @Component({
   selector: 'app-home',
@@ -20,13 +23,33 @@ import { AnneeServiceImpl } from '../../services/impl/annee.service.impl';
 export class HomeComponent implements OnInit{
   response?: RestResponse<ListeModel[]>;
   anneeResponse?: RestResponse<AnneeModel[]>;
+  etdResponse?: RestResponse<EtudiantCreateXlsx[]>;
   keyword: string = '';
   annee: number = 0;
-  constructor(private listeService:ListeServiceImpl, private anneeService:AnneeServiceImpl){}
+  constructor(private router:Router, private listeService:ListeServiceImpl, private anneeService:AnneeServiceImpl, private etudiantService:EtudiantServiceImpl){}
   
   ngOnInit(): void {
     this.anneeService.findAll().subscribe(data=>this.anneeResponse=data);
     this.filter()
+  }
+
+  viewListe(liste:any){
+    if(typeof window !== 'undefined' && localStorage){
+      localStorage.setItem('newListe', liste);
+    }
+    this.router.navigate(['/app/view-groups']);
+  }
+
+  useListe(liste:any){
+    this.etudiantService.findByListe(liste).subscribe(data=>this.etdResponse=data);
+    console.log(this.etdResponse);
+
+    if((this.etdResponse) && (typeof window !== 'undefined' && localStorage)){
+      localStorage.setItem('etudiants', JSON.stringify(this.etdResponse.results));
+      this.clearData();
+      this.router.navigate(['/app/liste-membre']);
+    }
+    
   }
 
   refresh(page:number=0,keyword:string=""){
@@ -41,6 +64,17 @@ export class HomeComponent implements OnInit{
 
   pages(start: number, end: number | undefined = 5): number[] {
     return Array(end - start + 1).fill(0).map((_, idx) => start + idx);
+  }
+
+  clearData(){
+    if (typeof window !== 'undefined' && localStorage){
+      localStorage.removeItem('formData');
+      localStorage.removeItem('ecoleListe');
+      localStorage.removeItem('tailleGrp')
+      localStorage.removeItem('nomGrp');
+      localStorage.removeItem('anneeListe');
+    }
+    
   }
 
 }

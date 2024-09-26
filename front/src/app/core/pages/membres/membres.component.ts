@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavComponent } from "../../components/nav/nav.component";
 import { FootComponent } from "../../components/foot/foot.component";
 import * as XLSX from 'xlsx';
-import { EtudiantCreate, EtudiantModel } from '../../models/etudiant.model';
+import { EtudiantCreate, EtudiantCreateXlsx, EtudiantModel } from '../../models/etudiant.model';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -28,15 +28,15 @@ import { AnneeServiceImpl } from '../../services/impl/annee.service.impl';
 export class MembresComponent implements OnInit{
   ecoleResponse?: RestResponse<EcoleModel[]>;
   fileName: any = '';
-  etudiants: EtudiantCreate[] = [];
+  etudiants: EtudiantCreateXlsx[] = [];
   criteres: any[] = [];
+  critCheck: boolean = false;
   anneeResponse?: RestResponse<AnneeModel[]>;
   annee: number = 0;
   ecole: number = 0;
   tailleGrp: number = 0;
   error: boolean = false;
   returnResponse?: ReturnResponse;
-  returnListe?: any = 0;
   constructor(private router:Router, private ecoleService:EcoleServiceImpl, private apiService: ApiService, private anneeService:AnneeServiceImpl) { }
 
   ngOnInit(): void {
@@ -68,6 +68,7 @@ export class MembresComponent implements OnInit{
       this.annee = parseInt(localStorage.getItem('anneeListe') || '0', 10);
       this.ecole = parseInt(localStorage.getItem('ecoleListe') || '0', 10);
     }
+    this.critCheck = (typeof window !== 'undefined' && !!localStorage.getItem('formData'));
   }
 
   loadEtudiants(){
@@ -97,7 +98,7 @@ export class MembresComponent implements OnInit{
         const arrayBuffer = e.target.result;
         const workbook = XLSX.read(arrayBuffer, { type: 'array' });
         const sheetName = workbook.SheetNames[0];
-        const json = XLSX.utils.sheet_to_json<EtudiantCreate>(workbook.Sheets[sheetName]);
+        const json = XLSX.utils.sheet_to_json<EtudiantCreateXlsx>(workbook.Sheets[sheetName]);
 
         this.loadEtudiants();
 
@@ -136,28 +137,20 @@ export class MembresComponent implements OnInit{
   }
 
   checkCorrect():boolean{
-    const formData = localStorage.getItem('formData');
     const ecoleNum = parseInt(localStorage.getItem('ecoleListe') || '0', 10);
     const anneeListe = parseInt(localStorage.getItem('anneeListe') || '0', 10);
     const taille = parseInt(localStorage.getItem('tailleGrp') || '0', 10);
     const etds = localStorage.getItem('etudiants');
     const nom = localStorage.getItem('nomGrp');
 
-    if ((!formData || formData === 'null' || formData === 'undefined' || formData === '') ||
-        (ecoleNum ==0) || (taille < 2) || (nom === '') || (anneeListe ==0) ||
+    if ((ecoleNum ==0) || (taille < 2) || (nom === '') || (anneeListe ==0) ||
         (!etds || etds === 'null' || etds === 'undefined' || etds === '')) {
       console.log('Error: formData, etudiants, ecole or taille');
       return false;
     } else {
-      const parsedData = JSON.parse(formData);
       const etdData = JSON.parse(etds);
       
-      if (((parsedData.niveau && parsedData.niveau.length < 1) && 
-          (parsedData.filiere && parsedData.filiere.length < 1) &&
-          (parsedData.classe && parsedData.classe.length < 1) &&
-          (parsedData.sexe && parsedData.sexe.length < 1) &&
-          (parsedData.pays && parsedData.pays.length < 1)) ||
-          (etdData.length < 1)) {
+      if ((etdData.length < 1)) {
         console.log('criteres or etudiant list is empty');
         return false;
       }
@@ -180,7 +173,7 @@ export class MembresComponent implements OnInit{
 
   createGroups(){
     if(this.checkCorrect()){
-      if (typeof window !== 'undefined' && localStorage.getItem('formData')){
+      if (typeof window !== 'undefined' && localStorage){
         const formData = localStorage.getItem('formData');
         const ecoleNum = parseInt(localStorage.getItem('ecoleListe') || '0', 10);
         const taille = parseInt(localStorage.getItem('tailleGrp') || '0', 10);
@@ -201,9 +194,8 @@ export class MembresComponent implements OnInit{
         this.apiService.sendDataToBackend(this.returnResponse).subscribe(
           response => {
             console.log('Data successfully sent', response);
-            this.returnListe = response.data;
             this.clearData();
-            localStorage.setItem('newListe', this.returnListe);
+            localStorage.setItem('newListe', response.data);
             this.router.navigate(['/app/view-groups']);
           },
           error => {

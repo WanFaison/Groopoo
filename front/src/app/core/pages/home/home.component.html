@@ -3,7 +3,7 @@
     
     <div class="mt-5 row justify-content-center align-items-center h-100">
         <div class="flex-center my-3">
-            <h4 class="underline-bold">Liste des groupes deja crees</h4>
+            <h4 class="underline-bold">Liste des groupes deja crées</h4>
         </div>
 
         <div class="flex-center my-3">
@@ -28,6 +28,7 @@
                   <tr>
                     <th scope="col">Nom de la liste</th>
                     <th scope="col">Date</th>
+                    <th scope="col">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -35,12 +36,20 @@
                    <tr>
                       <th scope="row">{{item.libelle}}</th>
                       <td>{{item.date}}</td>
+                      <td>
+                        <a (click)="viewListe(item.id)" class="btn btn-info me-2" 
+                        role="button" style="color: white;">
+                          Voir plus</a>
+                        <a (click)="useListe(item.id)" class="btn btn-secondary" 
+                        role="button" style="color: white;">
+                          Utiliser</a>
+                      </td>
                    </tr> 
                   }
                 </tbody>
               </table>
         </div>
-        <div class="pagination-div">
+        <div class="pagination-div" style="margin-bottom: 10rem;">
           <nav aria-label="Page navigation example">
             <ul class="pagination">
               <li *ngIf="response && response.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': response.currentPage === 0}">
@@ -51,7 +60,7 @@
               </li>
 
               @for (item of pages(1,response?.totalPages); track $index){
-                <li class="page-item" [ngClass]="{'active':item==response?.currentPage}">
+                <li class="page-item" [ngClass]="{'active':item-1==response?.currentPage}">
                   <a (click)="paginate(item - 1)" class="page-link">{{item}}</a>
                 </li>
               }

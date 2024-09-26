@@ -16,5 +16,17 @@ export interface EtudiantCreate{
     sexe: string,
     niveau: string,
     filiere: string,
+    classe: string,
     nationalite: string
+}
+
+export interface EtudiantCreateXlsx{
+    Matricule: string,
+    Nom: string,
+    Prenom: string,
+    Sexe: string,
+    Niveau: string,
+    Filiere: string,
+    Classe: string,
+    Nationalite: string
 }

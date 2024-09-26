@@ -10,6 +10,8 @@ import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { ListeModel } from '../../models/liste.model';
 import { ListeServiceImpl } from '../../services/impl/list.service.impl';
+import { EtudiantCreate, EtudiantCreateXlsx } from '../../models/etudiant.model';
+import { EtudiantServiceImpl } from '../../services/impl/etudiant.service.impl';
 
 @Component({
   selector: 'app-groups',
@@ -21,12 +23,13 @@ import { ListeServiceImpl } from '../../services/impl/list.service.impl';
 export class GroupsComponent implements OnInit{
   liste: number = 0;
   listeResponse?: RestResponse<ListeModel>;
+  etdResponse?: RestResponse<EtudiantCreateXlsx[]>;
   groupResponse?: RestResponse<GroupeModel[]>;
-  constructor(private router:Router, private groupeService:GroupeServiceImpl, private listeService:ListeServiceImpl, private apiService:ApiService) { }
+  constructor(private router:Router, private groupeService:GroupeServiceImpl, private listeService:ListeServiceImpl, private apiService:ApiService, private etudiantService:EtudiantServiceImpl) { }
 
   ngOnInit(): void {
     if (typeof window !== 'undefined' && localStorage){
-      this.liste = parseInt(localStorage.getItem('newListe') || '0', 10);
+      this.liste = parseInt(localStorage.getItem('newListe') || '1', 10);
       this.listeService.findById(this.liste).subscribe(data=>this.listeResponse=data);
     }
     this.refresh(this.liste);
@@ -45,6 +48,18 @@ export class GroupsComponent implements OnInit{
     });
   }
 
+  useListe(){
+    this.etudiantService.findByListe(this.liste).subscribe(data=>this.etdResponse=data);
+    console.log(this.etdResponse);
+
+    if(this.etdResponse){
+      localStorage.setItem('etudiants', JSON.stringify(this.etdResponse.results));
+      this.clearData();
+      this.router.navigate(['/app/liste-membre']);
+    }
+    
+  }
+
   refresh(liste:number=0, page:number=0){
     this.groupeService.findAll(liste, page).subscribe(data=>this.groupResponse=data);
   }
@@ -54,6 +69,17 @@ export class GroupsComponent implements OnInit{
 
   pages(start: number, end: number | undefined = 5): number[] {
     return Array(end - start + 1).fill(0).map((_, idx) => start + idx);
+  }
+
+  clearData(){
+    if (typeof window !== 'undefined' && localStorage){
+      localStorage.removeItem('formData');
+      localStorage.removeItem('ecoleListe');
+      localStorage.removeItem('tailleGrp')
+      localStorage.removeItem('nomGrp');
+      localStorage.removeItem('anneeListe');
+    }
+    
   }
 
 }

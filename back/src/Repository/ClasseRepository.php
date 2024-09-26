@@ -7,6 +7,7 @@ use App\Entity\Ecole;
 use App\Entity\Filiere;
 use App\Entity\Niveau;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -14,9 +15,17 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ClasseRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $entityManager;
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, Classe::class);
+        $this->entityManager = $entityManager;
+    }
+
+    public function addOrUpdate(Classe $entity): void
+    {
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush();
     }
 
     public function findAllByEcole(?Ecole $ecole=null): array
@@ -47,6 +56,27 @@ class ClasseRepository extends ServiceEntityRepository
                             ->setParameter('isArchived', false)
                             ->getQuery()
                             ->getOneOrNullResult();
+    }
+
+    public function findByLibelle(string $libelle): ?Classe
+    {
+        return $this->createQueryBuilder('e')
+                    ->where('e.libelle = :libelle') 
+                    ->andWhere('e.isArchived = :isArchived') 
+                    ->setParameter('libelle', $libelle)
+                    ->setParameter('isArchived', false)
+                    ->getQuery()
+                    ->getOneOrNullResult();
+    }
+
+    public function checkExistByLibelle(string $libelle): bool
+    {
+        $classe = $this->findByLibelle($libelle);
+        if($classe){
+            return true;
+        }
+
+        return false;
     }
 
 //    /**

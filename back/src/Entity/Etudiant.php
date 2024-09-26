@@ -29,7 +29,7 @@ class Etudiant extends AbstractEntity
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $nationalite = null;
 
-    #[ORM\Column(length: 2, nullable: true)]
+    #[ORM\Column(length: 50, nullable: true)]
     private ?string $sexe = null;
 
 

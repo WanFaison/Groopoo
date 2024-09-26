@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Ecole;
 use App\Entity\Filiere;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -12,9 +13,17 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class FiliereRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $entityManager;
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, Filiere::class);
+        $this->entityManager = $entityManager;
+    }
+
+    public function addOrUpdate(Filiere $entity): void
+    {
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush();
     }
 
     public function findAllByEcole(?Ecole $ecole=null): array
@@ -40,6 +49,16 @@ class FiliereRepository extends ServiceEntityRepository
         ->setParameter('isArchived', false)
         ->getQuery()
         ->getOneOrNullResult();
+    }
+
+    public function checkExistByLibelle(string $libelle): bool
+    {
+        $fil = $this->findByLibelle($libelle);
+        if($fil){
+            return true;
+        }
+
+        return false;
     }
 
 //    /**

@@ -13,7 +13,7 @@ class Classe extends AbstractEntity
 {
 
     #[ORM\Column]
-    private ?int $effectif = null;
+    private ?int $effectif = 0;
 
     /**
      * @var Collection<int, Etudiant>

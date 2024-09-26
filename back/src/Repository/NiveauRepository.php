@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Niveau;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -11,9 +12,17 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class NiveauRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $entityManager;
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, Niveau::class);
+        $this->entityManager = $entityManager;
+    }
+
+    public function addOrUpdate(Niveau $entity): void
+    {
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush();
     }
 
     public function findAllUnarchived(): array
@@ -35,6 +44,16 @@ class NiveauRepository extends ServiceEntityRepository
         ->setParameter('isArchived', false)
         ->getQuery()
         ->getOneOrNullResult();
+    }
+
+    public function checkExistByLibelle(string $libelle): bool
+    {
+        $niv = $this->findByLibelle($libelle);
+        if($niv){
+            return true;
+        }
+
+        return false;
     }
 
 //    /**

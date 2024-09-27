@@ -128,6 +128,7 @@ class ListeController extends AbstractController
             $sheet->setCellValue('A'.$row, 'Nom');
             $sheet->setCellValue('B'.$row, 'Prenom');
             $sheet->setCellValue('C'.$row, 'Classe');
+            $sheet->setCellValue('D'.$row, 'Emargement');
             foreach ($group->getEtudiant() as $etd) {
                 $row++;
                 $sheet->setCellValue('A'.$row, $etd->getNom());

@@ -14,7 +14,7 @@
                 <option *ngFor="let item of anneeResponse?.results" [value]="item.id">{{ item.libelle }}</option>
               </select>
             </div>
-            <a class="btn btn-orange col-md-1 me-5" (click)="filter(0, keyword, annee)" role="button" style="color: white;">
+            <a id="orange-btn" class="btn btn-success col-md-1 me-5" (click)="filter(0, keyword, annee)" role="button" style="color: white;">
                 Filtrer
             </a>
             <a class="btn btn-secondary col-md-1" (click)="refresh()" role="button" style="color: white;">
@@ -39,10 +39,10 @@
                       <td>
                         <a (click)="viewListe(item.id)" class="btn btn-info me-2" 
                         role="button" style="color: white;">
-                          Voir plus</a>
+                          Consulter</a>
                         <a (click)="useListe(item.id)" class="btn btn-secondary" 
                         role="button" style="color: white;">
-                          Utiliser</a>
+                          Réutiliser</a>
                       </td>
                    </tr> 
                   }

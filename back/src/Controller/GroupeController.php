@@ -191,7 +191,7 @@ class GroupeController extends AbstractController
                                 if((count($crit['niveau'])<1)){
                                     $etdToAdd = min($tailleLeft, count($filteredEtds));
                                     for ($i = 0; $i < $etdToAdd; $i++) {
-                                        if((!$this->checkLoad($group, 'filiere', $filiere, $tailleLeft)) && (count($group) < $taille)){
+                                        if((count($group) < $taille)){
                                             $group[] = array_shift($filteredEtds);
                                             $newGrp->addEtudiant($group[count($group) - 1]);
                                             unset($etds[array_search($group[count($group) - 1], $etds)]);
@@ -210,7 +210,7 @@ class GroupeController extends AbstractController
                                             $etdToAdd = min($miniTaille, count($filteredEtds));
                                             $tailleLeft -= $etdToAdd;
                                             for ($i = 0; $i < $etdToAdd; $i++) {
-                                                if((!$this->checkLoad($group, 'niveau', $niveau, $miniTaille)) && (count($group) < $taille)){
+                                                if((count($group) < $taille)){
                                                     $group[] = array_shift($filteredEtds);
                                                     $newGrp->addEtudiant($group[count($group) - 1]);
                                                     unset($etds[array_search($group[count($group) - 1], $etds)]);
@@ -225,7 +225,7 @@ class GroupeController extends AbstractController
                                                     });
                                     $etdToAdd = min($tailleLeft, count($filteredEtds));
                                     for ($i = 0; $i < $etdToAdd; $i++) {
-                                        if((!$this->checkLoad($group, 'filiere', $filiere, $crit['taille'])) && (count($group) < $taille)){
+                                        if((count($group) < $taille)){
                                             $group[] = array_shift($filteredEtds);
                                             $newGrp->addEtudiant($group[count($group) - 1]);
                                             unset($etds[array_search($group[count($group) - 1], $etds)]);
@@ -262,7 +262,7 @@ class GroupeController extends AbstractController
                                                 });
                                 $etdToAdd = min($tailleLeft, count($filteredEtds));
                                 for ($i = 0; $i < $etdToAdd; $i++) {
-                                    if((!$this->checkLoad($group, 'classe', $classe, $tailleLeft)) && (count($group) < $taille)){
+                                    if((count($group) < $taille)){
                                         $group[] = array_shift($filteredEtds);
                                         $newGrp->addEtudiant($group[count($group) - 1]);
                                         unset($etds[array_search($group[count($group) - 1], $etds)]);
@@ -299,7 +299,7 @@ class GroupeController extends AbstractController
                                                 });
                                 $etdToAdd = min($tailleLeft, count($filteredEtds));
                                 for ($i = 0; $i < $etdToAdd; $i++) {
-                                    if((!$this->checkLoad($group, 'niveau', $niveau, $tailleLeft)) && (count($group) < $taille)){
+                                    if((count($group) < $taille)){
                                         $group[] = array_shift($filteredEtds);
                                         $newGrp->addEtudiant($group[count($group) - 1]);
                                         unset($etds[array_search($group[count($group) - 1], $etds)]);

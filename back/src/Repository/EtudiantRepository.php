@@ -25,6 +25,19 @@ class EtudiantRepository extends ServiceEntityRepository
         $this->entityManager->flush();
     }
 
+    public function deleteById(int $id): bool
+    {
+        $etd = $this->find($id);
+
+        if (!$etd) {
+            return false;
+        }
+        $this->entityManager->remove($etd);
+        $this->entityManager->flush(); 
+
+        return true;
+    }
+
     public function findByMatricule(string $matricule): ?Etudiant
     {
         return $this->createQueryBuilder('e')

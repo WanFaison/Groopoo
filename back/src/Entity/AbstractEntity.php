@@ -13,7 +13,7 @@ abstract class AbstractEntity
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 100, nullable: true)]
     private ?string $libelle = null;
 
     #[ORM\Column]
@@ -22,6 +22,13 @@ abstract class AbstractEntity
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(?string $id): static
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getLibelle(): ?string

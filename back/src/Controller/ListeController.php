@@ -14,6 +14,7 @@ use App\Repository\EtudiantRepository;
 use App\Repository\FiliereRepository;
 use App\Repository\GroupeRepository;
 use App\Repository\NiveauRepository;
+use FPDF;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use RestResponse;
@@ -22,6 +23,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 
 class ListeController extends AbstractController
@@ -104,6 +106,16 @@ class ListeController extends AbstractController
         return DtoRestResponse::linearResponse($dto, 1, JsonResponse::HTTP_OK);
     }
 
+    #[Route('/api/liste-archive', name: 'api_liste_archive', methods: ['GET'])]
+    public function archiveList(Request $request): JsonResponse
+    {
+        $listeId = $request->query->getInt('liste', 0);
+        $liste = $this->listeRepository->find($listeId);
+        $liste->setArchived(true);
+        $this->listeRepository->addOrUpdate($liste);
+        
+        return DtoRestResponse::requestResponse('List has been archived', 1, JsonResponse::HTTP_OK);
+    }
 
     #[Route('/api/liste-export', name: 'api_liste_export', methods: ['GET'])]
     public function exportExcel(Request $request): BinaryFileResponse
@@ -113,6 +125,19 @@ class ListeController extends AbstractController
         $excelFile = $this->makeSheet($liste);
 
         return new BinaryFileResponse($excelFile);
+    }
+
+    #[Route('/api/liste-export-pdf', name: 'api_liste_export_pdf', methods: ['GET'])]
+    public function exportPdf(Request $request): Response
+    {
+        $listeId = $request->query->getInt('liste', 0);
+        $liste = $this->listeRepository->find($listeId);
+        $pdfFilePath = $this->makePdf($listeId);
+
+        $response = $this->file($pdfFilePath, $liste->getLibelle(), ResponseHeaderBag::DISPOSITION_INLINE);
+        $response->headers->set('X-Liste-Libelle', $liste->getLibelle());
+
+        return $response;
     }
 
     public function makeSheet($liste)
@@ -128,7 +153,8 @@ class ListeController extends AbstractController
             $sheet->setCellValue('A'.$row, 'Nom');
             $sheet->setCellValue('B'.$row, 'Prenom');
             $sheet->setCellValue('C'.$row, 'Classe');
-            $sheet->setCellValue('D'.$row, 'Emargement');
+            $sheet->setCellValue('D'.$row, 'Emargement 1');
+            $sheet->setCellValue('E'.$row, 'Emargement 2');
             foreach ($group->getEtudiant() as $etd) {
                 $row++;
                 $sheet->setCellValue('A'.$row, $etd->getNom());
@@ -143,5 +169,45 @@ class ListeController extends AbstractController
         $writer->save($temp_file);
 
         return $temp_file;
+    }
+
+    public function makePdf($liste): string
+    {
+        $listeT = $this->listeRepository->find($liste);
+        $groupes = $listeT->getGroupes();
+        
+        $pdf = new FPDF('L');
+        $pdf->AddPage();
+        $pdf->SetFont('Arial', 'B', 14);
+        $pdf->Cell(0, 10, $listeT->getLibelle(), 0, 1, 'C');
+
+        foreach ($groupes as $g) {
+            $pdf->Ln(10);
+            $pdf->SetFont('Arial', 'B', 12);
+            $pdf->Cell(0, 10, $g->getLibelle(), 0, 1);
+
+            $pdf->SetFont('Arial', '', 10);
+            $pdf->Cell(40, 10, 'Nom', 1);
+            $pdf->Cell(50, 10, 'Prenom', 1); 
+            $pdf->Cell(50, 10, 'Classe', 1);
+            $pdf->Cell(30, 10, 'Emargement 1', 1);
+            $pdf->Cell(30, 10, 'Emargement 2', 1);
+            $pdf->Ln(); 
+
+            foreach ($g->getEtudiant() as $etudiant) {
+                $pdf->Cell(40, 10, $etudiant->getNom(), 1); 
+                $pdf->Cell(50, 10, $etudiant->getPrenom(), 1);
+                $pdf->Cell(50, 10, $etudiant->getClasse()->getLibelle(), 1);  
+                $pdf->Cell(30, 10, '', 1);  
+                $pdf->Cell(30, 10, '', 1);    
+                $pdf->Ln();
+            }
+        }
+
+        $fileName = $listeT->getLibelle() . time() . '.pdf';
+        $filePath = sys_get_temp_dir() . '/' . $fileName;
+        $pdf->Output($filePath, 'F');
+
+        return $filePath;
     }
 }

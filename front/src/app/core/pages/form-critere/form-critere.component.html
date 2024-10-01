@@ -28,7 +28,6 @@
                             <div *ngFor="let niveau of pair.get('niveau').controls; let j = index" [formGroupName]="j" class="d-flex mt-1">
                                 <div class="d-flex ">
                                     <select formControlName="choix" class="form-select form-select-sm me-2" aria-label="Choix select">
-                                        <option value="-1">Tous</option>
                                         <option *ngFor="let item of nivResponse?.results" [value]="item.id">{{ item.libelle }}</option>
                                     </select>
                                     <select formControlName="taille" class="form-select form-select-sm me-2" aria-label="Taille select">

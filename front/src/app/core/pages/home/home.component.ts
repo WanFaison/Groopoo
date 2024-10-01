@@ -52,6 +52,17 @@ export class HomeComponent implements OnInit{
     
   }
 
+  archiverListe(liste:any){
+    this.listeService.archiveListe(liste).subscribe(
+      response=>{
+            console.log(response.message)
+            this.reloadPage(); 
+          },        
+      error => {
+            console.error('Error sending data', error);
+          })
+  }
+
   refresh(page:number=0,keyword:string=""){
     this.listeService.findAll(page,keyword).subscribe(data=>this.response=data);
   }
@@ -64,6 +75,10 @@ export class HomeComponent implements OnInit{
 
   pages(start: number, end: number | undefined = 5): number[] {
     return Array(end - start + 1).fill(0).map((_, idx) => start + idx);
+  }
+
+  reloadPage() {
+    window.location.reload();
   }
 
   clearData(){

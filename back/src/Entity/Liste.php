@@ -29,6 +29,9 @@ class Liste extends AbstractEntity
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $date = null;
 
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $critere = null;
+
     public function __construct()
     {
         $this->groupes = new ArrayCollection();
@@ -40,6 +43,13 @@ class Liste extends AbstractEntity
     public function getGroupes(): Collection
     {
         return $this->groupes;
+    }
+
+    public function setGroupes(?Collection $groupes): static
+    {
+        $this->groupes = $groupes;
+
+        return $this;
     }
 
     public function addGroupe(Groupe $groupe): static
@@ -96,6 +106,18 @@ class Liste extends AbstractEntity
     public function setDate(?\DateTimeInterface $date): static
     {
         $this->date = $date;
+
+        return $this;
+    }
+
+    public function getCritere(): ?array
+    {
+        return $this->critere;
+    }
+
+    public function setCritere(?array $critere): static
+    {
+        $this->critere = $critere;
 
         return $this;
     }

@@ -13,12 +13,21 @@ import { environment } from "../../../../environments/environment.development";
 export class ListeServiceImpl implements ListeService{
     private apiUrl=`${environment.APIURL}/liste`;
     private apiUrl2=`${environment.APIURL}/liste-find`;
+    private apiUrlRedo=`${environment.APIURL}/recreate-groupe`;
+    private apiUrlArch=`${environment.APIURL}/liste-archive`;
     private today:Date = new Date();
     // private todayString:string ='';
     // private testString:string='';
     constructor(private http:HttpClient) { 
         // this.todayString = this.today.toISOString().slice(0,10);
         // this.testString = new Date('2022-02-12').toISOString().slice(0,10);
+    }
+    archiveListe(liste: number): Observable<any> {
+        return this.http.get<any>(`${this.apiUrlArch}?liste=${liste}`);
+    }
+
+    reDoListe(liste: number): Observable<any> {
+        return this.http.get<any>(`${this.apiUrlRedo}?liste=${liste}`);
     }
 
     findAll(page:number=0, keyword:string='', annee:number=0): Observable<RestResponse<ListeModel[]>> {

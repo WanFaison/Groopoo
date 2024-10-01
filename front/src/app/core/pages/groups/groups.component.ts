@@ -12,6 +12,8 @@ import { ListeModel } from '../../models/liste.model';
 import { ListeServiceImpl } from '../../services/impl/list.service.impl';
 import { EtudiantCreate, EtudiantCreateXlsx } from '../../models/etudiant.model';
 import { EtudiantServiceImpl } from '../../services/impl/etudiant.service.impl';
+import { HttpResponse } from '@angular/common/http';
+import { response } from 'express';
 
 @Component({
   selector: 'app-groups',
@@ -48,6 +50,23 @@ export class GroupsComponent implements OnInit{
     });
   }
 
+  printPdf(){
+    this.apiService.getPdf(this.liste).subscribe((response: HttpResponse<Blob>) => {
+      const blob = response.body!;
+      const libelle = response.headers.get('X-Liste-Libelle') || 'Nouvelle Liste';
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${libelle}.pdf`; 
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    }, error => {
+      console.error('Error exporting PDF:', error);
+    })
+  }
+
   useListe(){
     this.etudiantService.findByListe(this.liste).subscribe(data=>this.etdResponse=data);
     console.log(this.etdResponse);
@@ -60,6 +79,20 @@ export class GroupsComponent implements OnInit{
     
   }
 
+  reDoList(){
+    this.listeService.reDoListe(this.liste).subscribe(
+      response=>{
+                if (typeof window !== 'undefined' && localStorage){
+                  localStorage.setItem('newListe', response.data)
+                } 
+                this.reloadPage();
+              },        
+      error => {
+                console.error('Error sending data', error);
+              });
+    console.log('reformer liste')
+  }
+
   refresh(liste:number=0, page:number=0){
     this.groupeService.findAll(liste, page).subscribe(data=>this.groupResponse=data);
   }
@@ -69,6 +102,10 @@ export class GroupsComponent implements OnInit{
 
   pages(start: number, end: number | undefined = 5): number[] {
     return Array(end - start + 1).fill(0).map((_, idx) => start + idx);
+  }
+
+  reloadPage() {
+    window.location.reload();
   }
 
   clearData(){

@@ -28,6 +28,19 @@ class GroupeRepository extends ServiceEntityRepository
         $this->entityManager->flush();
     }
 
+    public function deleteById(int $id): bool
+    {
+        $grp = $this->find($id);
+
+        if (!$grp) {
+            return false;
+        }
+        $this->entityManager->remove($grp);
+        $this->entityManager->flush(); 
+
+        return true;
+    }
+
     public function findAllByListePaginated(int $page, int $limit, ?Liste $liste=null): Paginator
     {
         $queryBuilder = $this->createQueryBuilder('r');

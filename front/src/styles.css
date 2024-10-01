@@ -327,8 +327,6 @@ input::placeholder {
 #orange-btn:hover {
     background-color: #bb6803;
     border: #bb6803;
-
-    
 }
 
 .file-upload{display:block;text-align:center;font-family: Helvetica, Arial, sans-serif;font-size: 12px;}

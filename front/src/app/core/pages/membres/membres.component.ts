@@ -48,6 +48,10 @@ export class MembresComponent implements OnInit{
     this.loadProps();
   }
 
+  reloadPage() {
+    window.location.reload();
+  }
+
   saveEcole(value: any) {
     localStorage.setItem('ecoleListe', value);
   }
@@ -169,6 +173,13 @@ export class MembresComponent implements OnInit{
       localStorage.removeItem('anneeListe');
     }
     
+  }
+
+  clearEtd(){
+    if (typeof window !== 'undefined' && localStorage){
+      localStorage.removeItem('etudiants')
+      this.reloadPage();
+    }
   }
 
   createGroups(){

@@ -38,7 +38,9 @@ class ListeRepository extends ServiceEntityRepository
             $queryBuilder->andWhere('r.annee = :annee')
                          ->setParameter('annee', $annee);
         }
-        $query = $queryBuilder->orderBy('r.id', 'ASC')
+        $query = $queryBuilder->andWhere('r.isArchived = :isArchived') 
+                            ->setParameter('isArchived', false)
+                            ->orderBy('r.id', 'ASC')
                             ->getQuery();
         
         return PaginatorService::pageInator($query, $page, $limit);
@@ -51,6 +53,8 @@ class ListeRepository extends ServiceEntityRepository
         ->andWhere('e.isArchived = :isArchived') 
         ->setParameter('libelle', $libelle)
         ->setParameter('isArchived', false)
+        ->orderBy('e.id', 'DESC') 
+        ->setMaxResults(1)
         ->getQuery()
         ->getOneOrNullResult();
     }
@@ -59,6 +63,19 @@ class ListeRepository extends ServiceEntityRepository
     {
         $this->entityManager->persist($entity);
         $this->entityManager->flush();
+    }
+
+    public function deleteById(int $id): bool
+    {
+        $liste = $this->find($id);
+
+        if (!$liste) {
+            return false;
+        }
+        $this->entityManager->remove($liste);
+        $this->entityManager->flush(); 
+
+        return true;
     }
 
     public function convertToDate(string $dateString): DateTime

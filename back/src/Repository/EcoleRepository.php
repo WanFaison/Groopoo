@@ -3,7 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Ecole;
+use App\Service\PaginatorService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -11,9 +14,17 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class EcoleRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $entityManager;
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, Ecole::class);
+        $this->entityManager = $entityManager;
+    }
+
+    public function addOrUpdate(Ecole $entity): void
+    {
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush();
     }
 
     public function findAllUnarchived(): array
@@ -24,6 +35,22 @@ class EcoleRepository extends ServiceEntityRepository
             ->orderBy('n.id', 'ASC')
             ->getQuery()
             ->getResult();
+    }
+
+    public function findAllPaginated(int $page, int $limit, string $keyword): Paginator
+    {
+        $queryBuilder = $this->createQueryBuilder('r');
+        if (!empty($keyword)) {
+            $queryBuilder->andWhere('r.libelle LIKE :keyword')
+                ->setParameter('keyword', '%' . $keyword . '%');
+        }
+        
+        $query = $queryBuilder->andWhere('r.isArchived = :isArchived') 
+                            ->setParameter('isArchived', false)
+                            ->orderBy('r.id', 'ASC')
+                            ->getQuery();
+        
+        return PaginatorService::pageInator($query, $page, $limit);
     }
 
 //    /**

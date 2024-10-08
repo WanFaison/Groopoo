@@ -12,10 +12,26 @@ import { environment } from "../../../../environments/environment.development";
 
 export class AnneeServiceImpl implements AnneeService{
     private apiUrl=`${environment.APIURL}/annee`;
+    private apiUrlPg=`${environment.APIURL}/liste-annee`;
+    private apiUrlAdd=`${environment.APIURL}/add-annee`;
+    private apiUrlModif=`${environment.APIURL}/annee-modif`;
     constructor(private http:HttpClient){}
+
+    modifAnnee(annee: number, keyword:string=''): Observable<any> {
+        return this.http.get<any>(`${this.apiUrlModif}?annee=${annee}&keyword=${keyword}`);
+    }
+
+    getAddUrl(){
+        return this.apiUrlAdd;
+    }
 
     findAll(): Observable<RestResponse<AnneeModel[]>> {
         return this.http.get<RestResponse<AnneeModel[]>>(this.apiUrl);
+    }
+
+    findAllPg(page:number=0, keyword:string=''): Observable<RestResponse<AnneeModel[]>>
+    {
+        return this.http.get<RestResponse<AnneeModel[]>>(`${this.apiUrlPg}?page=${page}&keyword=${keyword}`)
     }
 
 }

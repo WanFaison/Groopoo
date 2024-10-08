@@ -1,0 +1,217 @@
+<div class="container-fluid min-vh-100">
+    <app-nav></app-nav>
+    
+    <div class="mt-5 row justify-content-center align-items-center h-100">
+        <div class="flex-center my-3">
+            <div class="input-group col-md-2">
+                <select [(ngModel)]="state" (ngModelChange)="changeState($event)" class="form-select col-md-6" aria-label=".form-select-sm example">
+                  <option selected value="0">Annee</option>
+                  <option value="1">Ecole</option>
+                </select>
+            </div>
+        </div>
+        <div class="flex-center my-3">
+            <h4 *ngIf="state == 0" class="underline-bold">Gerer Annees</h4>
+            <h4 *ngIf="state == 1" class="underline-bold">Gerer Ecoles</h4>
+        </div>
+
+        <div class="flex-center my-3">
+            <input type="text" [(ngModel)]="keyword" class="form-control input-black-border col-md-2 me-2" placeholder="Rechercher...">
+            <a id="orange-btn" class="btn btn-success col-md-1 me-4" (click)="filter(0, keyword)" role="button" style="color: white;">
+                Filtrer
+            </a>
+            <a class="btn btn-secondary col-md-1 me-2" (click)="refresh()" role="button" style="color: white;">
+                Reinitialiser
+            </a>
+            <a class="btn btn-info col-md-1" data-bs-toggle="modal" data-bs-target="#addModal" 
+                role="button" style="color: white;">
+                Ajouter/Creer
+            </a>
+        </div>
+
+        <div *ngIf="state == 0" class="flex-center">
+            <table class="table col-md-4">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">Annee</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of anneeResponse?.results; track $index){
+                   <tr>
+                      <th scope="row">{{item.libelle}}</th>
+                      <td>
+                        <a (click)="changeEnt(item.id, item.libelle)" class="btn btn-secondary me-2" 
+                        data-bs-toggle="modal" data-bs-target="#modifModal"
+                        role="button" style="color: white;">
+                            Modifier</a>
+                        <a class="btn btn-danger" 
+                        data-bs-toggle="modal" data-bs-target="#ynModal"
+                        role="button" style="color: white;">
+                          Supprimer</a>
+                      </td>
+                   </tr> 
+                  }
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="state == 1" class="flex-center">
+            <table class="table col-md-4">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">Ecole</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of ecoleResponse?.results; track $index){
+                   <tr>
+                      <th scope="row">{{item.libelle}}</th>
+                      <td>
+                        <a (click)="changeEnt(item.id, item.libelle)" class="btn btn-secondary me-2"
+                        data-bs-toggle="modal" data-bs-target="#modifModal" 
+                        role="button" style="color: white;">
+                            Modifier</a>
+                        <a class="btn btn-danger" 
+                        data-bs-toggle="modal" data-bs-target="#ynModal"
+                        role="button" style="color: white;">
+                          Supprimer</a>
+                      </td>
+                   </tr> 
+                  }
+                </tbody>
+            </table>
+        </div>
+
+        <div *ngIf="state == 0" class="pagination-div" style="margin-bottom: 10rem;">
+            <nav aria-label="Page navigation example">
+              <ul class="pagination">
+                <li *ngIf="anneeResponse && anneeResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': anneeResponse.currentPage === 0}">
+                  <a class="page-link" (click)="paginate(anneeResponse.currentPage - 1)" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                </li>
+  
+                @for (item of pages(1,anneeResponse?.totalPages); track $index){
+                  <li class="page-item" [ngClass]="{'active':item-1==anneeResponse?.currentPage}">
+                    <a (click)="paginate(item - 1)" class="page-link">{{item}}</a>
+                  </li>
+                }
+                
+                <li *ngIf="anneeResponse && anneeResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': anneeResponse.currentPage +1 === anneeResponse.totalPages}">
+                  <a class="page-link" (click)="paginate(anneeResponse.currentPage + 1)" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+        </div>   
+        <div *ngIf="state == 1" class="pagination-div" style="margin-bottom: 10rem;">
+            <nav aria-label="Page navigation example">
+              <ul class="pagination">
+                <li *ngIf="ecoleResponse && ecoleResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': ecoleResponse.currentPage === 0}">
+                  <a class="page-link" (click)="paginate(ecoleResponse.currentPage - 1)" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                </li>
+  
+                @for (item of pages(1,ecoleResponse?.totalPages); track $index){
+                  <li class="page-item" [ngClass]="{'active':item-1==ecoleResponse?.currentPage}">
+                    <a (click)="paginate(item - 1)" class="page-link">{{item}}</a>
+                  </li>
+                }
+                
+                <li *ngIf="ecoleResponse && ecoleResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': ecoleResponse.currentPage +1 === ecoleResponse.totalPages}">
+                  <a class="page-link" (click)="paginate(ecoleResponse.currentPage + 1)" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+        </div>   
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content row">
+            <div class="modal-header">
+                <h5 *ngIf="state == 0" class="modal-title" id="exampleModalLabel">Ajouter Annee</h5>
+                <h5 *ngIf="state == 1" class="modal-title" id="exampleModalLabel">Ajouter Ecole</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <label *ngIf="state == 0" class="form-label custom-label" for="libelle">Libelle de l'annee</label>
+                <label *ngIf="state == 1" class="form-label custom-label" for="libelle">Nom de l'ecole</label>
+                <input required id="libelle" #libelleInput="ngModel" [(ngModel)]="libelle" 
+                name="libelle" class="form-control form-control-lg custom-input" placeholder="Entrez le nom..." />
+                <div *ngIf="libelleInput.invalid && libelleInput.touched" class="text-danger">
+                    Le nom/libelle est requis.
+                </div>
+            </div>
+            <div class="modal-footer d-flex">
+                <button (click)="addObj()" type="button" class="btn btn-success">Confirmer</button>
+                <button (click)="reloadPage()" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Modal 2-->
+    <div class="modal fade" id="modifModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content row">
+            <div class="modal-header">
+                <h5 *ngIf="state == 0" class="modal-title" id="exampleModalLabel">Modifier Annee</h5>
+                <h5 *ngIf="state == 1" class="modal-title" id="exampleModalLabel">Modifier Ecole</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <label *ngIf="state == 0" class="form-label custom-label" for="libelle">Libelle de l'annee</label>
+                <label *ngIf="state == 1" class="form-label custom-label" for="libelle">Nom de l'ecole</label>
+                <input required id="libelle" #libelleInput="ngModel" [(ngModel)]="libelle" 
+                name="libelle" class="form-control form-control-lg custom-input" placeholder="Entrez le nom..." />
+                <div *ngIf="libelleInput.invalid && libelleInput.touched" class="text-danger">
+                    Le nom/libelle est requis.
+                </div>
+            </div>
+            <div class="modal-footer d-flex">
+                <button (click)="modifEnt(state, entity, libelle)" type="button" 
+                class="btn btn-success" data-bs-dismiss="modal">Modifier</button>
+                <button (click)="libelle = ''" type="button" class="btn btn-secondary" 
+                data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Modal yn-->
+    <div class="modal fade" id="ynModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content row">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Suppression</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4 *ngIf="state == 0" class="form-label custom-label">Voulez vous supprimer cette annee?</h4>
+                <h4 *ngIf="state == 1" class="form-label custom-label">Voulez vous supprimer cette ecole?</h4>
+                <p>NB: la suppression de cette entite, causera la suppression de toute listes correspondantes </p>
+            </div>
+            <div class="modal-footer d-flex">
+                <button (click)="modifEnt(state, entity, libelle)" type="button" class="btn btn-success">Oui</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <app-foot></app-foot>
+</div>
+

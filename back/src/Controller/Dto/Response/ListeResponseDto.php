@@ -11,7 +11,7 @@ class ListeResponseDto
 {
     private int $id;
     private string $libelle;
-    private bool $isArchived;
+    private array $critere;
     private int $annee;
     private string $ecole;
     private string $date;
@@ -37,14 +37,14 @@ class ListeResponseDto
         return $this;
     }
 
-    public function isArchived(): ?bool
+    public function getCritere(): ?array
     {
-        return $this->isArchived;
+        return $this->critere;
     }
 
-    public function setArchived(bool $isArchived): static
+    public function setCritere(array $critere): static
     {
-        $this->isArchived = $isArchived;
+        $this->critere = $critere;
 
         return $this;
     }
@@ -91,7 +91,7 @@ class ListeResponseDto
 
         $dto->setId($liste->getId());
         $dto->setLibelle($liste->getLibelle());
-        $dto->setArchived($liste->isArchived());
+        $dto->setCritere($liste->getCritere());
         $dto->setAnnee($liste->getAnnee()->getId());
         $dto->setEcole($liste->getEcole()->getLibelle());
         $dto->setDate($liste->getDate()->format('d-m-Y'));

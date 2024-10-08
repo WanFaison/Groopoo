@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Liste;
 use App\Entity\Annee;
+use App\Entity\Ecole;
 use App\Service\PaginatorService;
 use DateTime;
 use DateTimeInterface;
@@ -20,14 +21,18 @@ use Symfony\Component\Validator\Constraints\Date;
 class ListeRepository extends ServiceEntityRepository
 {
     private $entityManager;
-    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
+    private $anneeRepository;
+    private $ecoleRepository;
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager, EcoleRepository $ecoleRepository, AnneeRepository $anneeRepository)
     {
         parent::__construct($registry, Liste::class);
         $this->entityManager = $entityManager;
+        $this->ecoleRepository = $ecoleRepository;
+        $this->anneeRepository = $anneeRepository;
     }
 
 
-    public function findAllPaginated(int $page, int $limit, string $keyword, ?Annee $annee = null): Paginator
+    public function findAllPaginated(int $page, int $limit, string $keyword, int $annee = null, int $ecole = null): Paginator
     {
         $queryBuilder = $this->createQueryBuilder('r');
         if (!empty($keyword)) {
@@ -36,7 +41,11 @@ class ListeRepository extends ServiceEntityRepository
         }
         if ($annee) {
             $queryBuilder->andWhere('r.annee = :annee')
-                         ->setParameter('annee', $annee);
+                         ->setParameter('annee', $this->anneeRepository->find($annee));
+        }
+        if ($ecole) {
+            $queryBuilder->andWhere('r.ecole = :ecole')
+                         ->setParameter('ecole', $this->ecoleRepository->find($ecole));
         }
         $query = $queryBuilder->andWhere('r.isArchived = :isArchived') 
                             ->setParameter('isArchived', false)
@@ -44,6 +53,38 @@ class ListeRepository extends ServiceEntityRepository
                             ->getQuery();
         
         return PaginatorService::pageInator($query, $page, $limit);
+    }
+
+    public function findAllByAnnee(?Annee $annee = null):array
+    {
+        $queryBuilder = $this->createQueryBuilder('r');
+        if ($annee) {
+            $queryBuilder->andWhere('r.annee = :annee')
+                         ->setParameter('annee', $annee);
+        }
+        $query = $queryBuilder->andWhere('r.isArchived = :isArchived')
+                            ->setParameter('isArchived', false)
+                            ->orderBy('r.id', 'ASC')
+                            ->getQuery()
+                            ->getResult();
+
+        return $query;
+    }
+
+    public function findAllByEcole(?Ecole $ecole = null):array
+    {
+        $queryBuilder = $this->createQueryBuilder('r');
+        if ($ecole) {
+            $queryBuilder->andWhere('r.ecole = :ecole')
+                         ->setParameter('ecole', $ecole);
+        }
+        $query = $queryBuilder->andWhere('r.isArchived = :isArchived')
+                            ->setParameter('isArchived', false)
+                            ->orderBy('r.id', 'ASC')
+                            ->getQuery()
+                            ->getResult();
+
+        return $query;
     }
 
     public function findByLibelle(string $libelle): ?Liste

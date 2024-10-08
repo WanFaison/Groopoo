@@ -12,7 +12,22 @@ import { environment } from "../../../../environments/environment.development";
 
 export class EcoleServiceImpl implements EcoleService{
     private apiUrl=`${environment.APIURL}/ecole`;
+    private apiUrlPg=`${environment.APIURL}/liste-ecole`;
+    private apiUrlAdd=`${environment.APIURL}/add-ecole`;
+    private apiUrlModif=`${environment.APIURL}/ecole-modif`;
     constructor(private http:HttpClient){}
+
+    modifEcole(ecole: number, keyword:string=''): Observable<any> {
+        return this.http.get<any>(`${this.apiUrlModif}?ecole=${ecole}&keyword=${keyword}`);
+    }
+
+    getAddUrl(){
+        return this.apiUrlAdd;
+    }
+
+    findAllPg(page: number, keyword: string): Observable<RestResponse<EcoleModel[]>> {
+        return this.http.get<RestResponse<EcoleModel[]>>(`${this.apiUrlPg}?page=${page}&keyword=${keyword}`)
+    }
     
     findAll(): Observable<RestResponse<EcoleModel[]>> {
         return this.http.get<RestResponse<EcoleModel[]>>(this.apiUrl);

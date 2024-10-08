@@ -6,6 +6,7 @@ import { SelectlistComponent } from './core/pages/selectlist/selectlist.componen
 import { AuthGuard } from './guards/auth.guard';
 import { FormCritereComponent } from './core/pages/form-critere/form-critere.component';
 import { GroupsComponent } from './core/pages/groups/groups.component';
+import { DonneesComponent } from './core/pages/donnees/donnees.component';
 
 export const routes: Routes = [
     {
@@ -35,6 +36,11 @@ export const routes: Routes = [
     {
         path:"app/liste-select",
         component:SelectlistComponent,
+        //canActivate: [AuthGuard]
+    },
+    {
+        path:"app/donnees",
+        component:DonneesComponent,
         //canActivate: [AuthGuard]
     },
     {

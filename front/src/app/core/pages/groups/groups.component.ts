@@ -71,6 +71,10 @@ export class GroupsComponent implements OnInit{
     this.etudiantService.findByListe(this.liste).subscribe(data=>this.etdResponse=data);
     console.log(this.etdResponse);
 
+    if(this.listeResponse){
+      localStorage.setItem('formData', JSON.stringify(this.listeResponse?.results.critere))
+    }
+
     if(this.etdResponse){
       localStorage.setItem('etudiants', JSON.stringify(this.etdResponse.results));
       this.clearData();
@@ -110,7 +114,6 @@ export class GroupsComponent implements OnInit{
 
   clearData(){
     if (typeof window !== 'undefined' && localStorage){
-      localStorage.removeItem('formData');
       localStorage.removeItem('ecoleListe');
       localStorage.removeItem('tailleGrp')
       localStorage.removeItem('nomGrp');

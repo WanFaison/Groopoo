@@ -12,6 +12,8 @@ import { AnneeServiceImpl } from '../../services/impl/annee.service.impl';
 import { GroupeModel } from '../../models/groupe.model';
 import { EtudiantCreate, EtudiantCreateXlsx } from '../../models/etudiant.model';
 import { EtudiantServiceImpl } from '../../services/impl/etudiant.service.impl';
+import { EcoleModel } from '../../models/ecole.model';
+import { EcoleServiceImpl } from '../../services/impl/ecole.service.impl';
 
 @Component({
   selector: 'app-home',
@@ -22,14 +24,18 @@ import { EtudiantServiceImpl } from '../../services/impl/etudiant.service.impl';
 })
 export class HomeComponent implements OnInit{
   response?: RestResponse<ListeModel[]>;
+  listeResponse?: RestResponse<ListeModel>;
   anneeResponse?: RestResponse<AnneeModel[]>;
   etdResponse?: RestResponse<EtudiantCreateXlsx[]>;
+  ecoleResponse?: RestResponse<EcoleModel[]>;
   keyword: string = '';
   annee: number = 0;
-  constructor(private router:Router, private listeService:ListeServiceImpl, private anneeService:AnneeServiceImpl, private etudiantService:EtudiantServiceImpl){}
+  ecole: number = 0;
+  constructor(private router:Router, private ecoleService:EcoleServiceImpl, private listeService:ListeServiceImpl, private anneeService:AnneeServiceImpl, private etudiantService:EtudiantServiceImpl){}
   
   ngOnInit(): void {
     this.anneeService.findAll().subscribe(data=>this.anneeResponse=data);
+    this.ecoleService.findAll().subscribe(data=>this.ecoleResponse=data);
     this.filter()
   }
 
@@ -41,6 +47,11 @@ export class HomeComponent implements OnInit{
   }
 
   useListe(liste:any){
+    this.listeService.findById(liste).subscribe(data=>this.listeResponse=data);
+    if(this.listeResponse){
+      localStorage.setItem('formData', JSON.stringify(this.listeResponse?.results.critere))
+    }
+
     this.etudiantService.findByListe(liste).subscribe(data=>this.etdResponse=data);
     console.log(this.etdResponse);
 
@@ -65,12 +76,15 @@ export class HomeComponent implements OnInit{
 
   refresh(page:number=0,keyword:string=""){
     this.listeService.findAll(page,keyword).subscribe(data=>this.response=data);
+    this.ecole =0;
+    this.annee =0;
+    this.keyword = '';
   }
   paginate(page:number){
     this.refresh(page)
   }
-  filter(page:number=0, keyword:string=this.keyword, annee:number=0){
-    this.listeService.findAll(page,keyword,annee).subscribe(data=>this.response=data);
+  filter(page:number=0, keyword:string=this.keyword, annee:number=0, ecole:number=0){
+    this.listeService.findAll(page,keyword,annee, ecole).subscribe(data=>this.response=data);
   }
 
   pages(start: number, end: number | undefined = 5): number[] {
@@ -83,7 +97,6 @@ export class HomeComponent implements OnInit{
 
   clearData(){
     if (typeof window !== 'undefined' && localStorage){
-      localStorage.removeItem('formData');
       localStorage.removeItem('ecoleListe');
       localStorage.removeItem('tailleGrp')
       localStorage.removeItem('nomGrp');

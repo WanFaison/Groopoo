@@ -45,15 +45,15 @@
         <div class="flex-center">
             <div *ngFor="let item of criteres" class="bg-black d-flex me-2 align-items-center border-black thick-border">
                 <p class="text-white mb-0 me-4">{{ item.choix }} {{ item.taille }}</p>
-                <a class="btn btn-orange text-white" role="button">X</a>
-              </div>
+                <a class="btn btn-orange text-white" role="button">O</a>
+            </div>
         </div>
 
         <div class="flex-center mt-2 w-50 mx-auto" style="margin-bottom: 2rem;">
             <a [routerLink]="['/app/form-critere']" class="btn btn-secondary text-white me-3" 
             role="button" [class.disabled]="ecole === 0 || tailleGrp < 2">Modifier critères</a>
             <a (click)="createGroups()" class="btn btn-info text-white me-3" 
-            role="button" [class.disabled]="ecole === 0 || tailleGrp < 2">Aléatoire</a>
+            role="button" [class.disabled]="ecole === 0 || tailleGrp < 2 || criteres.length > 0">Aléatoire</a>
         </div>
         <div class="flex-center mt-2 w-50 mx-auto" style="margin-bottom: 2rem;">
             <a (click)="clearEtd()" class="btn btn-secondary text-white me-3" 

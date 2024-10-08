@@ -56,13 +56,11 @@ class ListeController extends AbstractController
         $limit = $request->query->getInt('limit', 10);
         $keyword = $request->query->getString('keyword', '');
         $annee = $request->query->getInt('annee', 0);
+        $ecole = $request->query->getInt('ecole', 0);
 
-        if($annee == 0){
-            $listes = $listeRepository->findAllPaginated($page, $limit, $keyword);
-        }else{
-            $yr = $anneeRepository->find($annee);
-            $listes = $listeRepository->findAllPaginated($page, $limit, $keyword, $yr);
-        }
+        if($annee == 0){$annee = null;} 
+        if($ecole == 0){$ecole = null;} 
+        $listes = $listeRepository->findAllPaginated($page, $limit, $keyword, $annee, $ecole);
         
         $dtos = [];
         foreach ($listes as $liste) {
@@ -73,7 +71,7 @@ class ListeController extends AbstractController
             $results[] = [
                 'id' => $r->getId(),
                 'libelle' => $r->getLibelle(),
-                'isArchived' => $r->isArchived(),
+                'critere' => $r->getCritere(),
                 'annee' => $r->getAnnee(),
                 'ecole' => $r->getEcole(),
                 'date' => $r->getDate()
@@ -96,7 +94,7 @@ class ListeController extends AbstractController
             $dto = [
                     'id' => $dto->getId(),
                     'libelle' => $dto->getLibelle(),
-                    'isArchived' => $dto->isArchived(),
+                    'critere' => $dto->getCritere(),
                     'annee' => $dto->getAnnee(),
                     'ecole' => $dto->getEcole(),
                     'date' => $dto->getDate()

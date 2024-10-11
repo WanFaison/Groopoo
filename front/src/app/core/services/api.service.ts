@@ -11,6 +11,7 @@ export class ApiService {
   private apiUrl = `${environment.APIURL}/create-groupe`;
   private apiUrlXls = `${environment.APIURL}/liste-export`;
   private apiUrlPdf = `${environment.APIURL}/liste-export-pdf`;
+  private apiUrlNewUser = `${environment.APIURL}/add-user`;
 
   constructor(private http: HttpClient) {}
 
@@ -22,8 +23,14 @@ export class ApiService {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
-    
     return this.http.post(`${this.apiUrl}`, data, {headers});
+  }
+
+  sendNewUserToBack(data:any): Observable<any>{
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+    return this.http.post(`${this.apiUrlNewUser}`, data, {headers});
   }
 
   getExcelSheet(liste:number): Observable<any> {

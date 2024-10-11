@@ -23,6 +23,9 @@ class ApiLoginController extends AbstractController
 
         $user = $userRepository->findOneBy(['username' => $username]);
         if (!$user) {
+            $user = $userRepository->findOneBy(['email' => $username]);
+        }
+        if ((!$user) || ($user->isArchived())) {
             return new JsonResponse(['error' => 'User not found'], JsonResponse::HTTP_UNAUTHORIZED);
         }
 

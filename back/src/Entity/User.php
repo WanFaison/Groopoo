@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -36,6 +38,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private ?bool $isArchived = null;
+
+    /**
+     * @var Collection<int, Profile>
+     */
+    #[ORM\ManyToMany(targetEntity: Profile::class, inversedBy: 'users')]
+    private Collection $profile;
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Ecole $ecole = null;
+
+    public function __construct()
+    {
+        $this->profile = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -131,6 +147,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setArchived(bool $isArchived): static
     {
         $this->isArchived = $isArchived;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Profile>
+     */
+    public function getProfile(): Collection
+    {
+        return $this->profile;
+    }
+
+    public function addProfile(Profile $profile): static
+    {
+        if (!$this->profile->contains($profile)) {
+            $this->profile->add($profile);
+        }
+
+        return $this;
+    }
+
+    public function removeProfile(Profile $profile): static
+    {
+        $this->profile->removeElement($profile);
+
+        return $this;
+    }
+
+    public function getEcole(): ?Ecole
+    {
+        return $this->ecole;
+    }
+
+    public function setEcole(?Ecole $ecole): static
+    {
+        $this->ecole = $ecole;
 
         return $this;
     }

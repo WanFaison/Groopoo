@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, FormArray, Validators, FormsModule, ReactiveFor
 import { FootComponent } from "../../components/foot/foot.component";
 import { NavComponent } from "../../components/nav/nav.component";
 import { CommonModule } from '@angular/common';
-import { Country, RestResponse } from '../../models/rest.response';
+import { RestResponse } from '../../models/rest.response';
 import { NiveauModel } from '../../models/niveau.model';
 import { NiveauServiceImpl } from '../../services/impl/niveau.service.impl';
 import { FiliereModel } from '../../models/filiere.model';

@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use App\Service\PaginatorService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use PhpParser\Node\Expr\Cast\String_;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -16,9 +18,11 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    public function __construct(ManagerRegistry $registry)
+    private $passwordHasher;
+    public function __construct(ManagerRegistry $registry, UserPasswordHasherInterface $passwordHasher)
     {
         parent::__construct($registry, User::class);
+        $this->passwordHasher = $passwordHasher;
     }
 
     /**
@@ -35,19 +39,37 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-    public function createUser(UserPasswordHasherInterface $passwordHasher, string $password, string $username, string $email){
+    public function createUser(string $password, string $username, string $email){
         $user = new User();
         $user->setUsername($username);
         $user->setEmail($email);
 
-        // Hash the password
-        $hashedPassword = $passwordHasher->hashPassword(
+        $hashedPassword = $this->passwordHasher->hashPassword(
             $user,
             $password
         );
         $user->setPassword($hashedPassword);
 
         return $user;
+    }
+    
+    public function findAllPaginated(int $page, int $limit, string $keyword, int $ecole = null): Paginator
+    {
+        $queryBuilder = $this->createQueryBuilder('r');
+        if (!empty($keyword)) {
+            $queryBuilder->andWhere('r.email LIKE :keyword')
+                ->setParameter('keyword', '%' . $keyword . '%');
+        }
+        if ($ecole) {
+            $queryBuilder->andWhere('r.ecole = :ecole')
+                         ->setParameter('ecole', $this->ecoleRepository->find($ecole));
+        }
+        $query = $queryBuilder->andWhere('r.isArchived = :isArchived') 
+                            ->setParameter('isArchived', false)
+                            ->orderBy('r.id', 'ASC')
+                            ->getQuery();
+        
+        return PaginatorService::pageInator($query, $page, $limit);
     }
 
 //    /**

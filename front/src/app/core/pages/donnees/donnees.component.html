@@ -144,7 +144,7 @@
             <div class="modal-header">
                 <h5 *ngIf="state == 0" class="modal-title" id="exampleModalLabel">Ajouter Annee</h5>
                 <h5 *ngIf="state == 1" class="modal-title" id="exampleModalLabel">Ajouter Ecole</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button (click)="reloadPage()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <label *ngIf="state == 0" class="form-label custom-label" for="libelle">Libelle de l'annee</label>
@@ -170,7 +170,7 @@
             <div class="modal-header">
                 <h5 *ngIf="state == 0" class="modal-title" id="exampleModalLabel">Modifier Annee</h5>
                 <h5 *ngIf="state == 1" class="modal-title" id="exampleModalLabel">Modifier Ecole</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button (click)="libelle = ''" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <label *ngIf="state == 0" class="form-label custom-label" for="libelle">Libelle de l'annee</label>

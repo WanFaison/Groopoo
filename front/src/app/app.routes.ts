@@ -7,6 +7,8 @@ import { AuthGuard } from './guards/auth.guard';
 import { FormCritereComponent } from './core/pages/form-critere/form-critere.component';
 import { GroupsComponent } from './core/pages/groups/groups.component';
 import { DonneesComponent } from './core/pages/donnees/donnees.component';
+import { ProfilesComponent } from './core/pages/profiles/profiles.component';
+import { FormUserComponent } from './core/pages/form-user/form-user.component';
 
 export const routes: Routes = [
     {
@@ -41,6 +43,16 @@ export const routes: Routes = [
     {
         path:"app/donnees",
         component:DonneesComponent,
+        //canActivate: [AuthGuard]
+    },
+    {
+        path:"app/users",
+        component:ProfilesComponent,
+        //canActivate: [AuthGuard]
+    },
+    {
+        path:"app/form-user",
+        component:FormUserComponent,
         //canActivate: [AuthGuard]
     },
     {

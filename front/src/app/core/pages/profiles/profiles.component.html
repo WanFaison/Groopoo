@@ -1,0 +1,111 @@
+<div class="container-fluid min-vh-100">
+    <app-nav></app-nav>
+
+    <div class="mt-5 row justify-content-center align-items-center h-100">
+        <div class="flex-center my-3">
+            <h4 class="underline-bold">Gerer Utilisateurs</h4>
+        </div>
+
+        <div class="flex-center my-3">
+            <input type="text" [(ngModel)]="keyword" class="form-control input-black-border col-md-2 me-2" placeholder="Rechercher...">
+            <div class="input-group col-md-2">
+                <select [(ngModel)]="ecole" class="form-select" aria-label=".form-select-sm example">
+                  <option selected value="0">ecole...</option>
+                  <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
+                </select>
+            </div>
+            <a id="orange-btn" class="btn btn-success col-md-1 me-4" (click)="filter(0, keyword, ecole)" role="button" style="color: white;">
+                Filtrer
+            </a>
+            <a class="btn btn-secondary col-md-1 me-2" (click)="refresh()" role="button" style="color: white;">
+                Reinitialiser
+            </a>
+            <a class="btn btn-info col-md-1"
+                [routerLink]="['/app/form-user']" routerLinkActive="active"
+                role="button" style="color: white;">
+                Ajouter/Creer
+            </a>
+        </div>
+
+        <div class="flex-center">
+            <table class="table col-md-6">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">Utilisateur</th>
+                    <th scope="col">Ecole</th>
+                    <th scope="col">Profiles</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of userResponse?.results; track $index){
+                   <tr>
+                      <td scope="row">{{item.email}}</td>
+                      <td>{{item.ecoleT}}</td>
+                      <td>
+                        <p *ngFor="let p of item.profiles; let i = index">{{p.libelle}},</p>
+                      </td>
+                      <td>
+                        <a (click)="saveUtilisateur(item.id)" class="btn btn-secondary me-2" 
+                        role="button" style="color: white;">
+                          Modifier</a>
+                        <a (click)="userId = item.id" class="btn btn-danger" 
+                        data-bs-toggle="modal" data-bs-target="#ynModal"
+                        role="button" style="color: white;">
+                          Archiver</a>
+                      </td>
+                   </tr> 
+                  }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination-div" style="margin-bottom: 10rem;">
+            <nav aria-label="Page navigation example">
+              <ul class="pagination">
+                <li *ngIf="userResponse && userResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': userResponse.currentPage === 0}">
+                  <a class="page-link" (click)="paginate(userResponse.currentPage - 1)" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                </li>
+  
+                @for (item of pages(1,userResponse?.totalPages); track $index){
+                  <li class="page-item" [ngClass]="{'active':item-1==userResponse?.currentPage}">
+                    <a (click)="paginate(item - 1)" class="page-link">{{item}}</a>
+                  </li>
+                }
+                
+                <li *ngIf="userResponse && userResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': userResponse.currentPage +1 === userResponse.totalPages}">
+                  <a class="page-link" (click)="paginate(userResponse.currentPage + 1)" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+        </div>    
+    </div>
+
+    <!-- Modal yn-->
+    <div class="modal fade" id="ynModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content row">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Suppression</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4 class="form-label custom-label">Voulez vous archiver cette utiliser?</h4>
+                <p>NB: la suppression de cette entité, l'empêchera d'accéder a la plateforme </p>
+            </div>
+            <div class="modal-footer d-flex">
+                <button (click)="archiveUser(userId)" type="button" class="btn btn-success">Oui</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <app-foot></app-foot>
+</div>

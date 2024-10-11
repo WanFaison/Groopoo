@@ -29,11 +29,18 @@ class Ecole extends AbstractEntity
     #[ORM\OneToMany(targetEntity: Classe::class, mappedBy: 'ecole')]
     private Collection $classes;
 
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'ecole')]
+    private Collection $users;
+
     public function __construct()
     {
         $this->listes = new ArrayCollection();
         $this->filieres = new ArrayCollection();
         $this->classes = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     /**
@@ -120,6 +127,36 @@ class Ecole extends AbstractEntity
             // set the owning side to null (unless already changed)
             if ($class->getEcole() === $this) {
                 $class->setEcole(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): static
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->setEcole($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): static
+    {
+        if ($this->users->removeElement($user)) {
+            // set the owning side to null (unless already changed)
+            if ($user->getEcole() === $this) {
+                $user->setEcole(null);
             }
         }
 

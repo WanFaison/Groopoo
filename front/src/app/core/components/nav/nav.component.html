@@ -23,9 +23,13 @@
     </div>
 
     <div>
-        <a (click)="onLogout()" class="btn btn-danger" 
-          role="button" style="color: white;">
-            Deconnexion
-        </a>
+      <button class="btn me-2" type="button" id="profileButton"
+      [routerLink]="['/app/users']" routerLinkActive="active">
+        <i class="bi bi-person-circle fs-3"></i>
+      </button>
+      <a (click)="onLogout()" class="btn btn-danger" 
+        role="button" style="color: white;">
+          Deconnexion
+      </a>
     </div>
 </nav>

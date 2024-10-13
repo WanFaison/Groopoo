@@ -20,7 +20,7 @@
             <a id="orange-btn" class="btn btn-success col-md-1 me-4" (click)="filter(0, keyword)" role="button" style="color: white;">
                 Filtrer
             </a>
-            <a class="btn btn-secondary col-md-1 me-2" (click)="refresh()" role="button" style="color: white;">
+            <a class="btn btn-secondary col-md-1 me-2" (click)="refresh(); keyword = '' " role="button" style="color: white;">
                 Reinitialiser
             </a>
             <a class="btn btn-info col-md-1" data-bs-toggle="modal" data-bs-target="#addModal" 
@@ -46,7 +46,7 @@
                         data-bs-toggle="modal" data-bs-target="#modifModal"
                         role="button" style="color: white;">
                             Modifier</a>
-                        <a class="btn btn-danger" 
+                        <a (click)="changeEnt(item.id)" class="btn btn-danger" 
                         data-bs-toggle="modal" data-bs-target="#ynModal"
                         role="button" style="color: white;">
                           Supprimer</a>
@@ -73,7 +73,7 @@
                         data-bs-toggle="modal" data-bs-target="#modifModal" 
                         role="button" style="color: white;">
                             Modifier</a>
-                        <a class="btn btn-danger" 
+                        <a (click)="changeEnt(item.id)" class="btn btn-danger" 
                         data-bs-toggle="modal" data-bs-target="#ynModal"
                         role="button" style="color: white;">
                           Supprimer</a>
@@ -151,8 +151,11 @@
                 <label *ngIf="state == 1" class="form-label custom-label" for="libelle">Nom de l'ecole</label>
                 <input required id="libelle" #libelleInput="ngModel" [(ngModel)]="libelle" 
                 name="libelle" class="form-control form-control-lg custom-input" placeholder="Entrez le nom..." />
-                <div *ngIf="libelleInput.invalid && libelleInput.touched" class="text-danger">
+                <div *ngIf="libelleInput.invalid && libelleInput.touched && !ajout" class="text-danger">
                     Le nom/libelle est requis.
+                </div>
+                <div *ngIf="ajout" class="text-success">
+                    L'ajout a été fait, vous pouvez ajouter à nouveau
                 </div>
             </div>
             <div class="modal-footer d-flex">

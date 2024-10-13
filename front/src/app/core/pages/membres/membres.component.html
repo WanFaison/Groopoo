@@ -38,7 +38,7 @@
         <div class="flex-center my-3">
             <p class="me-3 fs-5">Nom de la liste</p>
             <input [(ngModel)]="fileName" (ngModelChange)="saveNom($event)" type="text" class="me-5 form-control input-black-border col-md-3" placeholder="">
-            <a (click)="createGroups()" class="btn btn-orange col-md-1" 
+            <a (click)="createGroups()" id="orange-btn" class="btn btn-orange col-md-1" 
             role="button" [class.disabled]="ecole === 0 || tailleGrp < 2 || !critCheck">
                 Enregistrer</a>
         </div>

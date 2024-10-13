@@ -92,9 +92,11 @@ class EcoleController extends AbstractController
         $ecole = $ecoleRepository->find($ecoleId);
         if($keyword == ''){
             $listes = $listeRepository->findAllByEcole($ecole);
-            foreach ($listes as $l) {
-                $l->setArchived(true);
-                $listeRepository->addOrUpdate($l);
+            if(count($listes)>0){
+                foreach ($listes as $l) {
+                    $l->setArchived(true);
+                    $listeRepository->addOrUpdate($l);
+                }
             }
             $ecole->setArchived(true);
         }else{

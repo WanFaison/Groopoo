@@ -9,7 +9,7 @@ class UserResponseDto{
     private string $email;
     private ?int $ecole = null;
     private ?string $ecoleT = null;
-    private array $profiles;
+    private array $roles;
 
     public function getId(): ?int
     {
@@ -54,24 +54,24 @@ class UserResponseDto{
         return $this;
     }
 
-    public function getProfiles(): ?array
+    public function getRoles(): ?array
     {
-        return $this->profiles;
+        return $this->roles;
     }
-    public function setProfiles(array $profiles): static
+    public function setRoles(array $roles): static
     {
-        $this->profiles = $profiles;
+        $this->roles = $roles;
 
         return $this;
     }
 
-    public function toDto(User $user, array $profiles): UserResponseDto
+    public function toDto(User $user, array $roles): UserResponseDto
     {
         $dto = new UserResponseDto();
 
         $dto->setId($user->getId());
         $dto->setEmail($user->getEmail());
-        $dto->setProfiles($profiles);
+        $dto->setRoles($roles);
         if($user->getEcole()){
             $dto->setEcole($user->getEcole()->getId());
             $dto->setEcoleT($user->getEcole()->getLibelle());

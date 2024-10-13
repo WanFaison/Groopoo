@@ -95,9 +95,11 @@ class AnneeController extends AbstractController
             $annee->setLibelle($keyword);
         }else{
             $listes = $listeRepository->findAllByAnnee($annee);
-            foreach ($listes as $l) {
-                $l->setArchived(true);
-                $listeRepository->addOrUpdate($l);
+            if(count($listes)>0){
+                foreach ($listes as $l) {
+                    $l->setArchived(true);
+                    $listeRepository->addOrUpdate($l);
+                }
             }
             $annee->setArchived(true);
         }

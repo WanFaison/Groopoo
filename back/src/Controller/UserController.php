@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Controller\Dto\Response\UserResponseDto;
 use App\Entity\User;
+use App\Enums\Role;
 use App\Repository\ProfileRepository;
 
 class UserController extends AbstractController
@@ -39,19 +40,12 @@ class UserController extends AbstractController
     {
         $dtos = [];
         foreach($users as $u){
-            $profiles = [];
-            foreach($u->getProfile()->toArray() as $p){
-                $profiles[] = (new ProfileResponseDto())->toDto($p);
-            }
-            $pfs = [];
-            foreach($profiles as $e){
-                $pfs[] = [
-                    'id' => $e->getId(),
-                    'libelle' => $e->getLibelle(),
-                ];
+            $roles = [];
+            foreach($u->getRoles() as $r){
+                $roles[] = $r;
             }
 
-            $dtos[] = (new UserResponseDto())->toDto($u, $pfs);
+            $dtos[] = (new UserResponseDto())->toDto($u, $roles);
         }
 
         $results = [];
@@ -61,7 +55,7 @@ class UserController extends AbstractController
                 'email' => $d->getEmail(),
                 'ecole' => $d->getEcole(),
                 'ecoleT' => $d->getEcoleT(),
-                'profiles' => $d->getProfiles(),
+                'roles' => $d->getRoles(), 
             ];
         }
 
@@ -69,21 +63,28 @@ class UserController extends AbstractController
     }
 
     #[Route('/api/add-user', name: 'api_add_user', methods: ['POST'])]
-    public function addEcole(Request $request, UserRepository $userRepository, ProfileRepository $profileRepository): JsonResponse
+    public function addEcole(Request $request, UserRepository $userRepository, EcoleRepository $ecoleRepository): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $email = $data['email'] ?? null;
+        $ecole = $data['ecole'] ?? null;
         $option1 = $data['option1'] ?? null;
         $option2 = $data['option2'] ?? null;
         $option3 = $data['option3'] ?? null;
 
 
         if($email){
-            $user = $userRepository->createUser('passer', '', $email);
+            $user = $userRepository->createUser('passer', $email, $email);
             $user->setArchived(false);
-            if($option1){$user->addProfile($profileRepository->findByLibelle('Admin'));}
-            if($option2){$user->addProfile($profileRepository->findByLibelle('Ecole-Admin'));}
-            if($option3){$user->addProfile($profileRepository->findByLibelle('Visiteur'));}
+            
+            if($option1){$user->addRole(Role::ADMIN);}
+            else if($option2){
+                $user->addRole(Role::ECOLE_ADMIN);
+                if(($ecole) && ($ecole>0)){
+                    $user->setEcole($ecoleRepository->find($ecole));
+                }
+            }
+            else{$user->addRole(Role::VISITEUR);}
 
             $userRepository->addOrUpdate($user);
 

@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FootComponent } from '../../components/foot/foot.component';
 import { NavComponent } from '../../components/nav/nav.component';
-import { RestResponse } from '../../models/rest.response';
+import { RequestResponse, RestResponse } from '../../models/rest.response';
 import { EcoleModel } from '../../models/ecole.model';
 import { AnneeModel } from '../../models/annee.model';
 import { EcoleServiceImpl } from '../../services/impl/ecole.service.impl';
@@ -19,19 +19,24 @@ import { HttpClient } from '@angular/common/http';
   styleUrl: './donnees.component.css'
 })
 export class DonneesComponent implements OnInit{
-  state:number = 0;
+  state:any;
   ecoleResponse?: RestResponse<EcoleModel[]>;
   anneeResponse?: RestResponse<AnneeModel[]>;
   keyword:string = '';
   libelle:string = '';
+  ajout:boolean = false;
   entity:number = 0;
   constructor(private router:Router, private http:HttpClient, private ecoleService:EcoleServiceImpl, private anneeService:AnneeServiceImpl){}
   
   ngOnInit(): void {
+    if(typeof window !== 'undefined' && localStorage){
+      this.state = parseInt(localStorage.getItem('stateMenu') || '0', 10);
+    }
     this.filter()
   }
 
   modifEnt(state:any, id:any, kw:string = ''){
+    console.log(state, id, kw)
     if(state == 0){
       this.anneeService.modifAnnee(id, kw).subscribe(
         response=>{
@@ -51,7 +56,6 @@ export class DonneesComponent implements OnInit{
               console.error('Error sending data', error);
             })
     }
-    this.reloadPage();
   }
 
   addObj(){
@@ -60,6 +64,7 @@ export class DonneesComponent implements OnInit{
           this.http.post(this.anneeService.getAddUrl(), { data: this.libelle })
             .subscribe(response => {
               console.log('Response from back-end:', response);
+              this.ajout = true;
             }, error => {
               console.error('Error:', error);
             });
@@ -79,9 +84,10 @@ export class DonneesComponent implements OnInit{
 
   changeState(val:any){
     this.state = val;
+    localStorage.setItem('stateMenu', this.state);
     //this.reloadPage()
   }
-  changeEnt(val:any, l:any){
+  changeEnt(val:any, l:any=''){
     this.entity = val;
     this.libelle = l
   }

@@ -6,6 +6,12 @@ export interface RestResponse<T>{
     status: number
 }
 
+export type RequestResponse = {
+    message: string,
+    data: any,
+    status: number
+}
+
 export interface AuthResponse{
     message: string,
     status: number

@@ -321,7 +321,7 @@ input::placeholder {
 #orange-btn{
     background-color: #fb971f;
     border: #fb971f;
-
+    color: white;
 }
 
 #orange-btn:hover {

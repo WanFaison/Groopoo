@@ -37,6 +37,24 @@ class EcoleRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function checkExist(string $libelle): bool
+    {
+        $ent = $this->findByLibelle($libelle);
+        if($ent){return true;}
+        return false;
+    }
+
+    public function findByLibelle(string $libelle): ?Ecole
+    {
+        return $this->createQueryBuilder('e')
+        ->where('e.libelle = :libelle') 
+        ->andWhere('e.isArchived = :isArchived') 
+        ->setParameter('libelle', $libelle)
+        ->setParameter('isArchived', false)
+        ->getQuery()
+        ->getOneOrNullResult();
+    }
+
     public function findAllPaginated(int $page, int $limit, string $keyword): Paginator
     {
         $queryBuilder = $this->createQueryBuilder('r');

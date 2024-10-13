@@ -6,9 +6,9 @@ import { FootComponent } from '../../components/foot/foot.component';
 import { NavComponent } from '../../components/nav/nav.component';
 import { HttpClient } from '@angular/common/http';
 import { RestResponse } from '../../models/rest.response';
-import { ProfileModel } from '../../models/profile.model';
-import { ProfileServiceImpl } from '../../services/impl/profile.service.impl';
 import { ApiService } from '../../services/api.service';
+import { EcoleModel } from '../../models/ecole.model';
+import { EcoleServiceImpl } from '../../services/impl/ecole.service.impl';
 
 @Component({
   selector: 'app-form-user',
@@ -18,32 +18,33 @@ import { ApiService } from '../../services/api.service';
   styleUrl: './form-user.component.css'
 })
 export class FormUserComponent implements OnInit{
-  profileResponse?:RestResponse<ProfileModel[]>;
   profileForm:FormGroup;
+  ecoleResponse?:RestResponse<EcoleModel[]>;
   addReturnResponse:any;
   profiles:number = 0;
   error:boolean = false;
-  email:string ='';
-  constructor(private router:Router, private http:HttpClient, private formBuilder: FormBuilder, private apiService:ApiService, private profileService:ProfileServiceImpl) 
+  ecoleId:number = 0;
+  op2:boolean = false;
+  constructor(private router:Router, private http:HttpClient, private formBuilder: FormBuilder, private apiService:ApiService, private ecoleService:EcoleServiceImpl) 
   {
     this.profileForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
+      ecole: ['', Validators.required],
       option1: false,
       option2: false,
       option3: false,
     });
   }
   
-  ngOnInit(): void {
-    this.profileService.findAll().subscribe(data=>this.profileResponse = data)
-    if(this.profileResponse){
-      this.profiles = this.profileResponse?.results.length
-    }
-    
+  ngOnInit(): void { 
+    this.ecoleService.findAll().subscribe(data=>this.ecoleResponse = data); 
     this.profileForm.valueChanges.subscribe(value => {
       if (typeof window !== 'undefined' && window.localStorage) {
         localStorage.setItem('profileForm', JSON.stringify(this.profileForm.value));
       }
+      this.ecoleId = this.profileForm.get('ecole')?.value;
+      this.op2 = this.profileForm.get('option2')?.value;
+      //console.log(this.ecoleId, this.op2)
     });
     
     console.log(this.profileForm.value);

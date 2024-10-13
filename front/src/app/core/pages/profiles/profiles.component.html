@@ -43,12 +43,9 @@
                       <td scope="row">{{item.email}}</td>
                       <td>{{item.ecoleT}}</td>
                       <td>
-                        <p *ngFor="let p of item.profiles; let i = index">{{p.libelle}},</p>
+                        <p *ngFor="let p of item.roles; let i = index">{{p}},</p>
                       </td>
                       <td>
-                        <a (click)="saveUtilisateur(item.id)" class="btn btn-secondary me-2" 
-                        role="button" style="color: white;">
-                          Modifier</a>
                         <a (click)="userId = item.id" class="btn btn-danger" 
                         data-bs-toggle="modal" data-bs-target="#ynModal"
                         role="button" style="color: white;">

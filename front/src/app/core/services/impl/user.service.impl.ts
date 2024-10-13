@@ -20,7 +20,7 @@ export class UserServiceImpl implements UserService{
     }
 
     findAllPg(page: number=0, keyword: string='', ecole: number=0): Observable<RestResponse<UserModel[]>> {
-        return this.http.get<RestResponse<UserModel[]>>(this.apiUrlPg);
+        return this.http.get<RestResponse<UserModel[]>>(`${this.apiUrlPg}?page=${page}&keyword=${keyword}&ecole=${ecole}`);
     }
 
 }

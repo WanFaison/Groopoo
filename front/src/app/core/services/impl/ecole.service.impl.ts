@@ -18,7 +18,7 @@ export class EcoleServiceImpl implements EcoleService{
     constructor(private http:HttpClient){}
 
     modifEcole(ecole: number, keyword:string=''): Observable<any> {
-        return this.http.get<any>(`${this.apiUrlModif}?ecole=${ecole}&keyword=${keyword}`);
+        return this.http.get<any>(`${this.apiUrlModif}?ecole=${ecole}&keyword=${encodeURIComponent(keyword)}`);
     }
 
     getAddUrl(){

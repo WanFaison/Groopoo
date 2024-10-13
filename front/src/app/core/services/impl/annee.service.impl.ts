@@ -18,7 +18,7 @@ export class AnneeServiceImpl implements AnneeService{
     constructor(private http:HttpClient){}
 
     modifAnnee(annee: number, keyword:string=''): Observable<any> {
-        return this.http.get<any>(`${this.apiUrlModif}?annee=${annee}&keyword=${keyword}`);
+        return this.http.get<any>(`${this.apiUrlModif}?annee=${annee}&keyword=${encodeURIComponent(keyword)}`);
     }
 
     getAddUrl(){

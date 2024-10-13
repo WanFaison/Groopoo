@@ -27,6 +27,24 @@ class AnneeRepository extends ServiceEntityRepository
         $this->entityManager->flush();
     }
 
+    public function findByLibelle(string $libelle): ?Annee
+    {
+        return $this->createQueryBuilder('e')
+        ->where('e.libelle = :libelle') 
+        ->andWhere('e.isArchived = :isArchived') 
+        ->setParameter('libelle', $libelle)
+        ->setParameter('isArchived', false)
+        ->getQuery()
+        ->getOneOrNullResult();
+    }
+
+    public function checkExist(string $libelle): bool
+    {
+        $ent = $this->findByLibelle($libelle);
+        if($ent){return true;}
+        return false;
+    }
+
     public function findAllPaginated(int $page, int $limit, string $keyword): Paginator
     {
         $queryBuilder = $this->createQueryBuilder('r');

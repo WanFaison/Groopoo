@@ -20,6 +20,13 @@
                     </div>
                 </div>
                 <div class="mb-4">
+                    <label class="form-label" for="email">Ecole:</label>
+                    <select formControlName="ecole" class=" form-select form-select-sm  me-2" aria-label=".form-select-sm example">
+                        <option value="0" selected>Tous</option>
+                        <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
+                    </select>
+                </div>
+                <div class="mb-4">
                     <label class="form-label me-3">Profiles: </label>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="checkbox" id="inlineCheckbox1" formControlName="option1">
@@ -34,7 +41,12 @@
                         <label class="form-check-label" for="inlineCheckbox3">Visiteur</label>
                     </div>
                 </div>
-                <button data-mdb-ripple-init type="button" class="btn btn-primary btn-block mb-4">Ajouter</button>
+                <div *ngIf="ecoleId<1 && op2" class="text-danger">
+                    En sélectionnant « Ecole-Admin », assurez-vous de sélectionner une école correspondante.
+                </div>
+                <button (click)="onSubmit()" data-mdb-ripple-init type="button" 
+                [class.disabled]="ecoleId<1 && op2"
+                class="btn btn-primary btn-block mb-4">Ajouter</button>
             </form>   
         </div>
         

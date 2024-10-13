@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\User;
 use App\Service\PaginatorService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use PhpParser\Node\Expr\Cast\String_;
@@ -19,10 +20,14 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
     private $passwordHasher;
-    public function __construct(ManagerRegistry $registry, UserPasswordHasherInterface $passwordHasher)
+    private $entityManager;
+    private $ecoleRepository;
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, EcoleRepository $ecoleRepository)
     {
         parent::__construct($registry, User::class);
         $this->passwordHasher = $passwordHasher;
+        $this->entityManager = $entityManager;
+        $this->ecoleRepository = $ecoleRepository;
     }
 
     /**
@@ -70,6 +75,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                             ->getQuery();
         
         return PaginatorService::pageInator($query, $page, $limit);
+    }
+
+    public function addOrUpdate(User $entity): void
+    {
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush();
     }
 
 //    /**

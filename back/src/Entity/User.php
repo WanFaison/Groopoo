@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
+use App\Enums\Role;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -22,9 +24,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $username = null;
 
     /**
-     * @var list<string> The user roles
+     * @var list<Role> The user roles
      */
-    #[ORM\Column]
+    #[ORM\Column(type: Types::JSON)]
     private array $roles = [];
 
     /**
@@ -39,19 +41,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?bool $isArchived = null;
 
-    /**
-     * @var Collection<int, Profile>
-     */
-    #[ORM\ManyToMany(targetEntity: Profile::class, inversedBy: 'users')]
-    private Collection $profile;
-
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Ecole $ecole = null;
 
-    public function __construct()
-    {
-        $this->profile = new ArrayCollection();
-    }
+    public function __construct(){}
 
     public function getId(): ?int
     {
@@ -81,22 +74,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @see UserInterface
-     * @return list<string>
+     * @return list<Role> The user roles as Role enum
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        return $this->roles;
+    }
 
-        return array_unique($roles);
+    public function addRole(Role $role): self
+    {
+        if (!in_array($role, $this->roles, true)) {
+            $this->roles[] = $role;
+        }
+
+        return $this;
     }
 
     /**
-     * @param list<string> $roles
+     * @param list<Role> $roles
      */
-    public function setRoles(array $roles): static
+    public function setRoles(array $roles): self
     {
         $this->roles = $roles;
 
@@ -147,30 +144,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setArchived(bool $isArchived): static
     {
         $this->isArchived = $isArchived;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Profile>
-     */
-    public function getProfile(): Collection
-    {
-        return $this->profile;
-    }
-
-    public function addProfile(Profile $profile): static
-    {
-        if (!$this->profile->contains($profile)) {
-            $this->profile->add($profile);
-        }
-
-        return $this;
-    }
-
-    public function removeProfile(Profile $profile): static
-    {
-        $this->profile->removeElement($profile);
 
         return $this;
     }

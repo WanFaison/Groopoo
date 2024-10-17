@@ -9,6 +9,8 @@ import { RestResponse } from '../../models/rest.response';
 import { ApiService } from '../../services/api.service';
 import { EcoleModel } from '../../models/ecole.model';
 import { EcoleServiceImpl } from '../../services/impl/ecole.service.impl';
+import { LogUser } from '../../models/user.model';
+import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 
 @Component({
   selector: 'app-form-user',
@@ -25,7 +27,8 @@ export class FormUserComponent implements OnInit{
   error:boolean = false;
   ecoleId:number = 0;
   op2:boolean = false;
-  constructor(private router:Router, private http:HttpClient, private formBuilder: FormBuilder, private apiService:ApiService, private ecoleService:EcoleServiceImpl) 
+  user?:LogUser
+  constructor(private router:Router, private http:HttpClient, private authService:AuthServiceImpl, private formBuilder: FormBuilder, private apiService:ApiService, private ecoleService:EcoleServiceImpl) 
   {
     this.profileForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
@@ -37,6 +40,11 @@ export class FormUserComponent implements OnInit{
   }
   
   ngOnInit(): void { 
+    this.user = this.authService.getUser()
+    if(this.user?.role != 'ROLE_ADMIN'){
+      this.router.navigate(['/app/not-found'])
+    }
+
     this.ecoleService.findAll().subscribe(data=>this.ecoleResponse = data); 
     this.profileForm.valueChanges.subscribe(value => {
       if (typeof window !== 'undefined' && window.localStorage) {

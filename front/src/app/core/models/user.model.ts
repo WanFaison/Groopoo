@@ -5,3 +5,10 @@ export type UserModel = {
     ecoleT: string,
     roles: []
 }
+
+export type LogUser ={
+    id: number,
+    username: string,
+    role: any,
+    ecole: any
+}

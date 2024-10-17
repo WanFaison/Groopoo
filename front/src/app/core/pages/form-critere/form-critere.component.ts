@@ -11,8 +11,10 @@ import { ClasseModel } from '../../models/classe.model';
 import { FiliereServiceImpl } from '../../services/impl/filiere.service.impl';
 import { ClasseServiceImpl } from '../../services/impl/classe.service.impl';
 import { HttpClient } from '@angular/common/http';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { parse } from 'path';
+import { LogUser } from '../../models/user.model';
+import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 
 
 @Component({
@@ -33,8 +35,9 @@ export class FormCritereComponent implements OnInit{
   ecole: number= 0;
   tailleGrp: number = 0;
   numNiv: number = 0;
+  user?:LogUser
 
-  constructor(private http: HttpClient, private fb: FormBuilder, private niveauService:NiveauServiceImpl, private filiereService:FiliereServiceImpl, private classeService:ClasseServiceImpl) {
+  constructor(private http: HttpClient, private router:Router, private fb: FormBuilder, private authService:AuthServiceImpl, private niveauService:NiveauServiceImpl, private filiereService:FiliereServiceImpl, private classeService:ClasseServiceImpl) {
     this.form = this.fb.group({
       niveau: this.fb.array([]),
       filiere: this.fb.array([]),
@@ -42,6 +45,11 @@ export class FormCritereComponent implements OnInit{
     });
   }
   ngOnInit(): void {
+    this.user = this.authService.getUser()
+    if(this.user?.role == 'ROLE_VISITEUR'){
+      this.router.navigate(['/app/not-found'])
+    }
+
     this.niveau = this.form.get('niveau') as FormArray;
     this.filiere = this.form.get('filiere') as FormArray;
     this.classe = this.form.get('classe') as FormArray;

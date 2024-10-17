@@ -22,6 +22,12 @@ security:
                 check_path: /api/login
                 username_path: username
                 password_path: password
+            custom_authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
+                    #- Lexik\Bundle\JWTAuthenticationBundle\Security\Authenticator\JWTAuthenticator
+            entry_point: lexik_jwt_authentication.jwt_token_authenticator
+            #form_login: 
+                #check_path: /api/login
         main:
             lazy: true
             provider: app_user_provider
@@ -45,10 +51,9 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
         # - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUS }
-        #- { path: ^/api/login, roles: ROLE_ADMIN }
-        #- { path: ^/api/, roles: ROLE_ADMIN }
+        # - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        # - { path: ^/api/, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:

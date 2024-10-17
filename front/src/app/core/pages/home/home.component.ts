@@ -14,6 +14,8 @@ import { EtudiantCreate, EtudiantCreateXlsx } from '../../models/etudiant.model'
 import { EtudiantServiceImpl } from '../../services/impl/etudiant.service.impl';
 import { EcoleModel } from '../../models/ecole.model';
 import { EcoleServiceImpl } from '../../services/impl/ecole.service.impl';
+import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
+import { LogUser } from '../../models/user.model';
 
 @Component({
   selector: 'app-home',
@@ -31,12 +33,15 @@ export class HomeComponent implements OnInit{
   keyword: string = '';
   annee: number = 0;
   ecole: number = 0;
-  constructor(private router:Router, private ecoleService:EcoleServiceImpl, private listeService:ListeServiceImpl, private anneeService:AnneeServiceImpl, private etudiantService:EtudiantServiceImpl){}
+  user?:LogUser
+  constructor(private router:Router, private authService:AuthServiceImpl, private ecoleService:EcoleServiceImpl, private listeService:ListeServiceImpl, private anneeService:AnneeServiceImpl, private etudiantService:EtudiantServiceImpl){}
   
   ngOnInit(): void {
     this.anneeService.findAll().subscribe(data=>this.anneeResponse=data);
     this.ecoleService.findAll().subscribe(data=>this.ecoleResponse=data);
+    this.user = this.authService.getUser();
     this.filter()
+    //console.log(this.authService.getUser())
   }
 
   viewListe(liste:any){
@@ -75,7 +80,9 @@ export class HomeComponent implements OnInit{
   }
 
   refresh(page:number=0,keyword:string=""){
-    this.listeService.findAll(page,keyword).subscribe(data=>this.response=data);
+    if(this.user){
+      this.listeService.findAll(this.user?.id, page,keyword).subscribe(data=>this.response=data);
+    }
     this.ecole =0;
     this.annee =0;
     this.keyword = '';
@@ -84,7 +91,9 @@ export class HomeComponent implements OnInit{
     this.refresh(page)
   }
   filter(page:number=0, keyword:string=this.keyword, annee:number=0, ecole:number=0){
-    this.listeService.findAll(page,keyword,annee, ecole).subscribe(data=>this.response=data);
+    if(this.user){
+      this.listeService.findAll(this.user?.id,page,keyword,annee, ecole).subscribe(data=>this.response=data);
+    }
   }
 
   pages(start: number, end: number | undefined = 5): number[] {

@@ -71,13 +71,16 @@ class EcoleController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $libelle = $data['data'] ?? null;
 
+        if($ecoleRepository->findByLibelle($libelle)){
+            return RestResponse::requestResponse('Cette ecole existe deja', 1, JsonResponse::HTTP_OK);
+        }
         if($libelle){
             $ecole = new Ecole();
             $ecole->setLibelle($libelle);
             $ecole->setArchived(false);
             $ecoleRepository->addOrUpdate($ecole);
 
-            return RestResponse::requestResponse('ecole created!', $libelle, JsonResponse::HTTP_OK);
+            return RestResponse::requestResponse('ecole created!', 0, JsonResponse::HTTP_OK);
         }
 
         return RestResponse::requestResponse('failed to create', $libelle, JsonResponse::HTTP_BAD_REQUEST);
@@ -100,11 +103,14 @@ class EcoleController extends AbstractController
             }
             $ecole->setArchived(true);
         }else{
+            if($ecoleRepository->findByLibelle($keyword)){
+                return RestResponse::requestResponse('Cette ecole existe deja', 1, JsonResponse::HTTP_OK);
+            }
             $ecole->setLibelle($keyword);
         }
         
         $ecoleRepository->addOrUpdate($ecole);
         
-        return RestResponse::requestResponse('Ecole has been updated', 1, JsonResponse::HTTP_OK);
+        return RestResponse::requestResponse('Ecole has been updated', 0, JsonResponse::HTTP_OK);
     }
 }

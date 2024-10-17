@@ -72,13 +72,16 @@ class AnneeController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $libelle = $data['data'] ?? null;
 
+        if($anneeRepository->findByLibelle($libelle)){
+            return RestResponse::requestResponse('Cette annee existe deja', 1, JsonResponse::HTTP_OK);
+        }
         if($libelle){
             $annee = new Annee();
             $annee->setLibelle($libelle);
             $annee->setArchived(false);
             $anneeRepository->addOrUpdate($annee);
 
-            return RestResponse::requestResponse('annee created!', $libelle, JsonResponse::HTTP_OK);
+            return RestResponse::requestResponse('annee created!', 0, JsonResponse::HTTP_OK);
         }
 
         return RestResponse::requestResponse('failed to create', $libelle, JsonResponse::HTTP_BAD_REQUEST);
@@ -92,6 +95,9 @@ class AnneeController extends AbstractController
 
         $annee = $anneeRepository->find($anneeId);
         if($keyword != ''){
+            if($anneeRepository->findByLibelle($keyword)){
+                return RestResponse::requestResponse('Cette annee existe deja', 1, JsonResponse::HTTP_OK);
+            }
             $annee->setLibelle($keyword);
         }else{
             $listes = $listeRepository->findAllByAnnee($annee);
@@ -106,6 +112,6 @@ class AnneeController extends AbstractController
         
         $anneeRepository->addOrUpdate($annee);
         
-        return RestResponse::requestResponse('Annee has been updated', 1, JsonResponse::HTTP_OK);
+        return RestResponse::requestResponse('Annee has been updated', 0, JsonResponse::HTTP_OK);
     }
 }

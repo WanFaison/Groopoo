@@ -157,6 +157,9 @@
                 <div *ngIf="ajout" class="text-success">
                     L'ajout a été fait, vous pouvez ajouter à nouveau
                 </div>
+                <div *ngIf="error" class="text-danger">
+                    Cette entité existe deja
+                </div>
             </div>
             <div class="modal-footer d-flex">
                 <button (click)="addObj()" type="button" class="btn btn-success">Confirmer</button>
@@ -173,7 +176,7 @@
             <div class="modal-header">
                 <h5 *ngIf="state == 0" class="modal-title" id="exampleModalLabel">Modifier Annee</h5>
                 <h5 *ngIf="state == 1" class="modal-title" id="exampleModalLabel">Modifier Ecole</h5>
-                <button (click)="libelle = ''" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button (click)="libelle = ''; error = false;" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <label *ngIf="state == 0" class="form-label custom-label" for="libelle">Libelle de l'annee</label>
@@ -183,11 +186,14 @@
                 <div *ngIf="libelleInput.invalid && libelleInput.touched" class="text-danger">
                     Le nom/libelle est requis.
                 </div>
+                <div *ngIf="error" class="text-danger">
+                    Cette entité existe deja
+                </div>
             </div>
             <div class="modal-footer d-flex">
                 <button (click)="modifEnt(state, entity, libelle)" type="button" 
-                class="btn btn-success" data-bs-dismiss="modal">Modifier</button>
-                <button (click)="libelle = ''" type="button" class="btn btn-secondary" 
+                class="btn btn-success">Modifier</button>
+                <button (click)="libelle = ''; error = false;" type="button" class="btn btn-secondary" 
                 data-bs-dismiss="modal">Close</button>
             </div>
         </div>

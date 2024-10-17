@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 import { ReturnResponse } from '../models/return.model';
@@ -33,11 +33,22 @@ export class ApiService {
     return this.http.post(`${this.apiUrlNewUser}`, data, {headers});
   }
 
+  sendModifUserToBack(id:number, data:any): Observable<any>{
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+    return this.http.post(`${environment.APIURL}/modif-user/${id}`, data, {headers});
+  }
+
   getExcelSheet(liste:number): Observable<any> {
     return this.http.get(`${this.apiUrlXls}?liste=${liste}`, { responseType: 'blob' });
   }
 
-  getPdf(liste:number): Observable<any> {
-    return this.http.get(`${this.apiUrlPdf}?liste=${liste}`, { responseType: 'blob', observe: 'response' });
+  getPdf(liste: number, options?: { observe: 'response', responseType: 'blob' }): Observable<any> {
+    return this.http.get<HttpResponse<Blob>>(`${this.apiUrlPdf}?liste=${liste}`, {
+      ...options,
+      observe: 'response',
+      responseType: 'blob' as 'json'
+    });
   }
 }

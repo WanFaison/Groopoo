@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { RestResponse } from '../models/rest.response';
+import { AuthResponse, RestResponse } from '../models/rest.response';
 
 export interface AuthService {
-  login(username: string, password: string): Observable<RestResponse<AuthService>>;
+  login(username: string, password: string): Observable<AuthResponse>;
   logout(): void;
-  setAuth(auth: boolean): void;
   isLoggedIn(): boolean;
+  getToken(): any
 }

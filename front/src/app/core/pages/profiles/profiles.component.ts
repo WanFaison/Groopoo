@@ -7,9 +7,10 @@ import { FootComponent } from '../../components/foot/foot.component';
 import { NavComponent } from '../../components/nav/nav.component';
 import { UserServiceImpl } from '../../services/impl/user.service.impl';
 import { RestResponse } from '../../models/rest.response';
-import { UserModel } from '../../models/user.model';
+import { LogUser, UserModel } from '../../models/user.model';
 import { EcoleModel } from '../../models/ecole.model';
 import { EcoleServiceImpl } from '../../services/impl/ecole.service.impl';
+import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 
 @Component({
   selector: 'app-profiles',
@@ -24,9 +25,15 @@ export class ProfilesComponent implements OnInit{
   keyword:string = '';
   ecole:number = 0;
   userId:number =0;
-  constructor(private router:Router, private http:HttpClient, private userService:UserServiceImpl, private ecoleService:EcoleServiceImpl){}
+  user?:LogUser
+  constructor(private router:Router, private http:HttpClient, private authService:AuthServiceImpl, private userService:UserServiceImpl, private ecoleService:EcoleServiceImpl){}
 
   ngOnInit(): void {
+    this.user = this.authService.getUser()
+    if(this.user?.role != 'ROLE_ADMIN'){
+      this.router.navigate(['/app/not-found'])
+    }
+
     this.ecoleService.findAll().subscribe(data=>this.ecoleResponse = data)
     this.filter();
   }

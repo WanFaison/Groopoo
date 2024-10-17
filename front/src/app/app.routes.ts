@@ -9,6 +9,8 @@ import { GroupsComponent } from './core/pages/groups/groups.component';
 import { DonneesComponent } from './core/pages/donnees/donnees.component';
 import { ProfilesComponent } from './core/pages/profiles/profiles.component';
 import { FormUserComponent } from './core/pages/form-user/form-user.component';
+import { FormUserUpdateComponent } from './core/pages/form-user-update/form-user-update.component';
+import { NotFoundComponent } from './core/pages/404/404.component';
 
 export const routes: Routes = [
     {
@@ -18,41 +20,51 @@ export const routes: Routes = [
     {
         path:"app/home",
         component:HomeComponent,
-        // canActivate: [AuthGuard]
+        canActivate: [AuthGuard]
     },
     {
         path:"app/liste-membre",
         component:MembresComponent,
-        //canActivate: [AuthGuard]
+        canActivate: [AuthGuard]
     },
     {
         path:"app/form-critere",
         component:FormCritereComponent,
-        //canActivate: [AuthGuard]
+        canActivate: [AuthGuard]
     },
     {
         path:"app/view-groups",
         component:GroupsComponent,
-        //canActivate: [AuthGuard]
+        canActivate: [AuthGuard]
     },
     {
         path:"app/liste-select",
         component:SelectlistComponent,
-        //canActivate: [AuthGuard]
+        canActivate: [AuthGuard]
     },
     {
         path:"app/donnees",
         component:DonneesComponent,
-        //canActivate: [AuthGuard]
+        canActivate: [AuthGuard]
     },
     {
         path:"app/users",
         component:ProfilesComponent,
-        //canActivate: [AuthGuard]
+        canActivate: [AuthGuard]
     },
     {
         path:"app/form-user",
         component:FormUserComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path:"app/form-update",
+        component:FormUserUpdateComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path:"app/not-found",
+        component:NotFoundComponent,
         //canActivate: [AuthGuard]
     },
     {

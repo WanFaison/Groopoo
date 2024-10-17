@@ -8,12 +8,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -158,5 +159,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->ecole = $ecole;
 
         return $this;
+    }
+
+    /**
+     * Create a User from JWT payload.
+     *
+     * @param string $username
+     * @param array $payload
+     * @return static
+     */
+    public static function createFromPayload($username, array $payload): self
+    {
+        $user = new self();
+        $user->username = $username;
+
+        // Optionally extract more data from the payload and set it
+        // For example, if you store roles or other custom claims in the JWT:
+        if (isset($payload['roles'])) {
+            $user->roles = $payload['roles'];
+        }
+
+        return $user;
     }
 }

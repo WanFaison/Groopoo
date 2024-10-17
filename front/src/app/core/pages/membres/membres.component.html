@@ -14,7 +14,7 @@
                   <input type="file" (change)="importExcel($event)" name="chooseFile" id="chooseFile">
                 </div>
             </div>
-            <div class="input-group col-md-2">
+            <div *ngIf="user?.role == 'ROLE_ADMIN'" class="input-group col-md-2">
                 <select [(ngModel)]="ecole" (ngModelChange)="saveEcole($event)" class="form-select" aria-label=".form-select-sm example">
                   <option selected value="0">Choisir l'ecole...</option>
                   <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
@@ -53,7 +53,7 @@
             <a [routerLink]="['/app/form-critere']" class="btn btn-secondary text-white me-3" 
             role="button" [class.disabled]="ecole === 0 || tailleGrp < 2">Modifier critères</a>
             <a (click)="createGroups()" class="btn btn-info text-white me-3" 
-            role="button" [class.disabled]="ecole === 0 || tailleGrp < 2 || criteres.length > 0">Aléatoire</a>
+            role="button" [class.disabled]="ecole === 0 || tailleGrp < 2 || criteres.length > 0 || etudiants.length < 1">Aléatoire</a>
         </div>
         <div class="flex-center mt-2 w-50 mx-auto" style="margin-bottom: 2rem;">
             <a (click)="clearEtd()" class="btn btn-secondary text-white me-3" 

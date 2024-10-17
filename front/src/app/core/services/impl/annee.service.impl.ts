@@ -3,7 +3,7 @@ import { AnneeService } from "../annee.service";
 import { Observable } from "rxjs";
 import { AnneeModel } from "../../models/annee.model";
 import { RestResponse } from "../../models/rest.response";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "../../../../environments/environment.development";
 
 @Injectable({
@@ -23,6 +23,13 @@ export class AnneeServiceImpl implements AnneeService{
 
     getAddUrl(){
         return this.apiUrlAdd;
+    }
+
+    addAnnee(data:any): Observable<any>{
+        const headers = new HttpHeaders({
+          'Content-Type': 'application/json'
+        });
+        return this.http.post(`${this.apiUrlAdd}`, data, {headers});
     }
 
     findAll(): Observable<RestResponse<AnneeModel[]>> {

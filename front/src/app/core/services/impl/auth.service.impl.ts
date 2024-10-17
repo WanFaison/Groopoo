@@ -1,9 +1,11 @@
-import { Injectable } from "@angular/core";
+import { Inject, Injectable, PLATFORM_ID } from "@angular/core";
 import { AuthService } from "../auth.service";
 import { environment } from "../../../../environments/environment.development";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs";
-import { RestResponse } from "../../models/rest.response";
+import { AuthResponse, RestResponse } from "../../models/rest.response";
+import { LogUser } from "../../models/user.model";
+import { isPlatformBrowser } from "@angular/common";
 
 @Injectable({
     providedIn: 'root'
@@ -11,26 +13,50 @@ import { RestResponse } from "../../models/rest.response";
 
 export class AuthServiceImpl implements AuthService{
     private apiUrl=`${environment.APIURL}/login`;
-    private isAuth = false;
-    constructor(private http:HttpClient) { 
+    private token:string = '';
+    private logUser?:LogUser;
+    constructor(private http:HttpClient, @Inject(PLATFORM_ID) private platformId: Object) { 
     }
 
-    login(username: string, password: string): Observable<RestResponse<AuthService>> {
+    login(username: string, password: string): Observable<AuthResponse> {
         const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
         const body = { username, password };
     
         return this.http.post<any>(this.apiUrl, body, { headers });
     }
 
-    logout(): void {
-        this.isAuth = false;
+    getToken() {
+        return localStorage.getItem('jwtToken');
+        //return this.token;
+        //return sessionStorage.getItem('jwtToken')
     }
-    
-    setAuth(auth: boolean): void {
-        this.isAuth = auth;
+    setToken(tk:any){
+        this.token = tk;
+    }
+
+    getUser(){
+        const user = localStorage.getItem('logUser');
+        if (user) {
+            return JSON.parse(user) as LogUser;
+        }
+        return this.logUser;
+    }
+    setUser(loggedUser: any){
+        this.logUser = loggedUser;
+        localStorage.setItem('logUser', JSON.stringify(loggedUser));
+    }
+
+    logout(): void {
+        this.token = '';
+        if (typeof window !== 'undefined' && localStorage){
+            localStorage.removeItem('jwtToken');
+            localStorage.removeItem('logUser');
+        }
+        this.logUser = undefined
     }
     
     isLoggedIn(): boolean {
-        return this.isAuth;
+        return !!localStorage.getItem('jwtToken');
+        //return this.isAuth;
     }
 }

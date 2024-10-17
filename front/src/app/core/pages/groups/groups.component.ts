@@ -14,6 +14,8 @@ import { EtudiantCreate, EtudiantCreateXlsx } from '../../models/etudiant.model'
 import { EtudiantServiceImpl } from '../../services/impl/etudiant.service.impl';
 import { HttpResponse } from '@angular/common/http';
 import { response } from 'express';
+import { LogUser } from '../../models/user.model';
+import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 
 @Component({
   selector: 'app-groups',
@@ -27,9 +29,15 @@ export class GroupsComponent implements OnInit{
   listeResponse?: RestResponse<ListeModel>;
   etdResponse?: RestResponse<EtudiantCreateXlsx[]>;
   groupResponse?: RestResponse<GroupeModel[]>;
-  constructor(private router:Router, private groupeService:GroupeServiceImpl, private listeService:ListeServiceImpl, private apiService:ApiService, private etudiantService:EtudiantServiceImpl) { }
+  user?:LogUser;
+  constructor(private router:Router, private authService:AuthServiceImpl, private groupeService:GroupeServiceImpl, private listeService:ListeServiceImpl, private apiService:ApiService, private etudiantService:EtudiantServiceImpl) { }
 
   ngOnInit(): void {
+    this.user = this.authService.getUser();
+    if(this.user?.role == 'ROLE_VISITEUR'){
+      this.router.navigate(['/app/not-found'])
+    }
+
     if (typeof window !== 'undefined' && localStorage){
       this.liste = parseInt(localStorage.getItem('newListe') || '1', 10);
       this.listeService.findById(this.liste).subscribe(data=>this.listeResponse=data);
@@ -51,20 +59,26 @@ export class GroupsComponent implements OnInit{
   }
 
   printPdf(){
-    this.apiService.getPdf(this.liste).subscribe((response: HttpResponse<Blob>) => {
-      const blob = response.body!;
-      const libelle = response.headers.get('X-Liste-Libelle') || 'Nouvelle Liste';
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${libelle}.pdf`; 
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    }, error => {
-      console.error('Error exporting PDF:', error);
-    })
+    this.apiService.getPdf(this.liste, { observe: 'response', responseType: 'blob' }).subscribe(
+      (response: HttpResponse<Blob>) => {
+        const blob = new Blob([response.body!], { type: 'application/pdf' });
+        const libelle = response.headers.get('X-Liste-Libelle') || 'Nouvelle Liste';
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${libelle}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      },
+      error => {
+        console.error('Error exporting PDF:', error);
+        if (error.status === 0) {
+          console.error('Network or CORS issue.');
+        }
+      }
+    );
   }
 
   useListe(){

@@ -16,6 +16,8 @@ import { ApiService } from '../../services/api.service';
 import { ReturnResponse } from '../../models/return.model';
 import { AnneeModel } from '../../models/annee.model';
 import { AnneeServiceImpl } from '../../services/impl/annee.service.impl';
+import { LogUser } from '../../models/user.model';
+import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 
 
 @Component({
@@ -37,10 +39,19 @@ export class MembresComponent implements OnInit{
   tailleGrp: number = 0;
   error: boolean = false;
   returnResponse?: ReturnResponse;
-  constructor(private router:Router, private ecoleService:EcoleServiceImpl, private apiService: ApiService, private anneeService:AnneeServiceImpl) { }
+  user?:LogUser
+  constructor(private router:Router, private authService:AuthServiceImpl, private ecoleService:EcoleServiceImpl, private apiService: ApiService, private anneeService:AnneeServiceImpl) { }
 
   ngOnInit(): void {
     //this.clearData()
+    this.user = this.authService.getUser()
+    if(this.user?.role == 'ROLE_VISITEUR'){
+      this.router.navigate(['/app/not-found'])
+    }
+
+    if(this.user?.role == 'ROLE_ECOLE_ADMIN'){
+      localStorage.setItem('ecoleListe', this.user.ecole)
+    }
     this.ecoleService.findAll().subscribe(data=>this.ecoleResponse=data);
     this.anneeService.findAll().subscribe(data=>this.anneeResponse=data);
     this.loadEtudiants();
@@ -72,7 +83,7 @@ export class MembresComponent implements OnInit{
       this.annee = parseInt(localStorage.getItem('anneeListe') || '0', 10);
       this.ecole = parseInt(localStorage.getItem('ecoleListe') || '0', 10);
     }
-    this.critCheck = (typeof window !== 'undefined' && !!localStorage.getItem('formData'));
+    this.critCheck = (typeof window !== 'undefined' && !!localStorage.getItem('formData') && !!localStorage.getItem('etudiants'));
   }
 
   loadEtudiants(){

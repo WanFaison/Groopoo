@@ -15,21 +15,29 @@ export class LoginComponent implements OnInit{
   username: string = '';
   password: string = '';
   errorMessage: any
+  error:boolean = false
 
-  constructor(private authService:AuthServiceImpl, private router:Router){
-  }
+  constructor(private authService:AuthServiceImpl, private router:Router){}
 
   ngOnInit(): void {
+    this.authService.logout()
   }
 
   onLogin(): void {
     this.authService.login(this.username, this.password).subscribe(data=>{
       if(data.status==200){
-        this.authService.setAuth(true)
+        console.log(data)
+        localStorage.setItem('jwtToken', data.token);
+        this.authService.setToken(data.token)
+        this.authService.setUser(data.user)
         this.router.navigateByUrl("/app/home")
       }else{
-         this.errorMessage=data.results
+         this.errorMessage=data
       }
+    },
+    error => {
+      console.error(error);
+      this.error = true;
     });
   }
 

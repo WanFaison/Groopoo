@@ -14,7 +14,7 @@
                 <option *ngFor="let item of anneeResponse?.results" [value]="item.id">{{ item.libelle }}</option>
               </select>
 
-              <select [(ngModel)]="ecole" class="form-select col-md-6" aria-label=".form-select-sm example">
+              <select *ngIf="user?.role != 'ROLE_ECOLE_ADMIN'" [(ngModel)]="ecole" class="form-select col-md-6" aria-label=".form-select-sm example">
                 <option selected value="0">ecole...</option>
                 <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
               </select>
@@ -45,10 +45,12 @@
                         <a (click)="viewListe(item.id)" class="btn btn-info me-2" 
                         role="button" style="color: white;">
                           Consulter</a>
-                        <a (click)="useListe(item.id)" class="btn btn-secondary me-2" 
+                        <a *ngIf="user?.role != 'ROLE_VISITEUR'"
+                        (click)="useListe(item.id)" class="btn btn-secondary me-2" 
                         role="button" style="color: white;">
                           Réutiliser</a>
-                        <a (click)="archiverListe(item.id)" class="btn btn-danger" 
+                        <a *ngIf="user?.role == 'ROLE_ADMIN'"
+                        (click)="archiverListe(item.id)" class="btn btn-danger" 
                         role="button" style="color: white;">
                           Supprimer</a>
                       </td>

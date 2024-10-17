@@ -15,6 +15,7 @@ use App\Controller\Dto\Response\UserResponseDto;
 use App\Entity\User;
 use App\Enums\Role;
 use App\Repository\ProfileRepository;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserController extends AbstractController
 {
@@ -107,5 +108,38 @@ class UserController extends AbstractController
         }
         
         return RestResponse::requestResponse('User has been updated', 1, JsonResponse::HTTP_OK);
+    }
+
+    #[Route('/api/modif-user/{id}', name: 'api_modif_user', methods: ['POST'])]
+    public function updateUser(Request $request, UserRepository $userRepository, int $id, UserPasswordHasherInterface $passwordHasher): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $username = $data['username'] ?? null;
+        $pswd1 = $data['pswd1'] ?? null;
+        $pswd2 = $data['pswd2'] ?? null;
+
+        $user = $userRepository->find($id);
+        if (!$user) {
+            return new JsonResponse(['error' => 'User not found'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        if(!empty($username)){
+            if(($userRepository->findOneBy(['username' => $username])) && ($username != $user->getUsername())){
+                return RestResponse::requestResponse('Ce username existe deja', 1, JsonResponse::HTTP_OK);
+            }else{
+                $user->setUsername($username);
+            }
+        }
+        if(!empty($pswd1)){
+            if ($passwordHasher->isPasswordValid($user, $pswd1)){
+                $hashedPassword = $passwordHasher->hashPassword($user, $pswd2);
+                $user->setPassword($hashedPassword);
+            }else{
+                return RestResponse::requestResponse('Mot de passe incorrect', 2, JsonResponse::HTTP_OK);
+            }
+        }
+
+        $userRepository->addOrUpdate($user);
+        return RestResponse::requestResponse('User updated', 0, JsonResponse::HTTP_OK);
     }
 }

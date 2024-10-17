@@ -10,6 +10,8 @@ import { AnneeModel } from '../../models/annee.model';
 import { EcoleServiceImpl } from '../../services/impl/ecole.service.impl';
 import { AnneeServiceImpl } from '../../services/impl/annee.service.impl';
 import { HttpClient } from '@angular/common/http';
+import { LogUser } from '../../models/user.model';
+import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 
 @Component({
   selector: 'app-donnees',
@@ -25,10 +27,17 @@ export class DonneesComponent implements OnInit{
   keyword:string = '';
   libelle:string = '';
   ajout:boolean = false;
+  error:boolean = false;
   entity:number = 0;
-  constructor(private router:Router, private http:HttpClient, private ecoleService:EcoleServiceImpl, private anneeService:AnneeServiceImpl){}
+  user?:LogUser
+  constructor(private router:Router, private http:HttpClient, private authService:AuthServiceImpl, private ecoleService:EcoleServiceImpl, private anneeService:AnneeServiceImpl){}
   
   ngOnInit(): void {
+    this.user = this.authService.getUser()
+    if(this.user?.role != 'ROLE_ADMIN'){
+      this.router.navigate(['/app/not-found'])
+    }
+
     if(typeof window !== 'undefined' && localStorage){
       this.state = parseInt(localStorage.getItem('stateMenu') || '0', 10);
     }
@@ -41,7 +50,11 @@ export class DonneesComponent implements OnInit{
       this.anneeService.modifAnnee(id, kw).subscribe(
         response=>{
               console.log(response.message)
-              this.reloadPage(); 
+              if(response.data != 0){
+                this.error = true;
+              }else{
+                this.reloadPage(); 
+              } 
             },        
         error => {
               console.error('Error sending data', error);
@@ -50,7 +63,11 @@ export class DonneesComponent implements OnInit{
       this.ecoleService.modifEcole(id, kw).subscribe(
         response=>{
               console.log(response.message)
-              this.reloadPage(); 
+              if(response.data != 0){
+                this.error = true;
+              }else{
+                this.reloadPage(); 
+              } 
             },        
         error => {
               console.error('Error sending data', error);
@@ -61,17 +78,24 @@ export class DonneesComponent implements OnInit{
   addObj(){
     if(this.libelle != ''){
       if(this.state == 0){
-          this.http.post(this.anneeService.getAddUrl(), { data: this.libelle })
-            .subscribe(response => {
+        this.anneeService.addAnnee({ data: this.libelle }).subscribe((response:RequestResponse) => {
               console.log('Response from back-end:', response);
-              this.ajout = true;
+              if(response.data != 0){
+                this.error = true;
+              }else{
+                this.ajout = true;
+              }
             }, error => {
               console.error('Error:', error);
             });
       }else if(this.state == 1){
-        this.http.post(this.ecoleService.getAddUrl(), { data: this.libelle })
-            .subscribe(response => {
+        this.ecoleService.addEcole({ data: this.libelle }).subscribe((response:RequestResponse) => {
               console.log('Response from back-end:', response);
+              if(response.data != 0){
+                this.error = true;
+              }else{
+                this.ajout = true;
+              }
             }, error => {
               console.error('Error:', error);
             });
@@ -110,6 +134,7 @@ export class DonneesComponent implements OnInit{
   reloadPage() {
     window.location.reload();
     this.libelle ='';
+    this.error = false;
   }
 
 }

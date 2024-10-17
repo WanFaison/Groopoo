@@ -3,7 +3,7 @@ import { EcoleService } from "../ecole.service";
 import { Observable } from "rxjs";
 import { EcoleModel } from "../../models/ecole.model";
 import { RestResponse } from "../../models/rest.response";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "../../../../environments/environment.development";
 
 @Injectable({
@@ -23,6 +23,13 @@ export class EcoleServiceImpl implements EcoleService{
 
     getAddUrl(){
         return this.apiUrlAdd;
+    }
+
+    addEcole(data:any): Observable<any>{
+        const headers = new HttpHeaders({
+          'Content-Type': 'application/json'
+        });
+        return this.http.post(`${this.apiUrlAdd}`, data, {headers});
     }
 
     findAllPg(page: number, keyword: string): Observable<RestResponse<EcoleModel[]>> {

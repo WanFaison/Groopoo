@@ -14,6 +14,7 @@ use App\Repository\EtudiantRepository;
 use App\Repository\FiliereRepository;
 use App\Repository\GroupeRepository;
 use App\Repository\NiveauRepository;
+use App\Repository\UserRepository;
 use FPDF;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -36,8 +37,9 @@ class ListeController extends AbstractController
     private $classeRepository;
     private $groupeRepository;
     private $listeRepository;
+    private $userRepository;
 
-    public function __construct(EcoleRepository $ecoleRepository, AnneeRepository $anneeRepository, EtudiantRepository $etudiantRepository, NiveauRepository $niveauRepository, FiliereRepository $filiereRepository, ClasseRepository $classeRepository, GroupeRepository $groupeRepository, ListeRepository $listeRepository)
+    public function __construct(UserRepository $userRepository, EcoleRepository $ecoleRepository, AnneeRepository $anneeRepository, EtudiantRepository $etudiantRepository, NiveauRepository $niveauRepository, FiliereRepository $filiereRepository, ClasseRepository $classeRepository, GroupeRepository $groupeRepository, ListeRepository $listeRepository)
     {
         $this->ecoleRepository = $ecoleRepository;
         $this->anneeRepository = $anneeRepository;
@@ -47,16 +49,21 @@ class ListeController extends AbstractController
         $this->classeRepository = $classeRepository;
         $this->groupeRepository = $groupeRepository;
         $this->listeRepository = $listeRepository;
+        $this->userRepository = $userRepository;
     }
 
     #[Route('/api/liste', name: 'api_liste', methods: ['GET'])]
     public function listerListes(Request $request, ListeRepository $listeRepository, AnneeRepository $anneeRepository): JsonResponse
     {
+        $userId = $request->query->getInt('user', 0);
         $page = $request->query->getInt('page', 0);
         $limit = $request->query->getInt('limit', 10);
         $keyword = $request->query->getString('keyword', '');
         $annee = $request->query->getInt('annee', 0);
         $ecole = $request->query->getInt('ecole', 0);
+
+        $user = $this->userRepository->find($userId);
+        if($user->getEcole()){$ecole = $user->getEcole()->getId();}
 
         if($annee == 0){$annee = null;} 
         if($ecole == 0){$ecole = null;} 
@@ -130,9 +137,11 @@ class ListeController extends AbstractController
     {
         $listeId = $request->query->getInt('liste', 0);
         $liste = $this->listeRepository->find($listeId);
-        $pdfFilePath = $this->makePdf($listeId);
+        $pdfContent = $this->makePdf($listeId);
 
-        $response = $this->file($pdfFilePath, $liste->getLibelle(), ResponseHeaderBag::DISPOSITION_INLINE);
+        $response = new Response($pdfContent);
+        $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $liste->getLibelle() . '.pdf"');
         $response->headers->set('X-Liste-Libelle', $liste->getLibelle());
 
         return $response;
@@ -202,10 +211,6 @@ class ListeController extends AbstractController
             }
         }
 
-        $fileName = $listeT->getLibelle() . time() . '.pdf';
-        $filePath = sys_get_temp_dir() . '/' . $fileName;
-        $pdf->Output($filePath, 'F');
-
-        return $filePath;
+        return $pdf->Output('S');
     }
 }

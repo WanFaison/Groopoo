@@ -1,7 +1,7 @@
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpInterceptorFn } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import { AuthService } from "../auth.service";
-import { AuthServiceImpl } from "./auth.service.impl";
+import { AuthService } from "../services/auth.service";
+import { AuthServiceImpl } from "../services/impl/auth.service.impl";
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
     const authService = inject(AuthServiceImpl);

@@ -8,3 +8,6 @@ for example: DATABASE_URL="mysql://root:root@127.0.0.1:3306/band_it?serverVersio
 
 NB:- ensure the 'serverVersion' corresponds yours e.g ?serverVersion=mariadb-10.4.32
     - if needed, check server version from phpMyAdmin dashboard
+
+ALSO, download(from the link below) and add the node_module folder to the front. It contains all angular/typescript dependencies require for the webapp:
+https://drive.google.com/file/d/19wbIV7kety2PIEvnk1ooa3kMXAPvYsCl/view?usp=drive_link

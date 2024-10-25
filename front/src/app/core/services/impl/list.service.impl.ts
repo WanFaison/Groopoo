@@ -14,7 +14,7 @@ export class ListeServiceImpl implements ListeService{
     private apiUrl=`${environment.APIURL}/liste`;
     private apiUrl2=`${environment.APIURL}/liste-find`;
     private apiUrlRedo=`${environment.APIURL}/recreate-groupe`;
-    private apiUrlArch=`${environment.APIURL}/liste-archive`;
+    private apiUrlModif=`${environment.APIURL}/liste-modif`;
     private today:Date = new Date();
     // private todayString:string ='';
     // private testString:string='';
@@ -22,8 +22,8 @@ export class ListeServiceImpl implements ListeService{
         // this.todayString = this.today.toISOString().slice(0,10);
         // this.testString = new Date('2022-02-12').toISOString().slice(0,10);
     }
-    archiveListe(liste: number): Observable<any> {
-        return this.http.get<any>(`${this.apiUrlArch}?liste=${liste}`);
+    modifListe(liste: number, keyword:string=''): Observable<any> {
+        return this.http.get<any>(`${this.apiUrlModif}?liste=${liste}&keyword=${encodeURIComponent(keyword)}`);
     }
 
     reDoListe(liste: number): Observable<any> {

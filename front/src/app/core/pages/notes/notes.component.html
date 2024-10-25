@@ -1,0 +1,58 @@
+<div class="container-fluid min-vh-100">
+    <app-nav></app-nav>
+    
+    <div class="mt-5 row justify-content-center align-items-center h-100">
+        <div class="flex-center my-3 flex-column">
+            <div class="d-flex justify-content-between">
+              <h4 *ngIf="groupResponse" class="underline-bold">{{groupResponse.results[0].listeT}}</h4>
+            </div>
+        </div>
+        
+        <div class="d-flex flex-column justify-content-center align-items-center">
+            <table class="table col-md-9 mb-5">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Libelle</th>
+                        <th scope="col">Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let grp of groupResponse?.results; let i = index">
+                        <td>{{grp.libelle}}</td>
+                        <td>{{grp.note}}</td>
+                    </tr>
+                </tbody>
+              </table>
+        </div>
+
+        <div class="pagination-div" style="margin-bottom: 8rem;">
+          <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              <li *ngIf="groupResponse && groupResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': groupResponse.currentPage === 0}">
+                <a class="page-link" (click)="paginate(groupResponse.currentPage - 1)" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                  <span class="sr-only">Previous</span>
+                </a>
+              </li>
+
+              @for (item of pages(1,groupResponse?.totalPages); track $index){
+                <li class="page-item" [ngClass]="{'active':item-1==groupResponse?.currentPage}">
+                  <a (click)="paginate(item-1)" class="page-link">{{item}}</a>
+                </li>
+              }
+              
+              <li *ngIf="groupResponse && groupResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': groupResponse.currentPage +1 === groupResponse.totalPages}">
+                <a class="page-link" (click)="paginate(groupResponse.currentPage + 1)" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                  <span class="sr-only">Next</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>    
+    </div>
+
+
+    <app-foot></app-foot>
+</div>
+

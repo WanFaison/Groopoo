@@ -41,13 +41,20 @@ class ApiLoginController extends AbstractController
             return new JsonResponse(['error' => 'Token creation failed: ' . $e->getMessage()], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        if($user->getEcole()){$ecoleId = $user->getEcole()->getId();}
-        else{$ecoleId = 0;}
+        if($user->getEcole()){
+            $ecoleId = $user->getEcole()->getId();
+            $ecoleN = $user->getEcole()->getLibelle();
+        }
+        else{
+            $ecoleId = 0;
+            $ecoleN = '';
+        }
         $userDto = [
             'id'=>$user->getId(),
             'username'=>$user->getUsername(),
             'role'=>$user->getRoles()[0],
-            'ecole'=>$ecoleId
+            'ecole'=>$ecoleId,
+            'ecoleT'=>$ecoleN
         ];
         // Return a response, typically with a JWT or session token in real applications
         return new JsonResponse(['message' => 'Authentication successful',

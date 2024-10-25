@@ -111,15 +111,25 @@ class ListeController extends AbstractController
         return DtoRestResponse::linearResponse($dto, 1, JsonResponse::HTTP_OK);
     }
 
-    #[Route('/api/liste-archive', name: 'api_liste_archive', methods: ['GET'])]
+    #[Route('/api/liste-modif', name: 'api_liste_modif', methods: ['GET'])]
     public function archiveList(Request $request): JsonResponse
     {
         $listeId = $request->query->getInt('liste', 0);
+        $keyword = $request->query->getString('keyword', '');
+
         $liste = $this->listeRepository->find($listeId);
-        $liste->setArchived(true);
+        if($keyword != ''){
+            if($this->listeRepository->findByLibelle($keyword)){
+                return DtoRestResponse::requestResponse('Cette liste existe deja', 1, JsonResponse::HTTP_OK);
+            }
+            $liste->setLibelle($keyword);
+        }else{
+            $liste->setArchived(true);
+        }
+
         $this->listeRepository->addOrUpdate($liste);
         
-        return DtoRestResponse::requestResponse('List has been archived', 1, JsonResponse::HTTP_OK);
+        return DtoRestResponse::requestResponse('List has been archived', 0, JsonResponse::HTTP_OK);
     }
 
     #[Route('/api/liste-export', name: 'api_liste_export', methods: ['GET'])]

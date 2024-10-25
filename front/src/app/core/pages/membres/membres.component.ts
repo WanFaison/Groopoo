@@ -18,6 +18,7 @@ import { AnneeModel } from '../../models/annee.model';
 import { AnneeServiceImpl } from '../../services/impl/annee.service.impl';
 import { LogUser } from '../../models/user.model';
 import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
+import { count } from 'node:console';
 
 
 @Component({
@@ -136,14 +137,15 @@ export class MembresComponent implements OnInit{
     
       if (storedData) {
         const parsedData = JSON.parse(storedData);
-
-        this.criteres = [
-          ...parsedData.niveau.map((item: any) => ({ choix: item.choix, taille: item.taille })),
-          ...parsedData.filiere.map((item: any) => ({ choix: item.choix, taille: item.taille })),
-          ...parsedData.classe.map((item: any) => ({ choix: item.choix, taille: item.taille }))
-        ];
-        
-        console.log(this.criteres);
+        if (parsedData && Object.keys(parsedData).length > 0){
+          this.criteres = [
+            ...parsedData.niveau.map((item: any) => ({ choix: item.choix, taille: item.taille })),
+            ...parsedData.filiere.map((item: any) => ({ choix: item.choix, taille: item.taille })),
+            ...parsedData.classe.map((item: any) => ({ choix: item.choix, taille: item.taille }))
+          ];
+          
+          console.log(this.criteres);
+        }
       }else {
         console.error('No data found in localStorage for the specified key.');
       }
@@ -177,7 +179,6 @@ export class MembresComponent implements OnInit{
   clearData(){
     if (typeof window !== 'undefined' && localStorage){
       localStorage.removeItem('formData');
-      localStorage.removeItem('ecoleListe');
       localStorage.removeItem('tailleGrp')
       localStorage.removeItem('etudiants')
       localStorage.removeItem('nomGrp');

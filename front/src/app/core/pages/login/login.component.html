@@ -24,8 +24,8 @@
                                 <div *ngIf="error" class="text-danger">
                                     Nom d'utilisateur ou mot de passe invalide
                                 </div>
-                                <label class="form-label custom-label" for="username">Nom d'utilisateur ou Email</label>
-                                <input required type="email" id="username" #usernameInput="ngModel" [(ngModel)]="username" name="username" class="form-control form-control-lg custom-input" placeholder="mail@simple.com" />
+                                <label class="form-label custom-label" for="username">Nom d'utilisateur</label>
+                                <input required type="email" id="username" #usernameInput="ngModel" [(ngModel)]="username" name="username" class="form-control form-control-lg custom-input" placeholder="johndoe" />
                                 <div *ngIf="usernameInput.invalid && usernameInput.touched" class="text-danger">
                                     Le nom d'utilisateur ou l'email est requis.
                                 </div>
@@ -49,13 +49,13 @@
                         </form>
                     </div>
                     <div class="text-center w-25">
-                        <img src="/assets/images/Logo Band-it.png" class="w-25 mt-3" alt="band-it">
+                        <img src="assets/images/Logo_Band-it.png" class="w-25 mt-3" alt="band-it">
                         <p class="fst-italic w-75 mx-auto">"Créez des équipes, cultivez des talents"</p>
                     </div>
                 </div>
                 <div class="d-flex position-absolute bottom-0 start-50 translate-middle-x w-75">
                     <p class="centered-small fst-italic fs-6">Un service de Méga Octet Solution - Agence de Création des Solutions Digitales - &#64; 2025 Tous droits réservés</p>
-                    <img class="icon-img" src="assets/images/logo MOS.jpg" alt="">
+                    <img class="icon-img" src="assets/images/logo_MOS.jpg" alt="">
                 </div>
             </div>
         </div>

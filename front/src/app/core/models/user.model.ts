@@ -10,5 +10,6 @@ export type LogUser ={
     id: number,
     username: string,
     role: any,
-    ecole: any
+    ecole: any,
+    ecoleT: string
 }

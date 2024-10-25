@@ -30,14 +30,12 @@ export class GroupsComponent implements OnInit{
   etdResponse?: RestResponse<EtudiantCreateXlsx[]>;
   groupResponse?: RestResponse<GroupeModel[]>;
   user?:LogUser;
+  libelle:string = ''
+  error:boolean = false
   constructor(private router:Router, private authService:AuthServiceImpl, private groupeService:GroupeServiceImpl, private listeService:ListeServiceImpl, private apiService:ApiService, private etudiantService:EtudiantServiceImpl) { }
 
   ngOnInit(): void {
     this.user = this.authService.getUser();
-    if(this.user?.role == 'ROLE_VISITEUR'){
-      this.router.navigate(['/app/not-found'])
-    }
-
     if (typeof window !== 'undefined' && localStorage){
       this.liste = parseInt(localStorage.getItem('newListe') || '1', 10);
       this.listeService.findById(this.liste).subscribe(data=>this.listeResponse=data);
@@ -109,6 +107,20 @@ export class GroupsComponent implements OnInit{
                 console.error('Error sending data', error);
               });
     console.log('reformer liste')
+  }
+
+  modifEnt(ent: any,lib: string) {
+    this.listeService.modifListe(ent, lib).subscribe(
+      response=>{
+        if(response.data != 0){
+          this.error = true;
+        }else{
+          this.reloadPage(); 
+        } 
+      },        
+      error => {
+            console.error('Error sending data', error);
+          });
   }
 
   refresh(liste:number=0, page:number=0){

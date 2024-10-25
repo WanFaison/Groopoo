@@ -1,0 +1,135 @@
+<div class="container-fluid min-vh-100">
+    <app-nav></app-nav>
+
+    <div class="mt-5 row justify-content-center align-items-center h-100">
+        <div class="flex-center my-3 flex-column">
+            <div *ngIf="listeResponse" class="d-flex justify-content-between">
+              <h4 class="underline-bold">{{listeResponse.results.libelle}}</h4>
+              <a data-bs-toggle="modal" data-bs-target="#modifModal"
+              class="nav-link mx-1 text-black"
+              (click)="libelle = listeResponse.results.libelle;" ><i class="fas fa-lg fa-edit"></i></a>
+            </div>
+            <div class="d-flex justify-content-between mt-2">
+              <div>
+                <button data-bs-toggle="modal" data-bs-target="#addModal"
+                class="btn btn-info mb-5 me-2">Nouveau Jour</button>
+                <button (click)="viewGrps()" class="btn btn-secondary mb-5 me-2">Voir groupes</button>
+                <button id="orange-btn" class="btn btn-orange mb-5">Consulter notes</button>
+            </div>
+            </div>
+        </div>
+        
+        <div class="flex-center">
+            <table class="table col-md-4">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">Journee</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of jourResponse?.results; track $index){
+                   <tr>
+                      <th scope="row">{{item.libelle}}</th>
+                      <td>{{item.date}}</td>
+                      <td>
+                        <a (click)="consAbs(item.id)" class="btn btn-secondary me-2" 
+                        role="button" style="color: white;">
+                            Consulter</a>
+                        <a (click)="jrs = item.id" class="btn btn-danger" 
+                        data-bs-toggle="modal" data-bs-target="#ynModal"
+                        role="button" style="color: white;">
+                          Supprimer</a>
+                      </td>
+                   </tr> 
+                  }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="modifModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content row">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modifier Liste</h5>
+                <button (click)="libelle = ''; error = false;" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <label class="form-label custom-label" for="libelle">Libelle</label>
+                <input required id="libelle" #libelleInput="ngModel" [(ngModel)]="libelle" 
+                name="libelle" class="form-control form-control-lg custom-input" placeholder="Entrez le nom..." />
+                <div *ngIf="libelleInput.invalid && libelleInput.touched" class="text-danger">
+                    Le nom/libelle est requis.
+                </div>
+                <div *ngIf="error" class="text-danger">
+                  Une liste de ce nom existe déjà
+                </div>
+            </div>
+            <div class="modal-footer d-flex">
+                <button (click)="modifEnt(liste, libelle)" type="button" 
+                class="btn btn-success">Modifier</button>
+                <button (click)="libelle = ''; error = false;" type="button" class="btn btn-secondary" 
+                data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Modal addJr -->
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content row">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Nouvelle Journee</h5>
+                <button (click)="date = ''; error = false;" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <label class="form-label custom-label" for="date">Choisir la date</label>
+                <div class="input-group">
+                    <input class="form-control" placeholder="jj/mm/aaaa" 
+                           name="date" [(ngModel)]="date" ngbDatepicker #d="ngbDatepicker">
+                    <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
+                      <i class="bi bi-calendar"></i>
+                    </button>
+                </div>               
+            
+                <div *ngIf="error" class="text-danger">{{ errMsg }}</div>
+            </div>
+            <div class="modal-footer d-flex">
+                <button (click)="addJr()" type="button" 
+                class="btn btn-success">Ajouter</button>
+                <button (click)="date = ''; error = false;" type="button" class="btn btn-secondary" 
+                data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+
+    <!-- Modal yn-->
+    <div class="modal fade" id="ynModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content row">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Suppression</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4 class="form-label custom-label">Voulez vous supprimer cette journée?</h4>
+                <p>NB: la suppression de cette entite, causera la suppression de toute absences correspondantes </p>
+            </div>
+            <div class="modal-footer d-flex">
+                <button (click)="archJr()" type="button" class="btn btn-success">Oui</button>
+                <button type="button" class="btn btn-secondary" 
+                (click)="jrs = 0" data-bs-dismiss="modal">Non</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <app-foot></app-foot>
+</div>

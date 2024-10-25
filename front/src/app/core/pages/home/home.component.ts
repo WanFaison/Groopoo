@@ -48,7 +48,7 @@ export class HomeComponent implements OnInit{
     if(typeof window !== 'undefined' && localStorage){
       localStorage.setItem('newListe', liste);
     }
-    this.router.navigate(['/app/view-groups']);
+    this.router.navigate(['/app/view-jours']);
   }
 
   useListe(liste:any){
@@ -69,7 +69,7 @@ export class HomeComponent implements OnInit{
   }
 
   archiverListe(liste:any){
-    this.listeService.archiveListe(liste).subscribe(
+    this.listeService.modifListe(liste).subscribe(
       response=>{
             console.log(response.message)
             this.reloadPage(); 

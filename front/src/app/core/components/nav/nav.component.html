@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-md navbar-light bg-white navbar-bottom-border">
-    <a class="navbar-brand" href="#"><img src="assets/images/Logo Band-it.png" alt="logo" class="logo-img"></a>
+    <a class="navbar-brand" [routerLink]="['/app/home']" routerLinkActive="active"><img src="assets/images/Logo_Band-it.png" alt="logo" class="logo-img"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -25,7 +25,8 @@
       
     </div>
 
-    <div>
+    <div class="d-flex flex-center">
+      <h5 class="me-4">{{ user?.ecoleT }}</h5>
       <button class="btn me-2" type="button" id="profileButton"
       [routerLink]="['/app/form-update']" routerLinkActive="active">
         <i class="bi bi-person-circle fs-3"></i>

@@ -11,6 +11,8 @@ import { ProfilesComponent } from './core/pages/profiles/profiles.component';
 import { FormUserComponent } from './core/pages/form-user/form-user.component';
 import { FormUserUpdateComponent } from './core/pages/form-user-update/form-user-update.component';
 import { NotFoundComponent } from './core/pages/404/404.component';
+import { JoursComponent } from './core/pages/jours/jours.component';
+import { AttendanceComponent } from './core/pages/attendance/attendance.component';
 
 export const routes: Routes = [
     {
@@ -33,8 +35,18 @@ export const routes: Routes = [
         canActivate: [AuthGuard]
     },
     {
+        path:"app/view-jours",
+        component:JoursComponent,
+        canActivate: [AuthGuard]
+    },
+    {
         path:"app/view-groups",
         component:GroupsComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path:"app/attendance",
+        component:AttendanceComponent,
         canActivate: [AuthGuard]
     },
     {

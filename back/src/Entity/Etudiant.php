@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\EtudiantRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Table(name: "etudiant")]
@@ -31,6 +33,23 @@ class Etudiant extends AbstractEntity
 
     #[ORM\Column(length: 10, nullable: true)]
     private ?string $sexe = null;
+
+    /**
+     * @var Collection<int, Absence>
+     */
+    #[ORM\OneToMany(targetEntity: Absence::class, mappedBy: 'etudiant')]
+    private Collection $absences;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $noteCC = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $noteEX = null;
+
+    public function __construct()
+    {
+        $this->absences = new ArrayCollection();
+    }
 
 
     public function getMatricule(): ?string
@@ -114,6 +133,60 @@ class Etudiant extends AbstractEntity
     public function setSexe(?string $sexe): static
     {
         $this->sexe = $sexe;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Absence>
+     */
+    public function getAbsences(): Collection
+    {
+        return $this->absences;
+    }
+
+    public function addAbsence(Absence $absence): static
+    {
+        if (!$this->absences->contains($absence)) {
+            $this->absences->add($absence);
+            $absence->setEtudiant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAbsence(Absence $absence): static
+    {
+        if ($this->absences->removeElement($absence)) {
+            // set the owning side to null (unless already changed)
+            if ($absence->getEtudiant() === $this) {
+                $absence->setEtudiant(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getNoteCC(): ?float
+    {
+        return $this->noteCC;
+    }
+
+    public function setNoteCC(?float $noteCC): static
+    {
+        $this->noteCC = $noteCC;
+
+        return $this;
+    }
+
+    public function getNoteEX(): ?float
+    {
+        return $this->noteEX;
+    }
+
+    public function setNoteEX(?float $noteEX): static
+    {
+        $this->noteEX = $noteEX;
 
         return $this;
     }

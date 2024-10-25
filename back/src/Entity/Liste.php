@@ -32,9 +32,16 @@ class Liste extends AbstractEntity
     #[ORM\Column(type: 'json', nullable: true)]
     private ?array $critere = null;
 
+    /**
+     * @var Collection<int, Jour>
+     */
+    #[ORM\OneToMany(targetEntity: Jour::class, mappedBy: 'liste')]
+    private Collection $jours;
+
     public function __construct()
     {
         $this->groupes = new ArrayCollection();
+        $this->jours = new ArrayCollection();
     }
 
     /**
@@ -118,6 +125,36 @@ class Liste extends AbstractEntity
     public function setCritere(?array $critere): static
     {
         $this->critere = $critere;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Jour>
+     */
+    public function getJours(): Collection
+    {
+        return $this->jours;
+    }
+
+    public function addJour(Jour $jour): static
+    {
+        if (!$this->jours->contains($jour)) {
+            $this->jours->add($jour);
+            $jour->setListe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeJour(Jour $jour): static
+    {
+        if ($this->jours->removeElement($jour)) {
+            // set the owning side to null (unless already changed)
+            if ($jour->getListe() === $this) {
+                $jour->setListe(null);
+            }
+        }
 
         return $this;
     }

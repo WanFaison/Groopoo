@@ -11,3 +11,5 @@ NB:- ensure the 'serverVersion' corresponds to yours e.g ?serverVersion=mariadb-
 
 ALSO, download(from the link below) and add the 'node_module' folder to the front and 'jwt' folder to the back\config. They contain all angular/typescript dependencies and public/private keys respectively required for the webapp:
 https://drive.google.com/file/d/1rIF-dkQMbE-6F_PDgYbVGEBa2ddDUzVS/view?usp=drive_link
+
+TO CONCLUDE, run 'composer install' command in the root directory of the back folder (this is to ensure that all base dependencies for symfony are available)

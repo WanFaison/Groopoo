@@ -9,7 +9,7 @@ for example: DATABASE_URL="mysql://root:root@127.0.0.1:3306/band_it?serverVersio
 NB:- ensure the 'serverVersion' corresponds to yours e.g ?serverVersion=mariadb-10.4.32
     - if needed, check the server version from the phpMyAdmin dashboard
 
-ALSO, download(from the link below) and add the 'node_module' folder to the front and 'jwt' folder to the back\config. They contain all angular/typescript dependencies and public/private keys respectively required for the webapp:
-https://drive.google.com/file/d/1rIF-dkQMbE-6F_PDgYbVGEBa2ddDUzVS/view?usp=drive_link
+ALSO, download(from the link below) and add the 'node_module' folder to the front and 'jwt' folder to the back\config folder. They contain all angular/typescript dependencies and public/private keys respectively required for the webapp:
+https://drive.google.com/file/d/1dRyvZwlv1DQ_ACiCLD-pvC2v0SfnnJ9J/view?usp=sharing
 
 TO CONCLUDE, run 'composer install' command in the root directory of the back folder (this is to ensure that all base dependencies for symfony are available)

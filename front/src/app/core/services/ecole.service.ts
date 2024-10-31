@@ -7,4 +7,5 @@ export interface EcoleService{
     findAll():Observable<RestResponse<EcoleModel[]>>;
     findAllPg(page:number, keyword:string): Observable<RestResponse<EcoleModel[]>>;
     modifEcole(ecole:number):Observable<any>;
+    findById(ecole:number): Observable<RestResponse<EcoleModel>>;
 }

@@ -50,9 +50,6 @@ export class MembresComponent implements OnInit{
       this.router.navigate(['/app/not-found'])
     }
 
-    if(this.user?.role == 'ROLE_ECOLE_ADMIN'){
-      localStorage.setItem('ecoleListe', this.user.ecole)
-    }
     this.ecoleService.findAll().subscribe(data=>this.ecoleResponse=data);
     this.anneeService.findAll().subscribe(data=>this.anneeResponse=data);
     this.loadEtudiants();
@@ -214,6 +211,7 @@ export class MembresComponent implements OnInit{
           status: 200
         };
   
+        alert("Ce processus peut prendre plus de temps que prévu en fonction du nombre d'étudiants. Veuillez patienter.")
         this.apiService.sendDataToBackend(this.returnResponse).subscribe(
           response => {
             console.log('Data successfully sent', response);

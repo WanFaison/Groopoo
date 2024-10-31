@@ -55,15 +55,11 @@ class ListeController extends AbstractController
     #[Route('/api/liste', name: 'api_liste', methods: ['GET'])]
     public function listerListes(Request $request, ListeRepository $listeRepository, AnneeRepository $anneeRepository): JsonResponse
     {
-        $userId = $request->query->getInt('user', 0);
         $page = $request->query->getInt('page', 0);
         $limit = $request->query->getInt('limit', 10);
         $keyword = $request->query->getString('keyword', '');
         $annee = $request->query->getInt('annee', 0);
         $ecole = $request->query->getInt('ecole', 0);
-
-        $user = $this->userRepository->find($userId);
-        if($user->getEcole()){$ecole = $user->getEcole()->getId();}
 
         if($annee == 0){$annee = null;} 
         if($ecole == 0){$ecole = null;} 
@@ -81,7 +77,8 @@ class ListeController extends AbstractController
                 'critere' => $r->getCritere(),
                 'annee' => $r->getAnnee(),
                 'ecole' => $r->getEcole(),
-                'date' => $r->getDate()
+                'date' => $r->getDate(),
+                'isComplet' => $r->isComplete()
             ];
         }
 
@@ -104,7 +101,8 @@ class ListeController extends AbstractController
                     'critere' => $dto->getCritere(),
                     'annee' => $dto->getAnnee(),
                     'ecole' => $dto->getEcole(),
-                    'date' => $dto->getDate()
+                    'date' => $dto->getDate(),
+                    'isComplet' => $dto->isComplete()
                 ];
         }
 
@@ -116,6 +114,7 @@ class ListeController extends AbstractController
     {
         $listeId = $request->query->getInt('liste', 0);
         $keyword = $request->query->getString('keyword', '');
+        $motif = $request->query->getString('motif', '');
 
         $liste = $this->listeRepository->find($listeId);
         if($keyword != ''){
@@ -123,13 +122,17 @@ class ListeController extends AbstractController
                 return DtoRestResponse::requestResponse('Cette liste existe deja', 1, JsonResponse::HTTP_OK);
             }
             $liste->setLibelle($keyword);
+        }else if($motif == 'verr'){
+            $liste->setComplete(true);
+        }else if($motif == 'deverr'){
+            $liste->setComplete(false);
         }else{
             $liste->setArchived(true);
         }
 
         $this->listeRepository->addOrUpdate($liste);
         
-        return DtoRestResponse::requestResponse('List has been archived', 0, JsonResponse::HTTP_OK);
+        return DtoRestResponse::requestResponse('List has been modified', 0, JsonResponse::HTTP_OK);
     }
 
     #[Route('/api/liste-export', name: 'api_liste_export', methods: ['GET'])]

@@ -7,11 +7,13 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { AuthServiceImpl } from './core/services/impl/auth.service.impl';
 import { loadingInterceptor } from './core/interceptors/loader.interceptor';
+import { expiredTokenInterceptor } from './core/interceptors/expiredtoken.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideZoneChangeDetection({ eventCoalescing: true }), 
     provideRouter(routes), provideClientHydration(),
-    provideHttpClient(withFetch(), withInterceptors([authInterceptor, loadingInterceptor])),
+    provideHttpClient(withFetch(), 
+    withInterceptors([authInterceptor, loadingInterceptor, expiredTokenInterceptor])),
     { provide: AuthServiceImpl, useClass: AuthServiceImpl }
   ]
 };

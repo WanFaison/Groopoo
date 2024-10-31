@@ -17,6 +17,10 @@ export class EcoleServiceImpl implements EcoleService{
     private apiUrlModif=`${environment.APIURL}/ecole-modif`;
     constructor(private http:HttpClient){}
 
+    findById(ecole: number): Observable<RestResponse<EcoleModel>> {
+        return this.http.get<RestResponse<EcoleModel>>(`${environment.APIURL}/ecole-find?ecole=${ecole}`);
+    }
+
     modifEcole(ecole: number, keyword:string=''): Observable<any> {
         return this.http.get<any>(`${this.apiUrlModif}?ecole=${ecole}&keyword=${encodeURIComponent(keyword)}`);
     }

@@ -65,6 +65,23 @@ class EcoleController extends AbstractController
         return RestResponse::paginateResponse($results, $page, $totalItems, $totalPages, JsonResponse::HTTP_OK);
     }
 
+    #[Route('/api/ecole-find', name: 'api_ecole_find', methods: ['GET'])]
+    public function findEcole(Request $request, EcoleRepository $ecoleRepository): JsonResponse
+    {
+        $ecoleId = $request->query->getInt('ecole', 0);
+        $ecole = $ecoleRepository->find($ecoleId);
+        if($ecole != null){ 
+            $dto = (new EcoleResponseDto())->toDto($ecole); 
+            $dto = [
+                    'id' => $dto->getId(),
+                    'libelle' => $dto->getLibelle(),
+                    'isArchived' => $dto->isArchived()
+                ];
+        }
+
+        return RestResponse::linearResponse($dto, 1, JsonResponse::HTTP_OK);
+    }
+
     #[Route('/api/add-ecole', name: 'api_add_ecole', methods: ['POST'])]
     public function addEcole(Request $request, EcoleRepository $ecoleRepository): JsonResponse
     {

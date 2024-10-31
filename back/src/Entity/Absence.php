@@ -57,4 +57,16 @@ class Absence extends AbstractEntity
 
         return $this;
     }
+
+    public function getType(): ?AbsenceType
+    {
+        return $this->type;
+    }
+
+    public function setType(?AbsenceType $type): static
+    {
+        $this->type = $type;
+
+        return $this;
+    }
 }

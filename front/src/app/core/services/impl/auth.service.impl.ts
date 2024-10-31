@@ -49,8 +49,7 @@ export class AuthServiceImpl implements AuthService{
     logout(): void {
         this.token = '';
         if (typeof window !== 'undefined' && localStorage){
-            localStorage.removeItem('jwtToken');
-            localStorage.removeItem('logUser');
+            localStorage.clear()
         }
         this.logUser = undefined
     }

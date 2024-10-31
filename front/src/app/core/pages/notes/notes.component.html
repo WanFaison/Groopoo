@@ -3,13 +3,41 @@
     
     <div class="mt-5 row justify-content-center align-items-center h-100">
         <div class="flex-center my-3 flex-column">
-            <div class="d-flex justify-content-between">
-              <h4 *ngIf="groupResponse" class="underline-bold">{{groupResponse.results[0].listeT}}</h4>
+            <div class="d-flex flex-column align-items-center my-3">
+              <h4 *ngIf="groupResponse" class="underline-bold">{{ 'Notes: ' + groupResponse.results[0].listeT}}</h4>
+              <p class="fst-italic">Toutes les notes seront comptabilisées et attribuées aux étudiants en fonction de leur assiduité.</p>
+            </div>
+
+            <div *ngIf="msg.length >1" class="flex-center align-items-center">
+                <p class="fw-bold text-danger">{{ msg }} </p>
+            </div>
+
+            <div class="flex-center my-3">
+                <a id="orange-btn" class="btn btn-success col-md-5 me-5" 
+                [class.disabled] = "listeResponse?.results?.isComplet"
+                (click)="onSubmit()" role="button" style="color: white;">
+                    Enregistrer les notes
+                </a>
+                <a class="btn btn-secondary me-2"
+                [routerLink]="['/app/view-jours']" routerLinkActive="active"
+                role="button" style="color: white;">
+                    Retourner
+                </a>
+                <a class="btn btn-danger col-md-4"
+                *ngIf="!listeResponse?.results?.isComplet"
+                data-bs-toggle="modal" data-bs-target="#ynvModal"
+                role="button" style="color: white;">
+                    Verrouiller la liste</a>
+                <a class="btn btn-danger col-md-5"
+                *ngIf="user?.role == 'ROLE_ADMIN' && listeResponse?.results?.isComplet"
+                (click)="archiverListe(liste, 'deverr')"
+                role="button" style="color: white;">
+                    Deverrouiller la liste</a>
             </div>
         </div>
         
         <div class="d-flex flex-column justify-content-center align-items-center">
-            <table class="table col-md-9 mb-5">
+            <table class="table col-md-5 mb-5">
                 <thead class="thead-dark">
                     <tr>
                         <th scope="col">Libelle</th>
@@ -19,10 +47,11 @@
                 <tbody>
                     <tr *ngFor="let grp of groupResponse?.results; let i = index">
                         <td>{{grp.libelle}}</td>
-                        <td>{{grp.note}}</td>
+                        <td><input (input)="onNoteChange(grp.id, $event)" type="number" step="0.1" 
+                            min="0" max="20" [value]="grp.note" /></td>
                     </tr>
                 </tbody>
-              </table>
+            </table>
         </div>
 
         <div class="pagination-div" style="margin-bottom: 8rem;">
@@ -52,6 +81,27 @@
         </div>    
     </div>
 
+
+    <!-- Modal ynv-->
+    <div class="modal fade" id="ynvModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content row">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Verrouillage</h5>
+                <button type="button" class="btn-close"
+                data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4 class="form-label custom-label">Voulez vous verrouiller cette liste?</h4>
+                <p>NB: en verrouillant cette liste, on suppose que l'événement correspondant est terminé; par conséquent d'autres modifications ne seront pas autorisées </p>
+            </div>
+            <div class="modal-footer d-flex">
+                <button (click)="archiverListe(liste, 'verr')" type="button" class="btn btn-success">Oui</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+            </div>
+        </div>
+        </div>
+      </div>
 
     <app-foot></app-foot>
 </div>

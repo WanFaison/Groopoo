@@ -26,6 +26,15 @@ class RestResponse
         ]);
     }
 
+    public static function findRequestResponse(string $message, $result, $status): JsonResponse
+    {
+        return new JsonResponse([
+            'message' => $message,
+            'result' => $result,
+            'status' => $status
+        ]);
+    }
+    
     public static function requestResponse(string $message, $data, $status): JsonResponse
     {
         return new JsonResponse([

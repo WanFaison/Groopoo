@@ -32,15 +32,15 @@ class Ecole extends AbstractEntity
     /**
      * @var Collection<int, User>
      */
-    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'ecole')]
-    private Collection $users;
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'ecoles')]
+    private Collection $admins;
 
     public function __construct()
     {
         $this->listes = new ArrayCollection();
         $this->filieres = new ArrayCollection();
         $this->classes = new ArrayCollection();
-        $this->users = new ArrayCollection();
+        $this->admins = new ArrayCollection();
     }
 
     /**
@@ -132,32 +132,30 @@ class Ecole extends AbstractEntity
 
         return $this;
     }
+    
 
     /**
      * @return Collection<int, User>
      */
-    public function getUsers(): Collection
+    public function getAdmins(): Collection
     {
-        return $this->users;
+        return $this->admins;
     }
 
-    public function addUser(User $user): static
+    public function addAdmin(User $admin): static
     {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->setEcole($this);
+        if (!$this->admins->contains($admin)) {
+            $this->admins->add($admin);
+            $admin->addEcole($this);
         }
 
         return $this;
     }
 
-    public function removeUser(User $user): static
+    public function removeAdmin(User $admin): static
     {
-        if ($this->users->removeElement($user)) {
-            // set the owning side to null (unless already changed)
-            if ($user->getEcole() === $this) {
-                $user->setEcole(null);
-            }
+        if ($this->admins->removeElement($admin)) {
+            $admin->removeEcole($this);
         }
 
         return $this;

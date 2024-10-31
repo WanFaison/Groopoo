@@ -41,10 +41,10 @@ class Etudiant extends AbstractEntity
     private Collection $absences;
 
     #[ORM\Column(nullable: true)]
-    private ?float $noteCC = null;
+    private ?float $noteEtd = null;
 
     #[ORM\Column(nullable: true)]
-    private ?float $noteEX = null;
+    private ?float $noteFinal = null;
 
     public function __construct()
     {
@@ -167,26 +167,26 @@ class Etudiant extends AbstractEntity
         return $this;
     }
 
-    public function getNoteCC(): ?float
+    public function getNoteEtd(): ?float
     {
-        return $this->noteCC;
+        return $this->noteEtd;
     }
 
-    public function setNoteCC(?float $noteCC): static
+    public function setNoteEtd(?float $noteEtd): static
     {
-        $this->noteCC = $noteCC;
+        $this->noteEtd = $noteEtd;
 
         return $this;
     }
 
-    public function getNoteEX(): ?float
+    public function getNoteFinal(): ?float
     {
-        return $this->noteEX;
+        return $this->noteFinal;
     }
 
-    public function setNoteEX(?float $noteEX): static
+    public function setNoteFinal(?float $noteFinal): static
     {
-        $this->noteEX = $noteEX;
+        $this->noteFinal = $noteFinal;
 
         return $this;
     }

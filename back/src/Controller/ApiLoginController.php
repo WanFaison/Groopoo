@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Controller\Dto\Response\UserResponseDto;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
@@ -41,20 +42,18 @@ class ApiLoginController extends AbstractController
             return new JsonResponse(['error' => 'Token creation failed: ' . $e->getMessage()], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        if($user->getEcole()){
-            $ecoleId = $user->getEcole()->getId();
-            $ecoleN = $user->getEcole()->getLibelle();
+        $roles = [];
+        foreach($user->getRoles() as $r){
+            $roles[] = $r;
         }
-        else{
-            $ecoleId = 0;
-            $ecoleN = '';
-        }
+
+        $dto = (new UserResponseDto())->toDto($user, $roles);
         $userDto = [
-            'id'=>$user->getId(),
-            'username'=>$user->getUsername(),
-            'role'=>$user->getRoles()[0],
-            'ecole'=>$ecoleId,
-            'ecoleT'=>$ecoleN
+            'id'=>$dto->getId(),
+            'username'=>$dto->getUsername(),
+            'role'=>$dto->getRoles()[0],
+            'ecole'=>$dto->getEcole(),
+            'ecoleT'=>$dto->getEcoleT()
         ];
         // Return a response, typically with a JWT or session token in real applications
         return new JsonResponse(['message' => 'Authentication successful',

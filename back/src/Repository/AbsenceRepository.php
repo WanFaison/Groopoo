@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Absence;
+use App\Entity\Etudiant;
+use App\Entity\Jour;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -23,6 +25,36 @@ class AbsenceRepository extends ServiceEntityRepository
     {
         $this->entityManager->persist($entity);
         $this->entityManager->flush();
+    }
+
+    public function findAllByJourAndEtudiant(?Jour $jour=null, ?Etudiant $etudiant=null):array
+    {
+        $queryBuilder = $this->createQueryBuilder('r');
+        if ($jour) {
+            $queryBuilder->andWhere('r.jour = :jour')
+                         ->setParameter('jour', $jour);
+        }
+        if ($etudiant) {
+            $queryBuilder->andWhere('r.etudiant = :etudiant')
+                         ->setParameter('etudiant', $etudiant);
+        }
+        $query = $queryBuilder->andWhere('r.isArchived = :isArchived')
+                            ->setParameter('isArchived', false)
+                            ->orderBy('r.id', 'ASC')
+                            ->getQuery()
+                            ->getResult();
+
+        return $query;
+    }
+
+    public function deleteById(int $id): void
+    {
+        $absence = $this->find($id);
+
+        if ($absence) {
+            $this->entityManager->remove($absence);
+            $this->entityManager->flush();
+        }
     }
 
 //    /**

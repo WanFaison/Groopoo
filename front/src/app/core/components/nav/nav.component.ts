@@ -3,6 +3,9 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 import { LogUser } from '../../models/user.model';
 import { CommonModule } from '@angular/common';
+import { RestResponse } from '../../models/rest.response';
+import { EcoleModel } from '../../models/ecole.model';
+import { EcoleServiceImpl } from '../../services/impl/ecole.service.impl';
 
 @Component({
   selector: 'app-nav',
@@ -13,11 +16,17 @@ import { CommonModule } from '@angular/common';
 })
 export class NavComponent implements OnInit{
   user?:LogUser;
-  constructor(private authService:AuthServiceImpl, private router:Router){
-  }
+  ecole:number =0
+  ecoleResponse?:RestResponse<EcoleModel>
+  constructor(private authService:AuthServiceImpl, private router:Router, private ecoleService:EcoleServiceImpl)
+  {}
 
   ngOnInit(): void {
     this.user = this.authService.getUser();
+    if (typeof window !== 'undefined' && localStorage && this.user?.role == 'ROLE_ECOLE_ADMIN'){
+      this.ecole = parseInt(localStorage.getItem('ecoleListe') || '0', 10);
+      this.ecoleService.findById(this.ecole).subscribe(data=>this.ecoleResponse=data)
+    }
   }
 
   onLogout():void{

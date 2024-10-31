@@ -42,10 +42,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
     #[ORM\Column]
     private ?bool $isArchived = null;
 
-    #[ORM\ManyToOne(inversedBy: 'users')]
-    private ?Ecole $ecole = null;
+    /**
+     * @var Collection<int, Ecole>
+     */
+    #[ORM\ManyToMany(targetEntity: Ecole::class, inversedBy: 'admins')]
+    private Collection $ecoles;
 
-    public function __construct(){}
+    public function __construct()
+    {
+        $this->ecoles = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -149,18 +155,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
         return $this;
     }
 
-    public function getEcole(): ?Ecole
-    {
-        return $this->ecole;
-    }
-
-    public function setEcole(?Ecole $ecole): static
-    {
-        $this->ecole = $ecole;
-
-        return $this;
-    }
-
     /**
      * Create a User from JWT payload.
      *
@@ -180,5 +174,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
         }
 
         return $user;
+    }
+
+    /**
+     * @return Collection<int, Ecole>
+     */
+    public function getEcoles(): Collection
+    {
+        return $this->ecoles;
+    }
+
+    public function addEcole(Ecole $ecole): static
+    {
+        if (!$this->ecoles->contains($ecole)) {
+            $this->ecoles->add($ecole);
+        }
+
+        return $this;
+    }
+
+    public function removeEcole(Ecole $ecole): static
+    {
+        $this->ecoles->removeElement($ecole);
+
+        return $this;
     }
 }

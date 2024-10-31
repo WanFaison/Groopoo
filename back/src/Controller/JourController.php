@@ -27,6 +27,21 @@ class JourController extends AbstractController
         $this->absenceRepository = $absenceRepository;
     }
 
+    #[Route('/api/find-jour', name: 'app_find_jour', methods: ['GET'])]
+    public function findJour(Request $request): JsonResponse
+    {
+        $jourId = $request->query->getInt('jour', 0);
+        $jour = $this->jourRepository->find($jourId);
+        $dto = (new JourResponseDto())->toDto($jour);
+        $result = [
+            'id' => $dto->getId(),
+            'libelle' => $dto->getLibelle(),
+            'date' => $dto->getDate(),
+        ];
+
+        return RestResponse::findRequestResponse('Journee found', $result, JsonResponse::HTTP_OK);
+    }
+
     #[Route('/api/lister-jour', name: 'app_lister_jour', methods: ['GET'])]
     public function listerJours(Request $request): JsonResponse
     {

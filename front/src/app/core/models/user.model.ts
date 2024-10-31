@@ -11,5 +11,5 @@ export type LogUser ={
     username: string,
     role: any,
     ecole: any,
-    ecoleT: string
+    ecoleT: any
 }

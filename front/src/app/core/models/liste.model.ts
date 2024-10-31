@@ -3,6 +3,7 @@ export type ListeModel = {
     libelle: string,
     critere: string,
     annee: number,
-    ecole: string
-    date: string
+    ecole: string,
+    date: string,
+    isComplet: boolean
 }

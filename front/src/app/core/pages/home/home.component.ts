@@ -33,6 +33,8 @@ export class HomeComponent implements OnInit{
   keyword: string = '';
   annee: number = 0;
   ecole: number = 0;
+  selectedEcole: number = 0; 
+  liste: number = 0;
   user?:LogUser
   constructor(private router:Router, private authService:AuthServiceImpl, private ecoleService:EcoleServiceImpl, private listeService:ListeServiceImpl, private anneeService:AnneeServiceImpl, private etudiantService:EtudiantServiceImpl){}
   
@@ -40,8 +42,18 @@ export class HomeComponent implements OnInit{
     this.anneeService.findAll().subscribe(data=>this.anneeResponse=data);
     this.ecoleService.findAll().subscribe(data=>this.ecoleResponse=data);
     this.user = this.authService.getUser();
+    if(this.user?.role == 'ROLE_ECOLE_ADMIN'){
+      if(!localStorage.getItem('ecoleListe')){
+        localStorage.setItem('ecoleListe', this.user.ecole[0])
+      }
+    }
     this.filter()
     //console.log(this.authService.getUser())
+  }
+
+  changeEcole(index:any){
+    localStorage.setItem('ecoleListe', this.user?.ecole[this.selectedEcole])
+    this.reloadPage()
   }
 
   viewListe(liste:any){
@@ -68,8 +80,8 @@ export class HomeComponent implements OnInit{
     
   }
 
-  archiverListe(liste:any){
-    this.listeService.modifListe(liste).subscribe(
+  archiverListe(liste:any, motif:string='archive'){
+    this.listeService.modifListe(liste, motif).subscribe(
       response=>{
             console.log(response.message)
             this.reloadPage(); 
@@ -79,21 +91,25 @@ export class HomeComponent implements OnInit{
           })
   }
 
-  refresh(page:number=0,keyword:string=""){
+  refresh(page:number=0,keyword:string=this.keyword, annee:number=0, ecole:number = this.ecole){
     if(this.user){
-      this.listeService.findAll(this.user?.id, page,keyword).subscribe(data=>this.response=data);
+      if (typeof window !== 'undefined' && localStorage && this.user?.role == 'ROLE_ECOLE_ADMIN'){
+        this.ecole = parseInt(localStorage.getItem('ecoleListe') || '0', 10);
+        this.listeService.findAll(page,keyword, annee, this.ecole).subscribe(data=>this.response=data);
+      }else{
+        this.listeService.findAll(page,keyword, annee, ecole).subscribe(data=>this.response=data);
+      }
+      
     }
-    this.ecole =0;
+    this.ecole = 0
     this.annee =0;
     this.keyword = '';
   }
   paginate(page:number){
     this.refresh(page)
   }
-  filter(page:number=0, keyword:string=this.keyword, annee:number=0, ecole:number=0){
-    if(this.user){
-      this.listeService.findAll(this.user?.id,page,keyword,annee, ecole).subscribe(data=>this.response=data);
-    }
+  filter(page:number=0, keyword:string=this.keyword, annee:number=0, ecole:number=this.ecole){
+    this.refresh(page, keyword, annee, ecole)
   }
 
   pages(start: number, end: number | undefined = 5): number[] {

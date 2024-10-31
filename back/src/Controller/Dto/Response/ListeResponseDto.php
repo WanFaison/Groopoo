@@ -15,6 +15,7 @@ class ListeResponseDto
     private int $annee;
     private string $ecole;
     private string $date;
+    private bool $isComplete;
 
     public function getId(): ?int
     {
@@ -85,6 +86,18 @@ class ListeResponseDto
         return $this;
     }
 
+    public function isComplete(): ?bool
+    {
+        return $this->isComplete;
+    }
+
+    public function setComplete(bool $isComplete): static
+    {
+        $this->isComplete = $isComplete;
+
+        return $this;
+    }
+
     public function toDto(Liste $liste): ListeResponseDto
     {
         $dto = new ListeResponseDto();
@@ -95,6 +108,7 @@ class ListeResponseDto
         $dto->setAnnee($liste->getAnnee()->getId());
         $dto->setEcole($liste->getEcole()->getLibelle());
         $dto->setDate($liste->getDate()->format('d-m-Y'));
+        $dto->setComplete($liste->isComplete());
 
         return $dto;
     }

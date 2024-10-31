@@ -11,7 +11,7 @@ class GroupeResponseDto
     private int $liste;
     private string $listeT;
     private array $etudiants;
-    private string $note;
+    private float $note;
 
     public function getId(): ?int
     {
@@ -67,11 +67,11 @@ class GroupeResponseDto
         return $this;
     }
 
-    public function getNote(): ?string
+    public function getNote(): ?float
     {
         return $this->note;
     }
-    public function setNote(string $note): static
+    public function setNote(float $note): static
     {
         $this->note = $note;
 
@@ -87,7 +87,8 @@ class GroupeResponseDto
         $dto->setListe($groupe->getListe()->getId());
         $dto->setListeT($groupe->getListe()->getLibelle());
         $dto->setEtudiants($etds);
-        $dto->setNote(strval($groupe->getNote()));
+        $n = $groupe->getNote();
+        $dto->setNote($n !== null ? $n : 0);
 
         return $dto;
     }

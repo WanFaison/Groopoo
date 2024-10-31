@@ -14,6 +14,12 @@ export type RequestResponse = {
     status: number
 }
 
+export type FindRequestResponse<T> = {
+    message: string,
+    result: T,
+    status: number
+}
+
 export interface AuthResponse{
     message: string,
     status: number,

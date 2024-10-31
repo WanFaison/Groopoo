@@ -13,6 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
 class Liste extends AbstractEntity
 {
 
+    #[ORM\Column(nullable: false)]
+    private ?bool $isComplete = false;
+
     /**
      * @var Collection<int, Groupe>
      */
@@ -42,6 +45,19 @@ class Liste extends AbstractEntity
     {
         $this->groupes = new ArrayCollection();
         $this->jours = new ArrayCollection();
+    }
+
+
+    public function isComplete(): ?bool
+    {
+        return $this->isComplete;
+    }
+
+    public function setComplete(bool $isComplete): static
+    {
+        $this->isComplete = $isComplete;
+
+        return $this;
     }
 
     /**

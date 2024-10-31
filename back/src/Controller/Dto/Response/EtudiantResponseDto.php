@@ -16,6 +16,8 @@ class EtudiantResponseDto
     private string $niveau;
     private string $filiere;
     private int $groupe;
+    private float $noteEtd;
+    private float $noteFinal;
 
     public function getId(): ?int
     {
@@ -125,6 +127,26 @@ class EtudiantResponseDto
         return $this;
     }
 
+    public function getNoteEtd(): ?float
+    {
+        return $this->noteEtd;
+    }
+    public function setNoteEtd(float $noteEtd): static
+    {
+        $this->noteEtd = $noteEtd;
+        return $this;
+    }
+
+    public function getNoteFinal(): ?float
+    {
+        return $this->noteFinal;
+    }
+    public function setNoteFinal(float $noteFinal): static
+    {
+        $this->noteFinal = $noteFinal;
+        return $this;
+    }
+
     public function toDto(Etudiant $etudiant): EtudiantResponseDto
     {
         $dto = new EtudiantResponseDto();
@@ -139,6 +161,11 @@ class EtudiantResponseDto
         $dto->setNiveau($etudiant->getClasse()->getNiveau()->getLibelle());
         $dto->setFiliere($etudiant->getClasse()->getFiliere()->getLibelle());
         $dto->setGroupe($etudiant->getGroupe()->getId());
+
+        $cc = $etudiant->getNoteEtd();
+        $ex = $etudiant->getNoteFinal();
+        $dto->setNoteEtd($cc !== null ? $cc : 0);
+        $dto->setNoteFinal($ex !== null ? $ex : 0);
 
         return $dto;
     }

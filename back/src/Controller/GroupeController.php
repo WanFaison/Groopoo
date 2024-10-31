@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Controller\Dto\Request\EtudiantRequestDto;
+use App\Controller\Dto\Request\GroupeRequestDto;
 use App\Controller\Dto\Response\EtudiantResponseDto;
 use App\Controller\Dto\Response\GroupeResponseDto;
 use App\Controller\Dto\RestResponse;
@@ -11,12 +13,14 @@ use App\Entity\Filiere;
 use App\Entity\Groupe;
 use App\Entity\Liste;
 use App\Entity\Niveau;
+use App\Repository\AbsenceRepository;
 use App\Repository\AnneeRepository;
 use App\Repository\ClasseRepository;
 use App\Repository\EcoleRepository;
 use App\Repository\EtudiantRepository;
 use App\Repository\FiliereRepository;
 use App\Repository\GroupeRepository;
+use App\Repository\JourRepository;
 use App\Repository\ListeRepository;
 use App\Repository\NiveauRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -39,8 +43,10 @@ class GroupeController extends AbstractController
     private $groupeRepository;
     private $listeRepository;
     private $entityManager;
+    private $jourRepository;
+    private $absenceRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, EcoleRepository $ecoleRepository, AnneeRepository $anneeRepository, EtudiantRepository $etudiantRepository, NiveauRepository $niveauRepository, FiliereRepository $filiereRepository, ClasseRepository $classeRepository, GroupeRepository $groupeRepository, ListeRepository $listeRepository)
+    public function __construct(EntityManagerInterface $entityManager, AbsenceRepository $absenceRepository, JourRepository $jourRepository, EcoleRepository $ecoleRepository, AnneeRepository $anneeRepository, EtudiantRepository $etudiantRepository, NiveauRepository $niveauRepository, FiliereRepository $filiereRepository, ClasseRepository $classeRepository, GroupeRepository $groupeRepository, ListeRepository $listeRepository)
     {
         $this->entityManager = $entityManager;
         $this->ecoleRepository = $ecoleRepository;
@@ -51,7 +57,89 @@ class GroupeController extends AbstractController
         $this->classeRepository = $classeRepository;
         $this->groupeRepository = $groupeRepository;
         $this->listeRepository = $listeRepository;
+        $this->jourRepository = $jourRepository;
+        $this->absenceRepository = $absenceRepository;
     }
+
+    #[Route('/api/all-groupe', name: 'app_all_groupe', methods: ['GET'])]
+    public function listerAllGroupe(Request $request): JsonResponse
+    {
+        $liste = $request->query->getInt('liste', 0);
+        $groupes = $this->groupeRepository->findAllByListe($this->listeRepository->find($liste));
+        $dtos = [];
+        foreach ($groupes as $g) {
+            $dtos[] = (new GroupeRequestDto())->toDto($g);
+        } 
+        $results = [];
+        foreach ($dtos as $r) {
+            $results[] = [
+                'id' => $r->getId(),
+                'libelle' => $r->getLibelle()
+            ];
+        }
+
+        $totalItems = count($groupes);
+
+        return RestResponse::linearResponse($results, $totalItems, JsonResponse::HTTP_OK);
+    }
+
+    #[Route('/api/etd-groupe', name: 'api_groupe_etd', methods: ['GET'])]
+    public function voirEtdGroupe(Request $request): JsonResponse
+    {
+        $page = $request->query->getInt('page', 0);
+        $limit = $request->query->getInt('limit', 1);
+        $jourId = $request->query->getInt('jour', 0);
+        $groupeId = $request->query->getInt('groupe', 0);
+
+        $jour = $this->jourRepository->find($jourId);
+        $groupes = $this->groupeRepository->findAllByListePaginated($page, $limit, $jour->getListe(), $this->groupeRepository->find($groupeId));
+
+        $results = $this->grpJourDto($groupes, $jour);
+        $totalItems = $groupes->count();
+        $totalPages = ceil($totalItems / $limit);
+
+        return RestResponse::paginateResponse($results, $page, $totalItems, $totalPages, JsonResponse::HTTP_OK);
+    }
+    private function grpJourDto($groups, $jour):array
+    {
+        $dtos = [];
+        foreach($groups as $g){
+            $eds = [];
+            foreach($g->getEtudiant() as $e){
+                $eds[] = (new EtudiantRequestDto())->toDto($e, $this->absenceRepository->findAllByJourAndEtudiant($jour, $e));
+            }
+            $etds = [];
+            foreach($eds as $e){
+                $etds[] = [
+                    'id' => $e->getId(),
+                    'matricule' => $e->getMatricule(),
+                    'nom' => $e->getNom(),
+                    'prenom' => $e->getPrenom(),
+                    'classe' => $e->getClasse(),
+                    'groupe' => $e->getGroupe(),
+                    'emargement1' => $e->getEmargement1(),
+                    'emargement2' => $e->getEmargement2()
+                ];
+            }
+
+            $dtos[] = (new GroupeResponseDto())->toDto($g, $etds);
+        }
+
+        $results = [];
+        foreach($dtos as $d){
+            $results[] = [
+                'id' => $d->getId(),
+                'libelle' => $d->getLibelle(),
+                'liste' => $d->getListe(),
+                'listeT' => $d->getListeT(),
+                'etudiants' => $d->getEtudiants(),
+                'note' => $d->getNote()
+            ];
+        }
+
+        return $results;
+    }
+
 
     #[Route('/api/liste-groupe', name: 'api_groupe_liste', methods: ['GET'])]
     public function listeGroupe(Request $request): JsonResponse
@@ -88,7 +176,9 @@ class GroupeController extends AbstractController
                     'classe' => $e->getClasse(),
                     'niveau' => $e->getNiveau(),
                     'filiere' => $e->getFiliere(),
-                    'groupe' => $e->getGroupe()
+                    'groupe' => $e->getGroupe(),
+                    'noteEtd' => $e->getNoteEtd(),
+                    'noteFinal' => $e->getNoteFinal()
                 ];
             }
 
@@ -109,6 +199,63 @@ class GroupeController extends AbstractController
 
         return $results;
     }
+
+
+    #[Route('/api/notes', name: 'app_notes', methods: ['POST'])]
+    public function setNotes(Request $request): JsonResponse
+    {
+        if (!$request->getContent()) {
+            return new JsonResponse(['error' => 'No content'], 400);
+        }
+        $data = json_decode($request->getContent(), true);
+        $notes = $data['notes'] ?? [];
+
+        if (!is_array($notes)) {
+            return new JsonResponse(['error' => 'Invalid notes data format'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+        $this->manageNotes($notes);
+
+        try {
+            return RestResponse::requestResponse('Data received and notes accounted for', 0, JsonResponse::HTTP_OK);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    private function manageNotes(array $notes)
+    {
+        $grp = $this->groupeRepository->find($notes[0]['id']);
+        $pts = $this->marksPerPeriod($grp->getListe());
+        foreach($notes as $note){
+            $groupe = $this->groupeRepository->find($note['id']);
+            $groupe->setNote($this->checkNote((float) $note['note']));
+            foreach($groupe->getEtudiant() as $etd){
+                $noteEtd = (float) $note['note'];
+                foreach($etd->getAbsences() as $abs){
+                    $noteEtd = $noteEtd - $pts;
+                }
+                $etd->setNoteEtd($this->checkNote($noteEtd));
+                $final = (((float) $note['note'])+$noteEtd)/2.0;
+                $etd->setNoteFinal($this->checkNote($final));
+                $this->etudiantRepository->addOrUpdate($etd);
+            }
+            $this->groupeRepository->addOrUpdate($groupe);
+        }
+    }
+    private function marksPerPeriod(Liste $liste): float
+    {
+        $periods = ($liste->getJours()->count())*2;
+        return  20.0/$periods;
+    }
+    private function checkNote(float $note):float
+    {
+        if($note < 1.0){
+            return 0.0;
+        }
+        return $note;
+    }
+
+
 
     #[Route('/api/recreate-groupe', name: 'api_recreate_groupe', methods: ['GET'])]
     public function reCreateGroups(Request $request): JsonResponse

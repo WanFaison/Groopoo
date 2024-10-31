@@ -6,7 +6,20 @@ export type EtudiantModel = {
     sexe: string,
     nationalite: string,
     classe: string,
-    groupe: number
+    groupe: number,
+    noteEtd: number,
+    noteFinal: number
+}
+
+export type EtudiantJourModel = {
+    id: number,
+    matricule: string,
+    nom: string,
+    prenom: string,
+    classe: string,
+    groupe: number,
+    emargement1: boolean,
+    emargement2: boolean
 }
 
 export interface EtudiantCreate{

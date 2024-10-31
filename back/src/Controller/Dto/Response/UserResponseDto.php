@@ -6,9 +6,10 @@ use App\Entity\User;
 
 class UserResponseDto{
     private int $id;
+    private string $username;
     private string $email;
-    private ?int $ecole = null;
-    private ?string $ecoleT = null;
+    private ?array $ecole = null;
+    private ?array $ecoleT = null;
     private array $roles;
 
     public function getId(): ?int
@@ -21,6 +22,17 @@ class UserResponseDto{
         return $this;
     }
 
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+    public function setUsername(string $username): static
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+    
     public function getEmail(): ?string
     {
         return $this->email;
@@ -32,24 +44,36 @@ class UserResponseDto{
         return $this;
     }
 
-    public function getEcole(): ?int
+    public function getEcole(): ?array
     {
         return $this->ecole;
     }
-    public function setEcole(int $ecole): static
+    public function addEcole(int $ecole): static
     {
-        $this->ecole = $ecole;
+        if ($this->ecole === null) {
+            $this->ecole = [];
+        }
+    
+        if (!in_array($ecole, $this->ecole, true)) { 
+            $this->ecole[] = $ecole;
+        }
 
         return $this;
     }
     
-    public function getEcoleT(): ?string
+    public function getEcoleT(): ?array
     {
         return $this->ecoleT;
     }
-    public function setEcoleT(string $ecoleT): static
+    public function addEcoleT(string $ecoleT): static
     {
-        $this->ecoleT = $ecoleT;
+        if ($this->ecoleT === null) {
+            $this->ecoleT = [];
+        }
+    
+        if (!in_array($ecoleT, $this->ecoleT, true)) { 
+            $this->ecoleT[] = $ecoleT;
+        }
 
         return $this;
     }
@@ -70,11 +94,14 @@ class UserResponseDto{
         $dto = new UserResponseDto();
 
         $dto->setId($user->getId());
+        $dto->setUsername($user->getUsername());
         $dto->setEmail($user->getEmail());
         $dto->setRoles($roles);
-        if($user->getEcole()){
-            $dto->setEcole($user->getEcole()->getId());
-            $dto->setEcoleT($user->getEcole()->getLibelle());
+        if($user->getEcoles()){
+            foreach($user->getEcoles() as $e){
+                $dto->addEcole($e->getId());
+                $dto->addEcoleT($e->getLibelle());
+            }
         }
 
         return $dto;

@@ -13,6 +13,7 @@ import { FormUserUpdateComponent } from './core/pages/form-user-update/form-user
 import { NotFoundComponent } from './core/pages/404/404.component';
 import { JoursComponent } from './core/pages/jours/jours.component';
 import { AttendanceComponent } from './core/pages/attendance/attendance.component';
+import { NotesComponent } from './core/pages/notes/notes.component';
 
 export const routes: Routes = [
     {
@@ -47,6 +48,11 @@ export const routes: Routes = [
     {
         path:"app/attendance",
         component:AttendanceComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path:"app/form-notes",
+        component:NotesComponent,
         canActivate: [AuthGuard]
     },
     {

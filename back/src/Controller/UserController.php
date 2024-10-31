@@ -81,8 +81,10 @@ class UserController extends AbstractController
             if($option1){$user->addRole(Role::ADMIN);}
             else if($option2){
                 $user->addRole(Role::ECOLE_ADMIN);
-                if(($ecole) && ($ecole>0)){
-                    $user->setEcole($ecoleRepository->find($ecole));
+                if(($ecole) && (count($ecole)>0)){
+                    foreach($ecole as $e){
+                        $user->addEcole($ecoleRepository->find($e));
+                    }
                 }
             }
             else{$user->addRole(Role::VISITEUR);}

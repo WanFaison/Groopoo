@@ -41,12 +41,16 @@ class GroupeRepository extends ServiceEntityRepository
         return true;
     }
 
-    public function findAllByListePaginated(int $page, int $limit, ?Liste $liste=null): Paginator
+    public function findAllByListePaginated(int $page, int $limit, ?Liste $liste=null, ?Groupe $groupe=null): Paginator
     {
         $queryBuilder = $this->createQueryBuilder('r');
         if ($liste) {
             $queryBuilder->andWhere('r.liste = :liste')
                          ->setParameter('liste', $liste);
+        }
+        if ($groupe) {
+            $queryBuilder->andWhere('r.id = :id')
+                         ->setParameter('id', $groupe->getId());
         }
         $query = $queryBuilder->andWhere('r.isArchived = :isArchived')
                             ->setParameter('isArchived', false)

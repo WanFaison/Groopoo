@@ -110,7 +110,7 @@ export class GroupsComponent implements OnInit{
   }
 
   modifEnt(ent: any,lib: string) {
-    this.listeService.modifListe(ent, lib).subscribe(
+    this.listeService.modifListe(ent, 'modif', lib).subscribe(
       response=>{
         if(response.data != 0){
           this.error = true;

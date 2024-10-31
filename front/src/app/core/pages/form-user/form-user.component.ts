@@ -25,14 +25,13 @@ export class FormUserComponent implements OnInit{
   addReturnResponse:any;
   profiles:number = 0;
   error:boolean = false;
-  ecoleId:number = 0;
   op2:boolean = false;
   user?:LogUser
   constructor(private router:Router, private http:HttpClient, private authService:AuthServiceImpl, private formBuilder: FormBuilder, private apiService:ApiService, private ecoleService:EcoleServiceImpl) 
   {
     this.profileForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      ecole: ['', Validators.required],
+      ecole: [[], Validators.required],
       option1: false,
       option2: false,
       option3: false,
@@ -50,9 +49,7 @@ export class FormUserComponent implements OnInit{
       if (typeof window !== 'undefined' && window.localStorage) {
         localStorage.setItem('profileForm', JSON.stringify(this.profileForm.value));
       }
-      this.ecoleId = this.profileForm.get('ecole')?.value;
       this.op2 = this.profileForm.get('option2')?.value;
-      //console.log(this.ecoleId, this.op2)
     });
     
     console.log(this.profileForm.value);
@@ -60,6 +57,9 @@ export class FormUserComponent implements OnInit{
 
   get emailControl() {
     return this.profileForm.get('email');
+  }
+  get ecoleId(): any[] {
+    return this.profileForm.get('ecole')?.value || [];
   }
 
   onSubmit() {

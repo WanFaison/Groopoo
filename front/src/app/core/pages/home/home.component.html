@@ -2,6 +2,16 @@
     <app-nav></app-nav>
     
     <div class="mt-5 row justify-content-center align-items-center h-100">
+        <div *ngIf="user?.role == 'ROLE_ECOLE_ADMIN'" class="flex-center my-3">
+          <div class="input-group col-md-5">
+              <select [(ngModel)]="selectedEcole" (ngModelChange)="changeEcole($event)" 
+              class="form-select col-md-6" aria-label=".form-select-sm example">
+                <option selected value="0">gèrer ecole...</option>
+                <option *ngFor="let item of user?.ecoleT; let i = index" [value]="i">{{item}}</option>
+              </select>
+          </div>
+        </div>
+
         <div class="flex-center my-3">
             <h4 class="underline-bold">Liste des groupes deja crées</h4>
         </div>
@@ -39,7 +49,11 @@
                 <tbody>
                   @for (item of response?.results; track $index){
                    <tr>
-                      <th scope="row">{{item.libelle}}</th>
+                      <th scope="row">
+                        {{item.libelle}}
+                        <i *ngIf="user?.role != 'ROLE_VISITEUR' && item.isComplet"
+                         class="bi bi-lock-fill" style="color: black;"></i>
+                      </th>
                       <td>{{item.date}}</td>
                       <td>
                         <a (click)="viewListe(item.id)" class="btn btn-info me-2" 
@@ -49,8 +63,18 @@
                         (click)="useListe(item.id)" class="btn btn-secondary me-2" 
                         role="button" style="color: white;">
                           Réutiliser</a>
+                        <a *ngIf="user?.role != 'ROLE_VISITEUR' && !item.isComplet"
+                        (click)="liste = item.id;" class="btn btn-danger me-2"
+                        data-bs-toggle="modal" data-bs-target="#ynvModal" 
+                        role="button" style="color: white;">
+                          Verrouiller</a>
+                        <a *ngIf="user?.role == 'ROLE_ADMIN' && item.isComplet"
+                        (click)="archiverListe(item.id, 'deverr')" class="btn btn-danger me-2"
+                        role="button" style="color: white;">
+                          Deverrouiller</a>
                         <a *ngIf="user?.role == 'ROLE_ADMIN'"
-                        (click)="archiverListe(item.id)" class="btn btn-danger" 
+                        (click)="liste = item.id;" class="btn btn-danger"
+                        data-bs-toggle="modal" data-bs-target="#ynModal" 
                         role="button" style="color: white;">
                           Supprimer</a>
                       </td>
@@ -84,6 +108,53 @@
             </ul>
           </nav>
         </div>    
+    </div>
+
+
+    <!-- Modal yn-->
+    <div class="modal fade" id="ynModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+      <div class="modal-content row">
+          <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Suppression</h5>
+              <button type="button" class="btn-close"
+              (click)="liste = 0" 
+              data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <h4 class="form-label custom-label">Voulez vous supprimer cette liste?</h4>
+              <p>NB: la suppression de cette liste, causera la suppression de toute entite correspondantes </p>
+          </div>
+          <div class="modal-footer d-flex">
+              <button (click)="archiverListe(liste)" type="button" class="btn btn-success">Oui</button>
+              <button type="button" class="btn btn-secondary" 
+              (click)="liste = 0" data-bs-dismiss="modal">Non</button>
+          </div>
+      </div>
+      </div>
+    </div>
+
+    <!-- Modal ynv-->
+    <div class="modal fade" id="ynvModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+      <div class="modal-content row">
+          <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Verrouillage</h5>
+              <button type="button" class="btn-close"
+              (click)="liste = 0" 
+              data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <h4 class="form-label custom-label">Voulez vous verrouiller cette liste?</h4>
+              <p>NB: en verrouillant cette liste, on suppose que l'événement correspondant est terminé; par conséquent d'autres modifications ne seront pas autorisées </p>
+          </div>
+          <div class="modal-footer d-flex">
+              <button (click)="archiverListe(liste, 'verr')" type="button" class="btn btn-success">Oui</button>
+              <button type="button" class="btn btn-secondary" 
+              (click)="liste = 0" data-bs-dismiss="modal">Non</button>
+          </div>
+      </div>
+      </div>
     </div>
 
     <app-foot></app-foot>

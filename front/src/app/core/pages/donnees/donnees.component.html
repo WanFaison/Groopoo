@@ -5,14 +5,14 @@
         <div class="flex-center my-3">
             <div class="input-group col-md-2">
                 <select [(ngModel)]="state" (ngModelChange)="changeState($event)" class="form-select col-md-6" aria-label=".form-select-sm example">
-                  <option selected value="0">Annee</option>
+                  <option selected value="0">Année</option>
                   <option value="1">Ecole</option>
                 </select>
             </div>
         </div>
         <div class="flex-center my-3">
-            <h4 *ngIf="state == 0" class="underline-bold">Gerer Annees</h4>
-            <h4 *ngIf="state == 1" class="underline-bold">Gerer Ecoles</h4>
+            <h4 *ngIf="state == 0" class="underline-bold">Gérer Années</h4>
+            <h4 *ngIf="state == 1" class="underline-bold">Gérer Ecoles</h4>
         </div>
 
         <div class="flex-center my-3">
@@ -21,11 +21,11 @@
                 Filtrer
             </a>
             <a class="btn btn-secondary col-md-1 me-2" (click)="refresh(); keyword = '' " role="button" style="color: white;">
-                Reinitialiser
+                Réinitialiser
             </a>
             <a class="btn btn-info col-md-1" data-bs-toggle="modal" data-bs-target="#addModal" 
                 role="button" style="color: white;">
-                Ajouter/Creer
+                Ajouter/Créer
             </a>
         </div>
 
@@ -33,7 +33,7 @@
             <table class="table col-md-4">
                 <thead class="thead-dark">
                   <tr>
-                    <th scope="col">Annee</th>
+                    <th scope="col">Année</th>
                     <th scope="col">Action</th>
                   </tr>
                 </thead>
@@ -142,12 +142,12 @@
         <div class="modal-dialog">
         <div class="modal-content row">
             <div class="modal-header">
-                <h5 *ngIf="state == 0" class="modal-title" id="exampleModalLabel">Ajouter Annee</h5>
+                <h5 *ngIf="state == 0" class="modal-title" id="exampleModalLabel">Ajouter Année</h5>
                 <h5 *ngIf="state == 1" class="modal-title" id="exampleModalLabel">Ajouter Ecole</h5>
                 <button (click)="reloadPage()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <label *ngIf="state == 0" class="form-label custom-label" for="libelle">Libelle de l'annee</label>
+                <label *ngIf="state == 0" class="form-label custom-label" for="libelle">Libelle de l'année</label>
                 <label *ngIf="state == 1" class="form-label custom-label" for="libelle">Nom de l'ecole</label>
                 <input required id="libelle" #libelleInput="ngModel" [(ngModel)]="libelle" 
                 name="libelle" class="form-control form-control-lg custom-input" placeholder="Entrez le nom..." />
@@ -174,12 +174,12 @@
         <div class="modal-dialog">
         <div class="modal-content row">
             <div class="modal-header">
-                <h5 *ngIf="state == 0" class="modal-title" id="exampleModalLabel">Modifier Annee</h5>
+                <h5 *ngIf="state == 0" class="modal-title" id="exampleModalLabel">Modifier Année</h5>
                 <h5 *ngIf="state == 1" class="modal-title" id="exampleModalLabel">Modifier Ecole</h5>
                 <button (click)="libelle = ''; error = false;" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <label *ngIf="state == 0" class="form-label custom-label" for="libelle">Libelle de l'annee</label>
+                <label *ngIf="state == 0" class="form-label custom-label" for="libelle">Libelle de l'année</label>
                 <label *ngIf="state == 1" class="form-label custom-label" for="libelle">Nom de l'ecole</label>
                 <input required id="libelle" #libelleInput="ngModel" [(ngModel)]="libelle" 
                 name="libelle" class="form-control form-control-lg custom-input" placeholder="Entrez le nom..." />
@@ -209,7 +209,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <h4 *ngIf="state == 0" class="form-label custom-label">Voulez vous supprimer cette annee?</h4>
+                <h4 *ngIf="state == 0" class="form-label custom-label">Voulez vous supprimer cette année?</h4>
                 <h4 *ngIf="state == 1" class="form-label custom-label">Voulez vous supprimer cette ecole?</h4>
                 <p>NB: la suppression de cette entite, causera la suppression de toute listes correspondantes </p>
             </div>

@@ -38,6 +38,16 @@ class AnneeRepository extends ServiceEntityRepository
         ->getOneOrNullResult();
     }
 
+    public function findAllUnarchived(): array
+    {
+        return $this->createQueryBuilder('n')
+            ->where('n.isArchived = :isArchived')
+            ->setParameter('isArchived', false)
+            ->orderBy('n.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function checkExist(string $libelle): bool
     {
         $ent = $this->findByLibelle($libelle);

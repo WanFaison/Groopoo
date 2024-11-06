@@ -23,6 +23,10 @@ export class ListeServiceImpl implements ListeService{
         // this.testString = new Date('2022-02-12').toISOString().slice(0,10);
     }
 
+    getTemplate(): Observable<any> {
+        return this.http.get(`${environment.APIURL}/template`, { responseType: 'blob' });
+    }
+
     setNotes(data: any): Observable<any> {
         const headers = new HttpHeaders({
             'Content-Type': 'application/json'

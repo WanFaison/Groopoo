@@ -5,5 +5,6 @@ export type ListeModel = {
     annee: number,
     ecole: string,
     date: string,
+    count: number,
     isComplet: boolean
 }

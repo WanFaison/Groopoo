@@ -18,6 +18,7 @@
                 (click)="onSubmit()" role="button" style="color: white;">
                     Enregistrer les notes
                 </a>
+                <button (click)="printXls('results')" class="btn btn-info col-md-4 me-2">Exporter Resultats</button>
                 <a class="btn btn-secondary me-2"
                 [routerLink]="['/app/view-jours']" routerLinkActive="active"
                 role="button" style="color: white;">
@@ -29,7 +30,7 @@
                 role="button" style="color: white;">
                     Verrouiller la liste</a>
                 <a class="btn btn-danger col-md-5"
-                *ngIf="user?.role == 'ROLE_ADMIN' && listeResponse?.results?.isComplet"
+                *ngIf="listeResponse?.results?.isComplet"
                 (click)="archiverListe(liste, 'deverr')"
                 role="button" style="color: white;">
                     Deverrouiller la liste</a>

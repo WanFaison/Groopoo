@@ -102,6 +102,7 @@ class ListeController extends AbstractController
                     'annee' => $dto->getAnnee(),
                     'ecole' => $dto->getEcole(),
                     'date' => $dto->getDate(),
+                    'count' => $dto->getCount(),
                     'isComplet' => $dto->isComplete()
                 ];
         }
@@ -135,12 +136,35 @@ class ListeController extends AbstractController
         return DtoRestResponse::requestResponse('List has been modified', 0, JsonResponse::HTTP_OK);
     }
 
+    #[Route('/api/template', name: 'api_template', methods: ['GET'])]
+    public function makeTemplateSheet():BinaryFileResponse
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+                
+        $row = 1;
+        $sheet->setCellValue('A'.$row, 'Matricule');
+        $sheet->setCellValue('B'.$row, 'Nom');
+        $sheet->setCellValue('C'.$row, 'Prenom');
+        $sheet->setCellValue('D'.$row, 'Sexe');
+        $sheet->setCellValue('E'.$row, 'Classe');
+        $sheet->setCellValue('F'.$row, 'Niveau');
+        $sheet->setCellValue('G'.$row, 'Filiere');
+
+        $writer = new Xlsx($spreadsheet);
+        $temp_file = tempnam(sys_get_temp_dir(), 'Band-It template.xlsx');
+        $writer->save($temp_file);
+
+        return new BinaryFileResponse($temp_file);
+    }
+
     #[Route('/api/liste-export', name: 'api_liste_export', methods: ['GET'])]
     public function exportExcel(Request $request): BinaryFileResponse
     {
+        $motif = $request->query->getString('motif', '');
         $listeId = $request->query->getInt('liste', 0);
         $liste = $this->listeRepository->find($listeId);
-        $excelFile = $this->makeSheet($liste);
+        $excelFile = $this->makeSheet($liste, $motif);
 
         return new BinaryFileResponse($excelFile);
     }
@@ -160,7 +184,7 @@ class ListeController extends AbstractController
         return $response;
     }
 
-    public function makeSheet($liste)
+    public function makeSheet($liste, $motif)
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -169,17 +193,29 @@ class ListeController extends AbstractController
         $row = 1;
         foreach ($groupes as $group) {
             $sheet->setCellValue('A'.$row, $group->getLibelle());
+            if($motif == 'results'){
+                $sheet->setCellValue('B'.$row, $group->getNote());
+            }
             $row++;
             $sheet->setCellValue('A'.$row, 'Nom');
             $sheet->setCellValue('B'.$row, 'Prenom');
             $sheet->setCellValue('C'.$row, 'Classe');
-            $sheet->setCellValue('D'.$row, 'Emargement 1');
-            $sheet->setCellValue('E'.$row, 'Emargement 2');
+
+            if($motif == 'results'){
+                $sheet->setCellValue('D'.$row, 'Note');
+            }else{
+                $sheet->setCellValue('D'.$row, 'Emargement 1');
+                $sheet->setCellValue('E'.$row, 'Emargement 2');
+            }
+            
             foreach ($group->getEtudiant() as $etd) {
                 $row++;
                 $sheet->setCellValue('A'.$row, $etd->getNom());
                 $sheet->setCellValue('B'.$row, $etd->getPrenom());
                 $sheet->setCellValue('C'.$row, $etd->getClasse()->getLibelle());
+                if($motif == 'results'){
+                    $sheet->setCellValue('D'.$row, $etd->getNoteFinal());
+                }
             }
             $row+=2;
         }

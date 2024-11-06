@@ -13,7 +13,7 @@
         </div>
 
         <div class="flex-center my-3">
-            <h4 class="underline-bold">Liste des groupes deja crées</h4>
+            <h4 class="underline-bold">Listes existantes</h4>
         </div>
 
         <div class="flex-center my-3">
@@ -68,7 +68,7 @@
                         data-bs-toggle="modal" data-bs-target="#ynvModal" 
                         role="button" style="color: white;">
                           Verrouiller</a>
-                        <a *ngIf="user?.role == 'ROLE_ADMIN' && item.isComplet"
+                        <a *ngIf="item.isComplet"
                         (click)="archiverListe(item.id, 'deverr')" class="btn btn-danger me-2"
                         role="button" style="color: white;">
                           Deverrouiller</a>

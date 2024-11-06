@@ -46,12 +46,16 @@ export class GroupsComponent implements OnInit{
     } 
   }
 
-  printXls(){
-    this.apiService.getExcelSheet(this.liste).subscribe((data: Blob) => {
+  printXls(motif:string = ''){
+    this.apiService.getExcelSheet(this.liste, motif).subscribe((data: Blob) => {
       const downloadUrl = window.URL.createObjectURL(data);
       const link = document.createElement('a');
       link.href = downloadUrl;
-      link.download = `${this.listeResponse?.results.libelle}.xlsx`;
+      if(motif == 'results'){
+        link.download = `${this.listeResponse?.results.libelle} Resultats.xlsx`;
+      }else{
+        link.download = `${this.listeResponse?.results.libelle}.xlsx`;
+      }
       link.click();
     });
   }
@@ -140,7 +144,6 @@ export class GroupsComponent implements OnInit{
 
   clearData(){
     if (typeof window !== 'undefined' && localStorage){
-      localStorage.removeItem('ecoleListe');
       localStorage.removeItem('tailleGrp')
       localStorage.removeItem('nomGrp');
       localStorage.removeItem('anneeListe');

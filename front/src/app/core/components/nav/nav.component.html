@@ -7,7 +7,7 @@
     <div class="collapse navbar-collapse" id="navbarsExample04">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
-          <a class="nav-link" [routerLink]="['/app/home']" routerLinkActive="active">Acceuil <span class="sr-only">(current)</span></a>
+          <a class="nav-link" [routerLink]="['/app/home']" routerLinkActive="active">Accueil <span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item" *ngIf="user?.role != 'ROLE_VISITEUR'">
           <a class="nav-link text-dark" [routerLink]="['/app/liste-membre']" routerLinkActive="active">Créer une liste</a>

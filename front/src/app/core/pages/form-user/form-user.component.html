@@ -1,7 +1,7 @@
 <div class="container-fluid min-vh-100">
     <app-nav></app-nav>
 
-    <div class="mt-5 row justify-content-center align-items-center h-100">
+    <div class="mt-2 row justify-content-center align-items-center h-100">
         <div class="flex-center my-3">
             <h4 class="underline-bold">Créer Utilisateur</h4>
         </div>
@@ -21,6 +21,7 @@
                 </div>
                 <div class="mb-4">
                     <label class="form-label" for="email">Ecole:</label>
+                    <p class="fst-italic"><small>Maintenez le bouton Ctrl/Command(Cmd) enfoncé pour activer la sélection multiple.</small></p>
                     <select multiple formControlName="ecole" class=" form-select form-select-sm  me-2" aria-label=".form-select-sm example">
                         <option [value]="0" selected>Tous</option>
                         <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>

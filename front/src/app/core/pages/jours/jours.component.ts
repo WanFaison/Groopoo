@@ -48,7 +48,15 @@ export class JoursComponent implements OnInit{
   }
 
   archJr() {
-    this.jourService.modifJr(this.jrs)
+    this.jourService.modifJr(this.jrs).subscribe(
+      response=>{
+        console.log(response)
+        this.reloadPage(); 
+      },        
+      error => {
+            console.error('Error sending data', error);
+      }
+    )
   }
 
   consAbs(jr: any) {

@@ -77,9 +77,10 @@ class EcoleController extends AbstractController
                     'libelle' => $dto->getLibelle(),
                     'isArchived' => $dto->isArchived()
                 ];
+            return RestResponse::linearResponse($dto, 1, JsonResponse::HTTP_OK);
         }
 
-        return RestResponse::linearResponse($dto, 1, JsonResponse::HTTP_OK);
+        return RestResponse::requestResponse('null', 0, JsonResponse::HTTP_OK);
     }
 
     #[Route('/api/add-ecole', name: 'api_add_ecole', methods: ['POST'])]

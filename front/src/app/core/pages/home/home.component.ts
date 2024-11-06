@@ -122,7 +122,6 @@ export class HomeComponent implements OnInit{
 
   clearData(){
     if (typeof window !== 'undefined' && localStorage){
-      localStorage.removeItem('ecoleListe');
       localStorage.removeItem('tailleGrp')
       localStorage.removeItem('nomGrp');
       localStorage.removeItem('anneeListe');

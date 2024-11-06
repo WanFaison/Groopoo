@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Jour;
+use App\Entity\Liste;
 use DateTimeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,6 +19,18 @@ class JourRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Jour::class);
         $this->entityManager = $entityManager;
+    }
+
+    public function findAllByListeAndUnarchived(?Liste $liste): ?array
+    {
+        return $this->createQueryBuilder('e')
+        ->where('e.liste = :liste') 
+        ->andWhere('e.isArchived = :isArchived') 
+        ->setParameter('liste', $liste)
+        ->setParameter('isArchived', false)
+        ->orderBy('e.id', 'ASC')
+        ->getQuery()
+        ->getResult();
     }
 
     public function addOrUpdate(Jour $entity): void

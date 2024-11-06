@@ -38,6 +38,11 @@ class EtudiantRepository extends ServiceEntityRepository
         return true;
     }
 
+    // public function findAllUnarchived(): array
+    // {
+
+    // }
+
     public function findByMatricule(string $matricule): ?Etudiant
     {
         return $this->createQueryBuilder('e')

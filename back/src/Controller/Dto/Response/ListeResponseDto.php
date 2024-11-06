@@ -15,6 +15,7 @@ class ListeResponseDto
     private int $annee;
     private string $ecole;
     private string $date;
+    private int $count;
     private bool $isComplete;
 
     public function getId(): ?int
@@ -86,6 +87,18 @@ class ListeResponseDto
         return $this;
     }
 
+    public function getCount(): ?int
+    {
+        return $this->count;
+    }
+
+    public function setCount(int $count): static
+    {
+        $this->count = $count;
+
+        return $this;
+    }
+
     public function isComplete(): ?bool
     {
         return $this->isComplete;
@@ -108,6 +121,7 @@ class ListeResponseDto
         $dto->setAnnee($liste->getAnnee()->getId());
         $dto->setEcole($liste->getEcole()->getLibelle());
         $dto->setDate($liste->getDate()->format('d-m-Y'));
+        $dto->setCount($liste->getGroupes()->count());
         $dto->setComplete($liste->isComplete());
 
         return $dto;

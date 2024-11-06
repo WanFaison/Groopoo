@@ -19,6 +19,7 @@ import { AnneeServiceImpl } from '../../services/impl/annee.service.impl';
 import { LogUser } from '../../models/user.model';
 import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 import { count } from 'node:console';
+import { ListeServiceImpl } from '../../services/impl/list.service.impl';
 
 
 @Component({
@@ -41,7 +42,7 @@ export class MembresComponent implements OnInit{
   error: boolean = false;
   returnResponse?: ReturnResponse;
   user?:LogUser
-  constructor(private router:Router, private authService:AuthServiceImpl, private ecoleService:EcoleServiceImpl, private apiService: ApiService, private anneeService:AnneeServiceImpl) { }
+  constructor(private router:Router, private listeService:ListeServiceImpl, private authService:AuthServiceImpl, private ecoleService:EcoleServiceImpl, private apiService: ApiService, private anneeService:AnneeServiceImpl) { }
 
   ngOnInit(): void {
     //this.clearData()
@@ -57,6 +58,16 @@ export class MembresComponent implements OnInit{
     this.loadProps();
   }
 
+  printTemplate(){
+    this.listeService.getTemplate().subscribe((data: Blob) => {
+      const downloadUrl = window.URL.createObjectURL(data);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = 'Band-It template.xlsx';
+      link.click();
+    });
+  }
+
   reloadPage() {
     window.location.reload();
   }
@@ -66,12 +77,15 @@ export class MembresComponent implements OnInit{
   }
   saveTaille(value: any) {
     localStorage.setItem('tailleGrp', value);
+    this.loadProps()
   }
   saveNom(value: any) {
     localStorage.setItem('nomGrp', value);
+    this.loadProps()
   }
   saveAnnee(value: any) {
     localStorage.setItem('anneeListe', value);
+    this.loadProps()
   }
 
   loadProps(){

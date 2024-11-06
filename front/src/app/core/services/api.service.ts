@@ -40,8 +40,8 @@ export class ApiService {
     return this.http.post(`${environment.APIURL}/modif-user/${id}`, data, {headers});
   }
 
-  getExcelSheet(liste:number): Observable<any> {
-    return this.http.get(`${this.apiUrlXls}?liste=${liste}`, { responseType: 'blob' });
+  getExcelSheet(liste:number, motif:string = ''): Observable<any> {
+    return this.http.get(`${this.apiUrlXls}?liste=${liste}&motif=${motif}`, { responseType: 'blob' });
   }
 
   getPdf(liste: number, options?: { observe: 'response', responseType: 'blob' }): Observable<any> {

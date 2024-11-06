@@ -12,6 +12,7 @@ import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 import { GroupeServiceImpl } from '../../services/impl/groupe.service.impl';
 import { ListeServiceImpl } from '../../services/impl/list.service.impl';
 import { response } from 'express';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-notes',
@@ -27,7 +28,7 @@ export class NotesComponent implements OnInit{
   groupResponse?: RestResponse<GroupeModel[]>;
   user?:LogUser;
   msg:string = ''
-  constructor(private router:Router, private fb: FormBuilder, private groupeService:GroupeServiceImpl, private listeService:ListeServiceImpl, private authService:AuthServiceImpl){}
+  constructor(private router:Router, private apiService:ApiService, private fb: FormBuilder, private groupeService:GroupeServiceImpl, private listeService:ListeServiceImpl, private authService:AuthServiceImpl){}
 
   ngOnInit(): void {
     this.user = this.authService.getUser();
@@ -81,6 +82,16 @@ export class NotesComponent implements OnInit{
         this.msg = 'Aucune note modifiée'
       }
     }
+  }
+
+  printXls(motif:string = ''){
+    this.apiService.getExcelSheet(this.liste, motif).subscribe((data: Blob) => {
+      const downloadUrl = window.URL.createObjectURL(data);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `${this.listeResponse?.results.libelle} Resultats.xlsx`;
+      link.click();
+    });
   }
 
   archiverListe(liste:any, motif:string='archive'){

@@ -19,6 +19,7 @@
                     </select>
                 </div>
                 <a id="orange-btn" class="btn btn-success col-md-5 me-5" 
+                [class.disabled] = "listeResponse?.results?.isComplet"
                 (click)="setAbsences()" role="button" style="color: white;">
                     Confirmer les absences</a>
                 <a class="btn btn-secondary"

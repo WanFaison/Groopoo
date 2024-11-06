@@ -3,8 +3,8 @@
 
     <div class="mt-5 row justify-content-center align-items-center h-100">
         <div class="d-flex flex-column align-items-center my-3">
-            <h4 class="underline-bold">Créer une liste des membres</h4>
-            <p class="fst-italic">Choisir l'école et taille des groupes avant de poser les critères</p>
+            <h4 class="underline-bold">Créer une nouvelle liste</h4>
+            <p class="fst-italic">Pour créer des groupes à partir de cette nouvelle liste, veuillez compléter les champs ci-dessous: </p>
         </div>
         <div class="flex-center my-3">
             <div class="file-upload w-25">
@@ -25,14 +25,14 @@
             </div>
             <div class="input-group col-md-3">
                 <select [(ngModel)]="annee" (ngModelChange)="saveAnnee($event)" class="form-select col-md-6" aria-label=".form-select-sm example">
-                  <option selected value="0">Choisir l'annee...</option>
+                  <option selected value="0">Choisir l'année...</option>
                   <option *ngFor="let item of anneeResponse?.results" [value]="item.id">{{ item.libelle }}</option>
                 </select>
             </div>
         </div>
 
         <div *ngIf="error" class="flex-center align-items-center">
-            <p class="fw-bold text-danger">Erreur de la liste d'etudiants, l'annee, les criteres, l'ecole ou nom de liste </p>
+        <p class="fw-bold text-danger">Erreur - Veuillez remplir tous les champs requis : Année, Critères, École et Nom de liste. </p>
         </div>
 
         <div class="flex-center my-3">
@@ -53,11 +53,14 @@
             <a [routerLink]="['/app/form-critere']" class="btn btn-secondary text-white me-3" 
             role="button" [class.disabled]="ecole === 0 || tailleGrp < 2 || annee == 0">Modifier critères</a>
             <a (click)="createGroups()" class="btn btn-info text-white me-3" 
-            role="button" [class.disabled]="ecole === 0 || annee == 0 || tailleGrp < 2 || criteres.length > 0 || etudiants.length < 1">Aléatoire</a>
+            role="button" [class.disabled]="ecole === 0 || annee == 0 || tailleGrp < 2 || criteres.length > 0 || etudiants.length < 1">
+            Aléatoire</a>
+            <a (click)="printTemplate()" class="btn btn-info text-white me-3" 
+            role="button">Template Excel</a>
         </div>
         <div class="flex-center mt-2 w-50 mx-auto" style="margin-bottom: 2rem;">
             <a (click)="clearEtd()" class="btn btn-secondary text-white me-3" 
-            role="button">Réinitialiser les etudiants</a>
+            role="button">Vider tableau</a>
         </div>
 
         <div class="flex-center">

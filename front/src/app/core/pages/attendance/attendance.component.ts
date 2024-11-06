@@ -28,6 +28,7 @@ export class AttendanceComponent implements OnInit{
   liste: number = 0;
   grp:number = 0;
   groupResponse?: RestResponse<GroupeJourModel[]>;
+  listeResponse?: RestResponse<ListeModel>;
   grpReq?:RestResponse<GroupeReqModel[]>
   jourResponse?:FindRequestResponse<JourModel>
   user?:LogUser;
@@ -49,6 +50,7 @@ export class AttendanceComponent implements OnInit{
       this.jourService.findJour(this.jour).subscribe(data=>this.jourResponse=data)
       this.groupeService.findAllReq(this.liste).subscribe(data=>this.grpReq=data)
       this.groupeService.findByJour(this.jour).subscribe(data=>this.groupResponse=data)
+      this.listeService.findById(this.liste).subscribe(data=>this.listeResponse=data);
       this.refresh(this.jour);
     }
   }

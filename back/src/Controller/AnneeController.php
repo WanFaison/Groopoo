@@ -18,7 +18,7 @@ class AnneeController extends AbstractController
     #[Route('/api/annee', name: 'app_annee', methods: ['GET'])]
     public function listerAnnee(AnneeRepository $anneeRepository): JsonResponse
     {
-        $annees = $anneeRepository->findAll();
+        $annees = $anneeRepository->findAllUnarchived();
 
         $dtos = [];
         foreach ($annees as $an) {

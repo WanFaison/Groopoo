@@ -49,7 +49,7 @@ class JourController extends AbstractController
         $liste = $this->listeRepository->find($listeId);
 
         $dtos=[];
-        foreach($liste->getJours()->toArray() as $j){
+        foreach($this->jourRepository->findAllByListeAndUnarchived($liste) as $j){
             $dtos[] = (new JourResponseDto())->toDto($j);
         }
         $results = [];
@@ -101,6 +101,7 @@ class JourController extends AbstractController
         $jourId = $request->query->getInt('jour', 0);
 
         $jour = $this->jourRepository->find($jourId);
+        $liste = $jour->getListe();
         $abs = $jour->getAbsences();
         if($abs->count() >0){
             foreach($abs as $a){
@@ -110,7 +111,33 @@ class JourController extends AbstractController
         }
         $jour->setArchived(true);
         $this->jourRepository->addOrUpdate($jour);
+        $this->reOrderJours($this->jourRepository->findAllByListeAndUnarchived($liste));
         
         return RestResponse::requestResponse('Jour has been updated', 0, JsonResponse::HTTP_OK);
+    }
+
+    public function sortByDate(array $jrs): array
+    {
+        usort($jrs, function ($a, $b) {
+            $dateA = $a->getDate(); 
+            $dateB = $b->getDate();
+
+            if ($dateA === null) return 1; // Push null dates to the end
+            if ($dateB === null) return -1;
+            
+            return $dateA <=> $dateB;
+        });
+
+        return $jrs;
+    }
+
+    public function reOrderJours(array $jrs)
+    {
+        $i = 1;
+        foreach($this->sortByDate($jrs) as $j){
+            $j->setLibelle('Journée '.$i);
+            $this->jourRepository->addOrUpdate($j);
+            $i++;
+        }
     }
 }

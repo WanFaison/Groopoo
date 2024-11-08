@@ -65,26 +65,33 @@ class AbsenceController extends AbstractController
     private function manageAbsences($jourId, array $absences)
     {
         $jour = $this->jourRepository->find($jourId);
+        $i = 0;
         foreach($absences as $abs){
             $etudiant = $this->etudiantRepository->find($abs['id']);
             $etdAbs = $this->absenceRepository->findAllByJourAndEtudiant($jour, $etudiant);
             if((!$abs['emargement1']) && (!$this->checkExistOnJour('emargement1', $etdAbs))){
                 $newAbsence = new Absence();
-                $newAbsence->setJour($jour);
-                $newAbsence->setEtudiant($etudiant);
-                $newAbsence->setArchived(false);
-                $newAbsence->setType(AbsenceType::Emargement_1);
-                $this->absenceRepository->addOrUpdate($newAbsence);
+                $newAbsence->setJour($jour)
+                            ->setEtudiant($etudiant)
+                            ->setArchived(false)
+                            ->setType(AbsenceType::Emargement_1);
+                $this->entityManager->persist($newAbsence);
+                $i++;
             }
             if((!$abs['emargement2']) && (!$this->checkExistOnJour('emargement2', $etdAbs))){
                 $newAbsence = new Absence();
-                $newAbsence->setJour($jour);
-                $newAbsence->setEtudiant($etudiant);
-                $newAbsence->setArchived(false);
-                $newAbsence->setType(AbsenceType::Emargement_2);
-                $this->absenceRepository->addOrUpdate($newAbsence);
+                $newAbsence->setJour($jour)
+                            ->setEtudiant($etudiant)
+                            ->setArchived(false)
+                            ->setType(AbsenceType::Emargement_2);
+                $this->entityManager->persist($newAbsence);
+                $i++;
+            }
+            if($i % 10 === 0){
+                $this->entityManager->flush();
             }
         }
+        $this->entityManager->flush();
     }
     public function checkExistOnJour(string $typeToCheck, ?array $etdAbsences=null): bool
     {

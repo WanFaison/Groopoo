@@ -238,8 +238,9 @@ class GroupeController extends AbstractController
                 $etd->setNoteEtd($this->checkNote($noteEtd));
                 $final = (((float) $note['note']) + ($this->checkNote($noteEtd)))/2.0;
                 $etd->setNoteFinal($this->checkNote($final));
-                $this->etudiantRepository->addOrUpdate($etd);
+                $this->entityManager->persist($etd);
             }
+            $this->entityManager->flush();
             $this->groupeRepository->addOrUpdate($groupe);
         }
     }
@@ -289,27 +290,97 @@ class GroupeController extends AbstractController
                 $group = [];
                 $this->clearEtds($g);
 
-                foreach ($criteres['filiere'] as $crit) {
-                    if(isset($crit['choix']) || trim($crit['choix']) != ''){
-                        if($crit['choix'] == -1){
-                            $fnum = 0;
-                            while((count($group) < $taille) && (count($etds) > 0)){
-                                if(!$this->checkLoad($group, 'filiere', $etds[$fnum]->getClasse()->getFiliere(), 1)){
-                                    $group[] = $etds[$fnum];
-                                    $g->addEtudiant($group[count($group) - 1]);
-                                    unset($etds[$fnum]);
-                                    $etds = array_values($etds);
-                                    $fnum--;
+                if(!empty($criteres)){
+                    foreach ($criteres['filiere'] as $crit) {
+                        if(isset($crit['choix']) || trim($crit['choix']) != ''){
+                            if($crit['choix'] == -1){
+                                $fnum = 0;
+                                while((count($group) < $taille) && (count($etds) > 0)){
+                                    if(!$this->checkLoad($group, 'filiere', $etds[$fnum]->getClasse()->getFiliere(), 1)){
+                                        $group[] = $etds[$fnum];
+                                        $g->addEtudiant($group[count($group) - 1]);
+                                        unset($etds[$fnum]);
+                                        $etds = array_values($etds);
+                                        $fnum--;
+                                    }
+                                    $fnum++;
                                 }
-                                $fnum++;
+                            }else{
+                                $tailleLeft = $this->checkTaille($crit['taille']);
+                                $filiere = $this->filiereRepository->find($crit['choix']);
+                                $filteredEtds = array_filter($etds, function (Etudiant $etudiant) use ($filiere) {
+                                                return $etudiant->getClasse()->getFiliere() === $filiere;
+                                                });
+                                if((count($crit['niveau'])<1)){
+                                    $etdToAdd = min($tailleLeft, count($filteredEtds));
+                                    for ($i = 0; $i < $etdToAdd; $i++) {
+                                        if((count($group) < $taille)){
+                                            $group[] = array_shift($filteredEtds);
+                                            $g->addEtudiant($group[count($group) - 1]);
+                                            unset($etds[array_search($group[count($group) - 1], $etds)]);
+                                            $etds = array_values($etds);
+                                        }
+                                        
+                                    }
+                                }else{
+                                    foreach($crit['niveau'] as $niv){
+                                        if(isset($niv['choix']) || trim($niv['choix']) != ''){
+                                            $niveau = $this->niveauRepository->find($niv['choix']);
+                                            $filteredEtds = array_filter($filteredEtds, function (Etudiant $etudiant) use ($niveau) {
+                                                            return $etudiant->getClasse()->getNiveau() === $niveau;
+                                                            });
+                                            $miniTaille = $this->checkTaille($niv['taille']);
+                                            $etdToAdd = min($miniTaille, count($filteredEtds));
+                                            $tailleLeft -= $etdToAdd;
+                                            for ($i = 0; $i < $etdToAdd; $i++) {
+                                                if((count($group) < $taille)){
+                                                    $group[] = array_shift($filteredEtds);
+                                                    $g->addEtudiant($group[count($group) - 1]);
+                                                    unset($etds[array_search($group[count($group) - 1], $etds)]);
+                                                    $etds = array_values($etds);
+                                                }
+                                                
+                                            }
+                                        }
+                                    }
+                                    $filteredEtds = array_filter($etds, function (Etudiant $etudiant) use ($filiere) {
+                                                    return $etudiant->getClasse()->getFiliere() === $filiere;
+                                                    });
+                                    $etdToAdd = min($tailleLeft, count($filteredEtds));
+                                    for ($i = 0; $i < $etdToAdd; $i++) {
+                                        if((count($group) < $taille)){
+                                            $group[] = array_shift($filteredEtds);
+                                            $g->addEtudiant($group[count($group) - 1]);
+                                            unset($etds[array_search($group[count($group) - 1], $etds)]);
+                                            $etds = array_values($etds);
+                                        }  
+                                    }
+                                }
                             }
-                        }else{
-                            $tailleLeft = $this->checkTaille($crit['taille']);
-                            $filiere = $this->filiereRepository->find($crit['choix']);
-                            $filteredEtds = array_filter($etds, function (Etudiant $etudiant) use ($filiere) {
-                                            return $etudiant->getClasse()->getFiliere() === $filiere;
-                                            });
-                            if((count($crit['niveau'])<1)){
+                            
+                        }
+                    }
+        
+                    foreach ($criteres['classe'] as $crit) {
+                        if(isset($crit['choix']) || trim($crit['choix']) != ''){
+                            if($crit['choix'] == -1){
+                                $fnum = 0;
+                                while((count($group) < $taille) && (count($etds) > 0)){
+                                    if(!$this->checkLoad($group, 'classe', $etds[$fnum]->getClasse(), 1)){
+                                        $group[] = $etds[$fnum];
+                                        $g->addEtudiant($group[count($group) - 1]);
+                                        unset($etds[$fnum]);
+                                        $etds = array_values($etds);
+                                        $fnum--;
+                                    }
+                                    $fnum++;
+                                }
+                            }else{
+                                $tailleLeft = $this->checkTaille($crit['taille']);
+                                $classe = $this->classeRepository->find($crit['choix']);
+                                $filteredEtds = array_filter($etds, function (Etudiant $etudiant) use ($classe) {
+                                                return $etudiant->getClasse() === $classe;
+                                                });
                                 $etdToAdd = min($tailleLeft, count($filteredEtds));
                                 for ($i = 0; $i < $etdToAdd; $i++) {
                                     if((count($group) < $taille)){
@@ -320,29 +391,30 @@ class GroupeController extends AbstractController
                                     }
                                     
                                 }
-                            }else{
-                                foreach($crit['niveau'] as $niv){
-                                    if(isset($niv['choix']) || trim($niv['choix']) != ''){
-                                        $niveau = $this->niveauRepository->find($niv['choix']);
-                                        $filteredEtds = array_filter($filteredEtds, function (Etudiant $etudiant) use ($niveau) {
-                                                        return $etudiant->getClasse()->getNiveau() === $niveau;
-                                                        });
-                                        $miniTaille = $this->checkTaille($niv['taille']);
-                                        $etdToAdd = min($miniTaille, count($filteredEtds));
-                                        $tailleLeft -= $etdToAdd;
-                                        for ($i = 0; $i < $etdToAdd; $i++) {
-                                            if((count($group) < $taille)){
-                                                $group[] = array_shift($filteredEtds);
-                                                $g->addEtudiant($group[count($group) - 1]);
-                                                unset($etds[array_search($group[count($group) - 1], $etds)]);
-                                                $etds = array_values($etds);
-                                            }
-                                            
-                                        }
+                            }
+                        
+                        }
+                    }
+        
+                    foreach ($criteres['niveau'] as $crit) {
+                        if(isset($crit['choix']) || trim($crit['choix']) != ''){
+                            if($crit['choix'] == -1){
+                                $fnum = 0;
+                                while((count($group) < $taille) && (count($etds) > 0)){
+                                    if(!$this->checkLoad($group, 'niveau', $etds[$fnum]->getClasse()->getNiveau(), 1)){
+                                        $group[] = $etds[$fnum];
+                                        $g->addEtudiant($group[count($group) - 1]);
+                                        unset($etds[$fnum]);
+                                        $etds = array_values($etds);
+                                        $fnum--;
                                     }
+                                    $fnum++;
                                 }
-                                $filteredEtds = array_filter($etds, function (Etudiant $etudiant) use ($filiere) {
-                                                return $etudiant->getClasse()->getFiliere() === $filiere;
+                            }else{
+                                $tailleLeft = $this->checkTaille($crit['taille']);
+                                $niveau = $this->niveauRepository->find($crit['choix']);
+                                $filteredEtds = array_filter($etds, function (Etudiant $etudiant) use ($niveau) {
+                                                return $etudiant->getClasse()->getNiveau() === $niveau;
                                                 });
                                 $etdToAdd = min($tailleLeft, count($filteredEtds));
                                 for ($i = 0; $i < $etdToAdd; $i++) {
@@ -351,81 +423,12 @@ class GroupeController extends AbstractController
                                         $g->addEtudiant($group[count($group) - 1]);
                                         unset($etds[array_search($group[count($group) - 1], $etds)]);
                                         $etds = array_values($etds);
-                                    }  
+                                    }
+                                    
                                 }
                             }
+                            
                         }
-                        
-                    }
-                }
-    
-                foreach ($criteres['classe'] as $crit) {
-                    if(isset($crit['choix']) || trim($crit['choix']) != ''){
-                        if($crit['choix'] == -1){
-                            $fnum = 0;
-                            while((count($group) < $taille) && (count($etds) > 0)){
-                                if(!$this->checkLoad($group, 'classe', $etds[$fnum]->getClasse(), 1)){
-                                    $group[] = $etds[$fnum];
-                                    $g->addEtudiant($group[count($group) - 1]);
-                                    unset($etds[array_search($group[count($group) - 1], $etds)]);
-                                    $etds = array_values($etds);
-                                    $fnum--;
-                                }
-                                $fnum++;
-                            }
-                        }else{
-                            $tailleLeft = $this->checkTaille($crit['taille']);
-                            $classe = $this->classeRepository->find($crit['choix']);
-                            $filteredEtds = array_filter($etds, function (Etudiant $etudiant) use ($classe) {
-                                            return $etudiant->getClasse() === $classe;
-                                            });
-                            $etdToAdd = min($tailleLeft, count($filteredEtds));
-                            for ($i = 0; $i < $etdToAdd; $i++) {
-                                if((count($group) < $taille)){
-                                    $group[] = array_shift($filteredEtds);
-                                    $g->addEtudiant($group[count($group) - 1]);
-                                    unset($etds[array_search($group[count($group) - 1], $etds)]);
-                                    $etds = array_values($etds);
-                                }
-                                
-                            }
-                        }
-                    
-                    }
-                }
-    
-                foreach ($criteres['niveau'] as $crit) {
-                    if(isset($crit['choix']) || trim($crit['choix']) != ''){
-                        if($crit['choix'] == -1){
-                            $fnum = 0;
-                            while((count($group) < $taille) && (count($etds) > 0)){
-                                if(!$this->checkLoad($group, 'niveau', $etds[$fnum]->getClasse()->getNiveau(), 1)){
-                                    $group[] = $etds[$fnum];
-                                    $g->addEtudiant($group[count($group) - 1]);
-                                    unset($etds[array_search($group[count($group) - 1], $etds)]);
-                                    $etds = array_values($etds);
-                                    $fnum--;
-                                }
-                                $fnum++;
-                            }
-                        }else{
-                            $tailleLeft = $this->checkTaille($crit['taille']);
-                            $niveau = $this->niveauRepository->find($crit['choix']);
-                            $filteredEtds = array_filter($etds, function (Etudiant $etudiant) use ($niveau) {
-                                            return $etudiant->getClasse()->getNiveau() === $niveau;
-                                            });
-                            $etdToAdd = min($tailleLeft, count($filteredEtds));
-                            for ($i = 0; $i < $etdToAdd; $i++) {
-                                if((count($group) < $taille)){
-                                    $group[] = array_shift($filteredEtds);
-                                    $g->addEtudiant($group[count($group) - 1]);
-                                    unset($etds[array_search($group[count($group) - 1], $etds)]);
-                                    $etds = array_values($etds);
-                                }
-                                
-                            }
-                        }
-                        
                     }
                 }
     
@@ -441,10 +444,15 @@ class GroupeController extends AbstractController
                 }
                 
                 $g->setTaille(count($g->getEtudiant()));
-                $this->groupeRepository->addOrUpdate($g);
+                $this->entityManager->persist($g);
                 $tlaEtds -= count($g->getEtudiant());
+
+                if($num % 10 === 0){
+                    $this->entityManager->flush();
+                }
                 $num++; 
             }
+            $this->entityManager->flush();
         }
     }
 
@@ -517,27 +525,97 @@ class GroupeController extends AbstractController
                     ->setListe($liste)
                     ->setLibelle('Groupe '.$num);
 
-            foreach ($criteres['filiere'] as $crit) {
-                if(isset($crit['choix']) || trim($crit['choix']) != ''){
-                    if($crit['choix'] == -1){
-                        $fnum = 0;
-                        while((count($group) < $taille) && (count($etds) > 0)){
-                            if(!$this->checkLoad($group, 'filiere', $etds[$fnum]->getClasse()->getFiliere(), 1)){
-                                $group[] = $etds[$fnum];
-                                $newGrp->addEtudiant($group[count($group) - 1]);
-                                unset($etds[$fnum]);
-                                $etds = array_values($etds);
-                                $fnum--;
+            if(!empty($criteres)){
+                foreach ($criteres['filiere'] as $crit) {
+                    if(isset($crit['choix']) || trim($crit['choix']) != ''){
+                        if($crit['choix'] == -1){
+                            $fnum = 0;
+                            while((count($group) < $taille) && (count($etds) > 0)){
+                                if(!$this->checkLoad($group, 'filiere', $etds[$fnum]->getClasse()->getFiliere(), 1)){
+                                    $group[] = $etds[$fnum];
+                                    $newGrp->addEtudiant($group[count($group) - 1]);
+                                    unset($etds[$fnum]);
+                                    $etds = array_values($etds);
+                                    $fnum--;
+                                }
+                                $fnum++;
                             }
-                            $fnum++;
+                        }else{
+                            $tailleLeft = $this->checkTaille($crit['taille']);
+                            $filiere = $this->filiereRepository->find($crit['choix']);
+                            $filteredEtds = array_filter($etds, function (Etudiant $etudiant) use ($filiere) {
+                                            return $etudiant->getClasse()->getFiliere() === $filiere;
+                                            });
+                            if((count($crit['niveau'])<1)){
+                                $etdToAdd = min($tailleLeft, count($filteredEtds));
+                                for ($i = 0; $i < $etdToAdd; $i++) {
+                                    if((count($group) < $taille)){
+                                        $group[] = array_shift($filteredEtds);
+                                        $newGrp->addEtudiant($group[count($group) - 1]);
+                                        unset($etds[array_search($group[count($group) - 1], $etds)]);
+                                        $etds = array_values($etds);
+                                    }
+                                    
+                                }
+                            }else{
+                                foreach($crit['niveau'] as $niv){
+                                    if(isset($niv['choix']) || trim($niv['choix']) != ''){
+                                        $niveau = $this->niveauRepository->find($niv['choix']);
+                                        $filteredEtds = array_filter($filteredEtds, function (Etudiant $etudiant) use ($niveau) {
+                                                        return $etudiant->getClasse()->getNiveau() === $niveau;
+                                                        });
+                                        $miniTaille = $this->checkTaille($niv['taille']);
+                                        $etdToAdd = min($miniTaille, count($filteredEtds));
+                                        $tailleLeft -= $etdToAdd;
+                                        for ($i = 0; $i < $etdToAdd; $i++) {
+                                            if((count($group) < $taille)){
+                                                $group[] = array_shift($filteredEtds);
+                                                $newGrp->addEtudiant($group[count($group) - 1]);
+                                                unset($etds[array_search($group[count($group) - 1], $etds)]);
+                                                $etds = array_values($etds);
+                                            }
+                                            
+                                        }
+                                    }
+                                }
+                                $filteredEtds = array_filter($etds, function (Etudiant $etudiant) use ($filiere) {
+                                                return $etudiant->getClasse()->getFiliere() === $filiere;
+                                                });
+                                $etdToAdd = min($tailleLeft, count($filteredEtds));
+                                for ($i = 0; $i < $etdToAdd; $i++) {
+                                    if((count($group) < $taille)){
+                                        $group[] = array_shift($filteredEtds);
+                                        $newGrp->addEtudiant($group[count($group) - 1]);
+                                        unset($etds[array_search($group[count($group) - 1], $etds)]);
+                                        $etds = array_values($etds);
+                                    }  
+                                }
+                            }
                         }
-                    }else{
-                        $tailleLeft = $this->checkTaille($crit['taille']);
-                        $filiere = $this->filiereRepository->find($crit['choix']);
-                        $filteredEtds = array_filter($etds, function (Etudiant $etudiant) use ($filiere) {
-                                        return $etudiant->getClasse()->getFiliere() === $filiere;
-                                        });
-                        if((count($crit['niveau'])<1)){
+                        
+                    }
+                }
+    
+                foreach ($criteres['classe'] as $crit) {
+                    if(isset($crit['choix']) || trim($crit['choix']) != ''){
+                        if($crit['choix'] == -1){
+                            $fnum = 0;
+                            while((count($group) < $taille) && (count($etds) > 0)){
+                                if(!$this->checkLoad($group, 'classe', $etds[$fnum]->getClasse(), 1)){
+                                    $group[] = $etds[$fnum];
+                                    $newGrp->addEtudiant($group[count($group) - 1]);
+                                    unset($etds[$fnum]);
+                                    $etds = array_values($etds);
+                                    $fnum--;
+                                }
+                                $fnum++;
+                            }
+                        }else{
+                            $tailleLeft = $this->checkTaille($crit['taille']);
+                            $classe = $this->classeRepository->find($crit['choix']);
+                            $filteredEtds = array_filter($etds, function (Etudiant $etudiant) use ($classe) {
+                                            return $etudiant->getClasse() === $classe;
+                                            });
                             $etdToAdd = min($tailleLeft, count($filteredEtds));
                             for ($i = 0; $i < $etdToAdd; $i++) {
                                 if((count($group) < $taille)){
@@ -548,29 +626,30 @@ class GroupeController extends AbstractController
                                 }
                                 
                             }
-                        }else{
-                            foreach($crit['niveau'] as $niv){
-                                if(isset($niv['choix']) || trim($niv['choix']) != ''){
-                                    $niveau = $this->niveauRepository->find($niv['choix']);
-                                    $filteredEtds = array_filter($filteredEtds, function (Etudiant $etudiant) use ($niveau) {
-                                                    return $etudiant->getClasse()->getNiveau() === $niveau;
-                                                    });
-                                    $miniTaille = $this->checkTaille($niv['taille']);
-                                    $etdToAdd = min($miniTaille, count($filteredEtds));
-                                    $tailleLeft -= $etdToAdd;
-                                    for ($i = 0; $i < $etdToAdd; $i++) {
-                                        if((count($group) < $taille)){
-                                            $group[] = array_shift($filteredEtds);
-                                            $newGrp->addEtudiant($group[count($group) - 1]);
-                                            unset($etds[array_search($group[count($group) - 1], $etds)]);
-                                            $etds = array_values($etds);
-                                        }
-                                        
-                                    }
+                        }
+                    
+                    }
+                }
+    
+                foreach ($criteres['niveau'] as $crit) {
+                    if(isset($crit['choix']) || trim($crit['choix']) != ''){
+                        if($crit['choix'] == -1){
+                            $fnum = 0;
+                            while((count($group) < $taille) && (count($etds) > 0)){
+                                if(!$this->checkLoad($group, 'niveau', $etds[$fnum]->getClasse()->getNiveau(), 1)){
+                                    $group[] = $etds[$fnum];
+                                    $newGrp->addEtudiant($group[count($group) - 1]);
+                                    unset($etds[$fnum]);
+                                    $etds = array_values($etds);
+                                    $fnum--;
                                 }
+                                $fnum++;
                             }
-                            $filteredEtds = array_filter($etds, function (Etudiant $etudiant) use ($filiere) {
-                                            return $etudiant->getClasse()->getFiliere() === $filiere;
+                        }else{
+                            $tailleLeft = $this->checkTaille($crit['taille']);
+                            $niveau = $this->niveauRepository->find($crit['choix']);
+                            $filteredEtds = array_filter($etds, function (Etudiant $etudiant) use ($niveau) {
+                                            return $etudiant->getClasse()->getNiveau() === $niveau;
                                             });
                             $etdToAdd = min($tailleLeft, count($filteredEtds));
                             for ($i = 0; $i < $etdToAdd; $i++) {
@@ -579,81 +658,12 @@ class GroupeController extends AbstractController
                                     $newGrp->addEtudiant($group[count($group) - 1]);
                                     unset($etds[array_search($group[count($group) - 1], $etds)]);
                                     $etds = array_values($etds);
-                                }  
+                                }
+                                
                             }
                         }
+                        
                     }
-                    
-                }
-            }
-
-            foreach ($criteres['classe'] as $crit) {
-                if(isset($crit['choix']) || trim($crit['choix']) != ''){
-                    if($crit['choix'] == -1){
-                        $fnum = 0;
-                        while((count($group) < $taille) && (count($etds) > 0)){
-                            if(!$this->checkLoad($group, 'classe', $etds[$fnum]->getClasse(), 1)){
-                                $group[] = $etds[$fnum];
-                                $newGrp->addEtudiant($group[count($group) - 1]);
-                                unset($etds[$fnum]);
-                                $etds = array_values($etds);
-                                $fnum--;
-                            }
-                            $fnum++;
-                        }
-                    }else{
-                        $tailleLeft = $this->checkTaille($crit['taille']);
-                        $classe = $this->classeRepository->find($crit['choix']);
-                        $filteredEtds = array_filter($etds, function (Etudiant $etudiant) use ($classe) {
-                                        return $etudiant->getClasse() === $classe;
-                                        });
-                        $etdToAdd = min($tailleLeft, count($filteredEtds));
-                        for ($i = 0; $i < $etdToAdd; $i++) {
-                            if((count($group) < $taille)){
-                                $group[] = array_shift($filteredEtds);
-                                $newGrp->addEtudiant($group[count($group) - 1]);
-                                unset($etds[array_search($group[count($group) - 1], $etds)]);
-                                $etds = array_values($etds);
-                            }
-                            
-                        }
-                    }
-                
-                }
-            }
-
-            foreach ($criteres['niveau'] as $crit) {
-                if(isset($crit['choix']) || trim($crit['choix']) != ''){
-                    if($crit['choix'] == -1){
-                        $fnum = 0;
-                        while((count($group) < $taille) && (count($etds) > 0)){
-                            if(!$this->checkLoad($group, 'niveau', $etds[$fnum]->getClasse()->getNiveau(), 1)){
-                                $group[] = $etds[$fnum];
-                                $newGrp->addEtudiant($group[count($group) - 1]);
-                                unset($etds[$fnum]);
-                                $etds = array_values($etds);
-                                $fnum--;
-                            }
-                            $fnum++;
-                        }
-                    }else{
-                        $tailleLeft = $this->checkTaille($crit['taille']);
-                        $niveau = $this->niveauRepository->find($crit['choix']);
-                        $filteredEtds = array_filter($etds, function (Etudiant $etudiant) use ($niveau) {
-                                        return $etudiant->getClasse()->getNiveau() === $niveau;
-                                        });
-                        $etdToAdd = min($tailleLeft, count($filteredEtds));
-                        for ($i = 0; $i < $etdToAdd; $i++) {
-                            if((count($group) < $taille)){
-                                $group[] = array_shift($filteredEtds);
-                                $newGrp->addEtudiant($group[count($group) - 1]);
-                                unset($etds[array_search($group[count($group) - 1], $etds)]);
-                                $etds = array_values($etds);
-                            }
-                            
-                        }
-                    }
-                    
                 }
             }
 
@@ -690,44 +700,46 @@ class GroupeController extends AbstractController
 
     private function checkFinal($group, Etudiant $etudiant, $criteres):bool
     {
-        foreach ($criteres['niveau'] as $crit) {
-            $i=0;
-            $niveau = $this->niveauRepository->find($crit['choix']);
-            foreach($group as $etd){
-                if(($etd->getClasse()->getNiveau() == $etudiant->getClasse()->getNiveau()) && ($etudiant->getClasse()->getNiveau() == $niveau)){
-                    $i++;
-                }
-                if($i === $crit['taille']){
-                    return true;
-                }
-            }
-        }
-        
-        foreach ($criteres['filiere'] as $crit) {
-            $i=0;
-            $filiere = $this->filiereRepository->find($crit['choix']);
-            foreach($group as $etd){
-                if(($etd->getClasse()->getFiliere() == $etudiant->getClasse()->getFiliere()) && ($etudiant->getClasse()->getFiliere() == $filiere)){
-                    $i++;
-                }
-                if($i === $crit['taille']){
-                    return true;
+        if(!empty($criteres)){
+            foreach ($criteres['niveau'] as $crit) {
+                $i=0;
+                $niveau = $this->niveauRepository->find($crit['choix']);
+                foreach($group as $etd){
+                    if(($etd->getClasse()->getNiveau() == $etudiant->getClasse()->getNiveau()) && ($etudiant->getClasse()->getNiveau() == $niveau)){
+                        $i++;
+                    }
+                    if($i === $crit['taille']){
+                        return true;
+                    }
                 }
             }
-        }
-
-        foreach ($criteres['classe'] as $crit) {
-            $i=0;
-            $classe = $this->classeRepository->find($crit['choix']);
-            foreach($group as $etd){
-                if(($etd->getClasse() == $etudiant->getClasse()) && ($etudiant->getClasse() == $classe)){
-                    $i++;
-                }
-                if($i === $crit['taille']){
-                    return true;
+            
+            foreach ($criteres['filiere'] as $crit) {
+                $i=0;
+                $filiere = $this->filiereRepository->find($crit['choix']);
+                foreach($group as $etd){
+                    if(($etd->getClasse()->getFiliere() == $etudiant->getClasse()->getFiliere()) && ($etudiant->getClasse()->getFiliere() == $filiere)){
+                        $i++;
+                    }
+                    if($i === $crit['taille']){
+                        return true;
+                    }
                 }
             }
-        }    
+    
+            foreach ($criteres['classe'] as $crit) {
+                $i=0;
+                $classe = $this->classeRepository->find($crit['choix']);
+                foreach($group as $etd){
+                    if(($etd->getClasse() == $etudiant->getClasse()) && ($etudiant->getClasse() == $classe)){
+                        $i++;
+                    }
+                    if($i === $crit['taille']){
+                        return true;
+                    }
+                }
+            } 
+        }   
 
         return false;
     }
@@ -786,7 +798,7 @@ class GroupeController extends AbstractController
         }
 
         $newEtudiants = [];
-        $batchSize = 150;
+        $batchSize = 250;
         $i = 1;
         foreach ($etudiants as $key => $etudiant) {
             $newEtd = new Etudiant();

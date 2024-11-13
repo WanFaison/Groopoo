@@ -173,7 +173,7 @@ class GroupeController extends AbstractController
                     'nom' => $e->getNom(),
                     'prenom' => $e->getPrenom(),
                     'sexe' => $e->getSexe(),
-                    //'nationalite' => $e->getNationalite(),
+                    'nationalite' => $e->getNationalite(),
                     'classe' => $e->getClasse(),
                     'niveau' => $e->getNiveau(),
                     'filiere' => $e->getFiliere(),
@@ -805,7 +805,8 @@ class GroupeController extends AbstractController
         $i = 1;
         foreach ($etudiants as $key => $etudiant) {
             $newEtd = new Etudiant();
-            $newEtd->setArchived(false);
+            $newEtd->setArchived(false)
+                    ->setClasse($classesMap[$etudiant['Classe']]);
 
             $theEtd = $this->etudiantRepository->findByMatricule($etudiant['Matricule']);
             if($theEtd){                
@@ -813,15 +814,13 @@ class GroupeController extends AbstractController
                     ->setNom($theEtd->getNom())
                     ->setPrenom($theEtd->getPrenom())
                     ->setSexe($theEtd->getSexe())
-                    ->setNationalite($theEtd->getNationalite())
-                    ->setClasse($theEtd->getClasse());
+                    ->setNationalite($theEtd->getNationalite());
             }else{
                 $newEtd->setMatricule($etudiant['Matricule'])
                     ->setNom($etudiant['Nom'])
                     ->setPrenom($etudiant['Prenom'])
                     ->setSexe($etudiant['Sexe'])
-                    ->setNationalite($etudiant['Nationalite'])
-                    ->setClasse($classesMap[$etudiant['Classe']]);
+                    ->setNationalite($etudiant['Nationalite'] ?? 'unknown');
             }
 
             $this->entityManager->persist($newEtd);

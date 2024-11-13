@@ -75,7 +75,7 @@ class EtudiantResponseDto
 
     public function getNationalite(): ?string
     {
-        return $this->nationalite;
+        return $this->nationalite ?? 'unknown';
     }
     public function setNationalite(string $nationalite): static
     {

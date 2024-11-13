@@ -143,13 +143,29 @@ class ListeController extends AbstractController
         $sheet = $spreadsheet->getActiveSheet();
                 
         $row = 1;
-        $sheet->setCellValue('A'.$row, 'Matricule');
-        $sheet->setCellValue('B'.$row, 'Nom');
-        $sheet->setCellValue('C'.$row, 'Prenom');
-        $sheet->setCellValue('D'.$row, 'Sexe');
-        $sheet->setCellValue('E'.$row, 'Classe');
-        $sheet->setCellValue('F'.$row, 'Niveau');
-        $sheet->setCellValue('G'.$row, 'Filiere');
+        $sheet->setCellValue('A'.$row, 'Matricule')
+                ->setCellValue('B'.$row, 'Nom')
+                ->setCellValue('C'.$row, 'Prenom')
+                ->setCellValue('D'.$row, 'Sexe')
+                ->setCellValue('E'.$row, 'Classe')
+                ->setCellValue('F'.$row, 'Niveau')
+                ->setCellValue('G'.$row, 'Filiere')
+
+                ->setCellValue('A2', 'ISM2223/DK-30820')
+                ->setCellValue('B2', 'LY')
+                ->setCellValue('C2', 'Abdoulaye')
+                ->setCellValue('D2', 'Masculin')
+                ->setCellValue('E2', 'L2-CDSD')
+                ->setCellValue('F2', 'LICENCE 2')
+                ->setCellValue('G2', 'CDSD')
+
+                ->setCellValue('A3', 'ISM2223/DK-30805')
+                ->setCellValue('B3', 'DOE')
+                ->setCellValue('C3', 'John')
+                ->setCellValue('D3', 'Féminin')
+                ->setCellValue('E3', 'L1-MAIE')
+                ->setCellValue('F3', 'LICENCE 1')
+                ->setCellValue('G3', 'MAIE');
 
         $writer = new Xlsx($spreadsheet);
         $temp_file = tempnam(sys_get_temp_dir(), 'Band-It template.xlsx');
@@ -174,9 +190,7 @@ class ListeController extends AbstractController
                 ->setCellValue('D2', 'Sexe')
                 ->setCellValue('E2', 'Classe')
                 ->setCellValue('F2', 'Niveau')
-                ->setCellValue('G2', 'Filiere')
-                ->setCellValue('H2', 'Note Etudiant')
-                ->setCellValue('I2', 'Note Finale');
+                ->setCellValue('G2', 'Filiere');
 
         $writer = new Xlsx($spreadsheet);
         $temp_file = tempnam(sys_get_temp_dir(), 'Band-It import template.xlsx');

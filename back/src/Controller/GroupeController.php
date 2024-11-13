@@ -962,9 +962,7 @@ class GroupeController extends AbstractController
                         ->setNom($etd['nom'])
                         ->setPrenom($etd['prenom'])
                         ->setSexe($etd['sexe'])
-                        ->setClasse($classesMap[$etd['classe']])
-                        ->setNoteEtd($etd['noteEtd'])
-                        ->setNoteFinal($etd['noteFinal']);
+                        ->setClasse($classesMap[$etd['classe']]);
                 $newGrp->addEtudiant($newEtd);
                 $this->entityManager->persist($newEtd);
             }

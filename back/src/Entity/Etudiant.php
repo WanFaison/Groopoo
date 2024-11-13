@@ -41,10 +41,10 @@ class Etudiant extends AbstractEntity
     private Collection $absences;
 
     #[ORM\Column(nullable: true)]
-    private ?float $noteEtd = null;
+    private ?float $noteEtd = 0;
 
     #[ORM\Column(nullable: true)]
-    private ?float $noteFinal = null;
+    private ?float $noteFinal = 0;
 
     public function __construct()
     {

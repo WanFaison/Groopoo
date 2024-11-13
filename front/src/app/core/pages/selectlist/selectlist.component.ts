@@ -105,9 +105,7 @@ export class SelectlistComponent implements OnInit{
                 sexe: row[3],
                 classe: row[4],
                 niveau: row[5],
-                filiere: row[6],
-                noteEtd: row[7],
-                noteFinal: row[8]
+                filiere: row[6]
               };
               currentGroup.etudiants.push(etdActu);
             }

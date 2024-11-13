@@ -41,7 +41,7 @@ class EtudiantController extends AbstractController
                     'Nom' => $edt->getNom(),
                     'Prenom' => $edt->getPrenom(),
                     'Sexe' => $edt->getSexe(),
-                    'Nationalite' => $edt->getNationalite(),
+                    //'Nationalite' => $edt->getNationalite(),
                     'Classe' => $edt->getClasse(),
                     'Niveau' => $edt->getNiveau(),
                     'Filiere' => $edt->getFiliere(),
@@ -65,7 +65,7 @@ class EtudiantController extends AbstractController
                     'nom' => $dto->getNom(),
                     'prenom' => $dto->getPrenom(),
                     'sexe' => $dto->getSexe(),
-                    'nationalite' => $dto->getNationalite(),
+                    //'nationalite' => $dto->getNationalite(),
                     'classe' => $dto->getClasse()
                     ];
         }

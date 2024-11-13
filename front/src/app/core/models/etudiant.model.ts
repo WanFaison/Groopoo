@@ -40,9 +40,7 @@ export interface EtudiantImportXlsx{
     sexe: string,
     niveau: string,
     filiere: string,
-    classe: string,
-    noteEtd: number,
-    noteFinal: number
+    classe: string
 }
 
 export interface EtudiantCreateXlsx{
@@ -53,5 +51,5 @@ export interface EtudiantCreateXlsx{
     Niveau: string,
     Filiere: string,
     Classe: string,
-    Nationalite: string
+    Nationalite?: string
 }

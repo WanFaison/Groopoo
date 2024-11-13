@@ -22,7 +22,7 @@ export class GroupeServiceImpl implements GroupeService{
         return this.http.get<RestResponse<GroupeReqModel[]>>(`${environment.APIURL}/all-groupe?liste=${liste}`);
     }
 
-    findAll(liste:number, page: number=0, limit:number =10): Observable<RestResponse<GroupeModel[]>> {
+    findAll(liste:number, page: number=0, limit:number =1): Observable<RestResponse<GroupeModel[]>> {
         return this.http.get<RestResponse<GroupeModel[]>>(`${this.apiUrl}?liste=${liste}&page=${page}&limit=${limit}`)
     }
 

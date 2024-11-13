@@ -7,16 +7,41 @@
         </div>
         <div class="flex-column w-75">
             <h5 class="mt-5">Televerser un fichier excel</h5>
-            <div class="file-upload w-50 my-2">
-                <div class="file-select">
-                  <div class="file-select-button" id="fileName">Choose File</div>
-                  <div class="file-select-name" id="noFile">No file chosen...</div> 
-                  <input type="file" name="chooseFile" id="chooseFile">
+            <div *ngIf="error" class="my-1">
+                <p class="fw-bold text-danger">Erreur de la liste fournit </p>
+            </div>
+
+            <div class="my-1">
+                <p class="fw-bold">{{fileName}}</p>
+            </div>
+            <div class="d-flex">
+                <div class="file-upload w-50 mb-2">
+                    <div class="file-select">
+                      <div class="file-select-button" id="fileName">Choose File</div>
+                      <div class="file-select-name" id="noFile">No file chosen...</div> 
+                      <input type="file" (change)="onFileSelected($event)" name="chooseFile" id="chooseFile">
+                    </div>
+                </div>
+                <div *ngIf="user?.role == 'ROLE_ADMIN'" class="input-group col-md-2">
+                    <select [(ngModel)]="ecole" (ngModelChange)="saveEcole($event)" class="form-select form-select-sm" aria-label=".form-select-sm example">
+                      <option selected value="0">Choisir l'ecole...</option>
+                      <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
+                    </select>
+                </div>
+                <div class="input-group col-md-2">
+                    <select [(ngModel)]="annee" (ngModelChange)="saveAnnee($event)" class="form-select form-select-sm" aria-label=".form-select-sm example">
+                      <option selected value="0">Choisir l'année...</option>
+                      <option *ngFor="let item of anneeResponse?.results" [value]="item.id">{{ item.libelle }}</option>
+                    </select>
                 </div>
             </div>
-            <a class="btn btn-orange col-md-1" href="#" role="button">
-                Televerser
-            </a>
+            <div class="d-flex">
+                <a id="orange-btn" class="btn btn-orange col-md-2 me-2" 
+                [class.disabled]="ecole === 0 || !fileName.trim() || annee == 0"
+                (click)="onSubmit()" role="button">Importer Liste</a>
+                <a (click)="printTemplate()" class="btn btn-info col-md-2 text-white" 
+                role="button">Import template</a>
+            </div>
         </div>
 
         <hr class="w-75 mx-auto simple-line mt-3">

@@ -51,4 +51,43 @@ class EtudiantController extends AbstractController
 
         return RestResponse::linearResponse($etudiants, count($etudiants), JsonResponse::HTTP_OK);
     }
+
+    #[Route('/api/etudiant-find', name: 'api_etudiant_find', methods: ['GET'])]
+    public function findEtudiant(Request $request): JsonResponse
+    {
+        $etudiantId = $request->query->getInt('etudiant', 0);
+        $etudiant = $this->etudiantRepository->find($etudiantId);
+        if($etudiant != null){ 
+            $dto = (new EtudiantResponseDto())->toDto($etudiant); 
+            $dto = [
+                    'id' => $dto->getId(),
+                    'matricule' => $dto->getMatricule(),
+                    'nom' => $dto->getNom(),
+                    'prenom' => $dto->getPrenom(),
+                    'sexe' => $dto->getSexe(),
+                    'nationalite' => $dto->getNationalite(),
+                    'classe' => $dto->getClasse()
+                    ];
+        }
+
+        return RestResponse::linearResponse($dto, 1, JsonResponse::HTTP_OK);
+    }
+
+    #[Route('/api/etudiant-transfer', name: 'api_etudiant_transfer', methods: ['GET'])]
+    public function transferEtudiant(Request $request): JsonResponse
+    {
+        $etudiantId = $request->query->getInt('etudiant', 0);
+        $groupeId = $request->query->getInt('groupe', 0);
+        $etudiant = $this->etudiantRepository->find($etudiantId);
+        $groupe = $this->groupeRepository->find($groupeId);
+
+        if($etudiant && $groupe){
+            $groupe->addEtudiant($etudiant);
+            $this->groupeRepository->addOrUpdate($groupe);
+            $this->etudiantRepository->addOrUpdate($etudiant);
+            return RestResponse::requestResponse('etudiant transferer avec succes', 0, JsonResponse::HTTP_OK);
+        }else{
+            return RestResponse::requestResponse('etudiant ou groupe non-trouve', 1, JsonResponse::HTTP_OK);
+        }
+    }
 }

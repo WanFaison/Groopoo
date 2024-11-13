@@ -23,7 +23,19 @@ export class ListeServiceImpl implements ListeService{
         // this.testString = new Date('2022-02-12').toISOString().slice(0,10);
     }
 
-    getTemplate(): Observable<any> {
+    importList(data: any): Observable<any> {
+        const headers = new HttpHeaders({
+            'Content-Type': 'application/json'
+        });
+        return this.http.post(`${environment.APIURL}/create-groupe-import`, data, {headers});
+    }
+
+    getTemplate(state:number): Observable<any> {
+        //state == 0/null pour le template d'etudiants a utiliser pour creer les listes
+        //state == 1 pour le template des groupes de liste passee a importer
+        if(state == 1){
+            return this.http.get(`${environment.APIURL}/template-import`, { responseType: 'blob' });
+        }
         return this.http.get(`${environment.APIURL}/template`, { responseType: 'blob' });
     }
 

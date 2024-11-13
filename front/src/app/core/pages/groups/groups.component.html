@@ -12,18 +12,18 @@
             </div>
             <div class="d-flex justify-content-between mt-2">
               <div class="col-md-8">
-                <button (click)="printXls('results')" class="btn btn-info col-md-4 mb-2 me-2">Exporter Resultats</button>
+                <button (click)="printXls('results')" class="btn btn-info col-md-4 mb-2 me-2">Exporter les Groupes</button>
                 <button (click)="printXls()" class="btn btn-info mb-2 me-2">Liste d'Emargement</button>
-                <button class="btn btn-secondary mb-5 me-2"
+                <button class="btn btn-secondary mb-2 me-2"
                 [routerLink]="['/app/view-jours']" routerLinkActive="active"
-                >Journées de l'événement</button>
+                >Liste des Journées</button>
               </div>
               <div class="ml-4" *ngIf="user?.role != 'ROLE_VISITEUR'">
-                <button (click)="useListe()" class="btn btn-secondary mb-5 me-2">Réutiliser</button>
+                <button (click)="useListe()" class="btn btn-secondary mb-2 me-2">Réutiliser la liste</button>
                 <button class="btn btn-success mb-5"
                 *ngIf="!listeResponse?.results?.isComplet"
                 data-bs-toggle="modal" data-bs-target="#ynModal"
-                >Reformer la liste</button>
+                >Reformer les groupes</button>
               </div>
             </div>
         </div>
@@ -50,6 +50,7 @@
                         <th scope="col">Classe</th>
                         <th *ngIf="user?.role != 'ROLE_VISITEUR'" scope="col">Note Etudiant</th>
                         <th *ngIf="user?.role != 'ROLE_VISITEUR'" scope="col">Note Finale</th>
+                        <th *ngIf="!listeResponse?.results?.isComplet">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -60,6 +61,11 @@
                         <td>{{etd.classe}}</td> 
                         <td *ngIf="user?.role != 'ROLE_VISITEUR'">{{etd.noteEtd}}</td> 
                         <td *ngIf="user?.role != 'ROLE_VISITEUR'">{{etd.noteFinal}}</td> 
+                        <td *ngIf="!listeResponse?.results?.isComplet">
+                          <button class="btn btn-secondary"
+                          (click)="findEtd(etd.id)"
+                          data-bs-toggle="modal" data-bs-target="#transfererModal">Transferer</button>
+                        </td>
                     </tr>
                 </tbody>
               </table>
@@ -74,12 +80,6 @@
                   <span class="sr-only">Previous</span>
                 </a>
               </li>
-
-              @for (item of pages(1,groupResponse?.totalPages); track $index){
-                <li class="page-item" [ngClass]="{'active':item-1==groupResponse?.currentPage}">
-                  <a (click)="paginate(item-1)" class="page-link">{{item}}</a>
-                </li>
-              }
               
               <li *ngIf="groupResponse && groupResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': groupResponse.currentPage +1 === groupResponse.totalPages}">
                 <a class="page-link" (click)="paginate(groupResponse.currentPage + 1)" aria-label="Next">
@@ -117,6 +117,33 @@
               <button (click)="modifEnt(liste, libelle)" type="button" 
               class="btn btn-success">Modifier</button>
               <button (click)="libelle = ''; error = false;" type="button" class="btn btn-secondary" 
+              data-bs-dismiss="modal">Close</button>
+          </div>
+      </div>
+      </div>
+    </div>
+
+    <!-- Modal transferer-->
+    <div class="modal fade" id="transfererModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+      <div class="modal-content row">
+          <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">{{ 'Transferer ' + etdResponse2?.results?.nom + ' vers...' }}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <label class="form-label custom-label" for="libelle">Choisir son nouveau groupe</label>
+              <div class="input-group me-2">
+                <select [(ngModel)]="grp" class="form-select" aria-label=".form-select-sm example">
+                  <option selected value="0">groupe...</option>
+                  <option *ngFor="let item of grpReq?.results" [value]="item.id">{{ item.libelle }}</option>
+                </select>
+              </div>
+          </div>
+          <div class="modal-footer d-flex">
+              <button (click)="transferEtd(grp)" type="button" 
+              class="btn btn-success">Confirmer</button>
+              <button type="button" class="btn btn-secondary" 
               data-bs-dismiss="modal">Close</button>
           </div>
       </div>

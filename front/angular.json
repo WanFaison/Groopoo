@@ -31,11 +31,11 @@
               "src/styles.css"
             ],
             "scripts": [],
-            "server": "src/main.server.ts",
-            "prerender": true,
-            "ssr": {
-              "entry": "server.ts"
-            }
+            "server": "src/main.server.ts",  //to be commented before building for deploy't
+            "prerender": true,  //to be commented before building for deploy't
+            "ssr": {  //to be commented before building for deploy't
+              "entry": "server.ts"  //to be commented before building for deploy't
+            }  //to be commented before building for deploy't
           },
           "configurations": {
             "production": {

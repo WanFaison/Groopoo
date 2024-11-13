@@ -4,11 +4,11 @@ export type EtudiantModel = {
     nom: string,
     prenom: string,
     sexe: string,
-    nationalite: string,
+    nationalite?: string,
     classe: string,
-    groupe: number,
-    noteEtd: number,
-    noteFinal: number
+    groupe?: number,
+    noteEtd?: number,
+    noteFinal?: number
 }
 
 export type EtudiantJourModel = {
@@ -31,6 +31,18 @@ export interface EtudiantCreate{
     filiere: string,
     classe: string,
     nationalite: string
+}
+
+export interface EtudiantImportXlsx{
+    matricule: string,
+    nom: string,
+    prenom: string,
+    sexe: string,
+    niveau: string,
+    filiere: string,
+    classe: string,
+    noteEtd: number,
+    noteFinal: number
 }
 
 export interface EtudiantCreateXlsx{

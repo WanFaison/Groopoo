@@ -59,7 +59,7 @@ export class MembresComponent implements OnInit{
   }
 
   printTemplate(){
-    this.listeService.getTemplate().subscribe((data: Blob) => {
+    this.listeService.getTemplate(0).subscribe((data: Blob) => {
       const downloadUrl = window.URL.createObjectURL(data);
       const link = document.createElement('a');
       link.href = downloadUrl;

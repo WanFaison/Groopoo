@@ -156,7 +156,7 @@ class EtudiantResponseDto
         $dto->setPrenom($etudiant->getPrenom());
         $dto->setMatricule($etudiant->getMatricule());
         $dto->setSexe($etudiant->getSexe());
-        $dto->setNationalite($etudiant->getNationalite());
+        //$dto->setNationalite($etudiant->getNationalite());
         $dto->setClasse($etudiant->getClasse()->getLibelle());
         $dto->setNiveau($etudiant->getClasse()->getNiveau()->getLibelle());
         $dto->setFiliere($etudiant->getClasse()->getFiliere()->getLibelle());

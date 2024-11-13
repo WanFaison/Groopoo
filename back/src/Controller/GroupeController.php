@@ -173,7 +173,7 @@ class GroupeController extends AbstractController
                     'nom' => $e->getNom(),
                     'prenom' => $e->getPrenom(),
                     'sexe' => $e->getSexe(),
-                    'nationalite' => $e->getNationalite(),
+                    //'nationalite' => $e->getNationalite(),
                     'classe' => $e->getClasse(),
                     'niveau' => $e->getNiveau(),
                     'filiere' => $e->getFiliere(),
@@ -236,7 +236,7 @@ class GroupeController extends AbstractController
                     $noteEtd = $noteEtd - $pts;
                 }
                 $etd->setNoteEtd($this->checkNote($noteEtd));
-                $final = (((float) $note['note']) + ($this->checkNote($noteEtd)))/2.0;
+                $final = round((((float) $note['note']) + ($this->checkNote($noteEtd))) / 2.0, 2);
                 $etd->setNoteFinal($this->checkNote($final));
                 $this->entityManager->persist($etd);
             }
@@ -466,8 +466,10 @@ class GroupeController extends AbstractController
         $this->entityManager->flush();
     }
 
+
+    //Fonction pour répartir les étudiants dans les groupes souhaités
     #[Route('/api/create-groupe', name: 'api_create_groupe', methods: ['POST'])]
-    public function createGroups(Request $request): JsonResponse
+    public function createGroups(Request $request): JsonResponse 
     {
         if (!$request->getContent()) {
             return new JsonResponse(['error' => 'No content'], 400);
@@ -479,6 +481,7 @@ class GroupeController extends AbstractController
             return new JsonResponse(['error' => 'Invalid JSON'], 400);
         }
 
+        //séparation des données du JSON envoyé par le frontend
         $ecole = $data['ecole'] ?? 0;
         $annee = $data['annee'] ?? 0;
         $taille = $data['taille'] ?? 0;
@@ -502,7 +505,7 @@ class GroupeController extends AbstractController
     private function manageData($ecoleId, $annee, $taille, $nom, $etudiants, $criteres): ?Liste
     {
         $ecole = $this->ecoleRepository->find($ecoleId);
-        $this->setClasses($etudiants, $ecole);
+        $this->setClasses($etudiants, $ecole); //fonction qui vérifie si toutes les classes de la liste existent dans la base de données (si ce n'est pas le cas, elle les crée)
         $newListe = $this->setListe($ecole, $annee, $nom, $criteres);
         $newEtds = $this->loadEtudiants($etudiants, $ecole);
         $this->loadGroups($criteres, $newEtds, $taille, $newListe);
@@ -896,10 +899,78 @@ class GroupeController extends AbstractController
             ->setDate(\DateTime::createFromFormat('Y-m-d', date('Y-m-d')))
             ->setLibelle($nom)
             ->setCritere($criteres)
-            ->setArchived(false);
+            ->setArchived(false)
+            ->setComplete(false);
         $this->listeRepository->addOrUpdate($liste);
         $newListe = $this->listeRepository->findByLibelle($nom);
 
         return $newListe;
+    }
+
+
+    #[Route('/api/create-groupe-import', name: 'api_create_groupe_import', methods: ['POST'])]
+    public function createImportGroups(Request $request): JsonResponse 
+    {
+        if (!$request->getContent()) {
+            return new JsonResponse(['error' => 'No content'], 400);
+        }
+
+        $data = json_decode($request->getContent(), true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return new JsonResponse(['error' => 'Invalid JSON'], 400);
+        }
+
+        $ecole = $data['ecole'] ?? 0;
+        $annee = $data['annee'] ?? 0;
+        $fileName = $data['fileName'] ?? '';
+        $etudiantGroups = $data['etudiantGroups'] ?? [];
+
+        $nEcole = $this->ecoleRepository->find($ecole);
+        $newListe = $this->setListe($nEcole, $annee, $fileName, []);
+        $this->manageImports($etudiantGroups, $newListe, $nEcole);
+
+        try {
+            return RestResponse::requestResponse('Data received and list created', $newListe->getId(), JsonResponse::HTTP_OK);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    private function manageImports(array $etudiantGroups, Liste $newListe, Ecole $ecole)
+    {
+        $existingClasses = $this->classeRepository->findAllByEcole($ecole);
+        $classesMap = [];
+        foreach ($existingClasses as $classe) {
+            $classesMap[$classe->getLibelle()] = $classe;
+        }
+
+        foreach($etudiantGroups as $key => $grp){
+            $cnt = 0;
+            $newGrp = new Groupe();
+            $newGrp->setArchived(false)
+                    ->setListe($newListe)
+                    ->setNote((float) $grp['groupNote'])
+                    ->setLibelle($grp['groupName']);
+            $this->entityManager->persist($newGrp);
+
+            foreach($grp['etudiants'] as $etd){
+                $cnt++;
+                $newEtd = new Etudiant();
+                $newEtd->setArchived(false)
+                        ->setMatricule($etd['matricule'])
+                        ->setNom($etd['nom'])
+                        ->setPrenom($etd['prenom'])
+                        ->setSexe($etd['sexe'])
+                        ->setClasse($classesMap[$etd['classe']])
+                        ->setNoteEtd($etd['noteEtd'])
+                        ->setNoteFinal($etd['noteFinal']);
+                $newGrp->addEtudiant($newEtd);
+                $this->entityManager->persist($newEtd);
+            }
+            $newGrp->setTaille($cnt);
+            $this->entityManager->persist($newGrp);
+            $this->entityManager->flush();
+        }
     }
 }

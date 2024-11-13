@@ -66,8 +66,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ->setParameter('keyword', '%' . $keyword . '%');
         }
         if ($ecole) {
-            $queryBuilder->andWhere('r.ecole = :ecole')
-                         ->setParameter('ecole', $this->ecoleRepository->find($ecole));
+            $queryBuilder->join('r.ecoles', 'e')
+                     ->andWhere('e.id = :ecoleId')
+                     ->setParameter('ecoleId', $ecole);
         }
         $query = $queryBuilder->andWhere('r.isArchived = :isArchived') 
                             ->setParameter('isArchived', false)

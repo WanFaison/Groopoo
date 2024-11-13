@@ -8,5 +8,6 @@ export interface ListeService{
     reDoListe(liste:number):Observable<any>;
     modifListe(liste:number, motif:string, keyword:string):Observable<any>;
     setNotes(data:any):Observable<any>;
-    getTemplate():Observable<any>;
+    getTemplate(state:number):Observable<any>;
+    importList(data:any):Observable<any>;
 }

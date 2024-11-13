@@ -158,6 +158,33 @@ class ListeController extends AbstractController
         return new BinaryFileResponse($temp_file);
     }
 
+    #[Route('/api/template-import', name: 'api_template_import', methods: ['GET'])]
+    public function makeImportTemplateSheet():BinaryFileResponse
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+                
+        $sheet->setCellValue('A1', 'Group n')
+                ->setCellValue('B1', '*entrez la note du groupe ici')
+                ->getStyle('B1')->getFont()->setItalic(true);
+
+        $sheet->setCellValue('A2', 'Matricule')
+                ->setCellValue('B2', 'Nom')
+                ->setCellValue('C2', 'Prenom')
+                ->setCellValue('D2', 'Sexe')
+                ->setCellValue('E2', 'Classe')
+                ->setCellValue('F2', 'Niveau')
+                ->setCellValue('G2', 'Filiere')
+                ->setCellValue('H2', 'Note Etudiant')
+                ->setCellValue('I2', 'Note Finale');
+
+        $writer = new Xlsx($spreadsheet);
+        $temp_file = tempnam(sys_get_temp_dir(), 'Band-It import template.xlsx');
+        $writer->save($temp_file);
+
+        return new BinaryFileResponse($temp_file);
+    }
+
     #[Route('/api/liste-export', name: 'api_liste_export', methods: ['GET'])]
     public function exportExcel(Request $request): BinaryFileResponse
     {

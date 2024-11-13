@@ -3,14 +3,14 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FootComponent } from '../../components/foot/foot.component';
 import { NavComponent } from '../../components/nav/nav.component';
 import { RestResponse } from '../../models/rest.response';
-import { GroupeModel } from '../../models/groupe.model';
+import { GroupeModel, GroupeReqModel } from '../../models/groupe.model';
 import { GroupeServiceImpl } from '../../services/impl/groupe.service.impl';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { ListeModel } from '../../models/liste.model';
 import { ListeServiceImpl } from '../../services/impl/list.service.impl';
-import { EtudiantCreate, EtudiantCreateXlsx } from '../../models/etudiant.model';
+import { EtudiantCreate, EtudiantCreateXlsx, EtudiantModel } from '../../models/etudiant.model';
 import { EtudiantServiceImpl } from '../../services/impl/etudiant.service.impl';
 import { HttpResponse } from '@angular/common/http';
 import { response } from 'express';
@@ -28,7 +28,10 @@ export class GroupsComponent implements OnInit{
   liste: number = 0;
   listeResponse?: RestResponse<ListeModel>;
   etdResponse?: RestResponse<EtudiantCreateXlsx[]>;
+  etdResponse2?: RestResponse<EtudiantModel>;
   groupResponse?: RestResponse<GroupeModel[]>;
+  grpReq?:RestResponse<GroupeReqModel[]>
+  grp:number = 0;
   user?:LogUser;
   libelle:string = ''
   error:boolean = false
@@ -39,11 +42,28 @@ export class GroupsComponent implements OnInit{
     if (typeof window !== 'undefined' && localStorage){
       this.liste = parseInt(localStorage.getItem('newListe') || '1', 10);
       this.listeService.findById(this.liste).subscribe(data=>this.listeResponse=data);
+      this.groupeService.findAllReq(this.liste).subscribe(data=>this.grpReq=data)
     }
     this.refresh(this.liste);
-    if (this.groupResponse) {
-      console.log(this.groupResponse);
-    } 
+  }
+
+  findEtd(id:number){
+    this.etudiantService.findById(id).subscribe(data=>this.etdResponse2=data);
+  }
+
+  transferEtd(grp:number = this.grp){
+    if(this.etdResponse2)
+    this.etudiantService.transferEtudiant(this.etdResponse2?.results.id, grp).subscribe(
+      response=>{
+        if(response.data != 0){
+          this.error = true;
+        }else{
+          this.reloadPage(); 
+        } 
+      },        
+      error => {
+            console.error('Error sending data', error);
+          });
   }
 
   printXls(motif:string = ''){

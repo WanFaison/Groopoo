@@ -4,7 +4,6 @@ export type EtudiantModel = {
     nom: string,
     prenom: string,
     sexe: string,
-    nationalite?: string,
     classe: string,
     groupe?: number,
     noteEtd?: number,
@@ -30,7 +29,6 @@ export interface EtudiantCreate{
     niveau: string,
     filiere: string,
     classe: string,
-    nationalite: string
 }
 
 export interface EtudiantImportXlsx{
@@ -51,5 +49,4 @@ export interface EtudiantCreateXlsx{
     Niveau: string,
     Filiere: string,
     Classe: string,
-    Nationalite?: string
 }

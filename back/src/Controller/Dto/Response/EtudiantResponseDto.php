@@ -11,7 +11,6 @@ class EtudiantResponseDto
     private string $nom;
     private string $prenom;
     private string $sexe;
-    private string $nationalite;
     private string $classe;
     private string $niveau;
     private string $filiere;
@@ -69,17 +68,6 @@ class EtudiantResponseDto
     public function setSexe(string $sexe): static
     {
         $this->sexe = $sexe;
-
-        return $this;
-    }
-
-    public function getNationalite(): ?string
-    {
-        return $this->nationalite ?? 'unknown';
-    }
-    public function setNationalite(string $nationalite): static
-    {
-        $this->nationalite = $nationalite;
 
         return $this;
     }
@@ -156,7 +144,6 @@ class EtudiantResponseDto
         $dto->setPrenom($etudiant->getPrenom());
         $dto->setMatricule($etudiant->getMatricule());
         $dto->setSexe($etudiant->getSexe());
-        //$dto->setNationalite($etudiant->getNationalite());
         $dto->setClasse($etudiant->getClasse()->getLibelle());
         $dto->setNiveau($etudiant->getClasse()->getNiveau()->getLibelle());
         $dto->setFiliere($etudiant->getClasse()->getFiliere()->getLibelle());

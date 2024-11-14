@@ -32,7 +32,7 @@ class ListeRepository extends ServiceEntityRepository
     }
 
 
-    public function findAllPaginated(int $page, int $limit, string $keyword, int $annee = null, int $ecole = null): Paginator
+    public function findAllPaginated(int $page, int $limit, string $keyword, int $annee = null, int $ecole = null, int $archived = 0): Paginator
     {
         $queryBuilder = $this->createQueryBuilder('r');
         if (!empty($keyword)) {
@@ -47,10 +47,17 @@ class ListeRepository extends ServiceEntityRepository
             $queryBuilder->andWhere('r.ecole = :ecole')
                          ->setParameter('ecole', $this->ecoleRepository->find($ecole));
         }
-        $query = $queryBuilder->andWhere('r.isArchived = :isArchived') 
+        if($archived == 0){
+            $query = $queryBuilder->andWhere('r.isArchived = :isArchived') 
                             ->setParameter('isArchived', false)
                             ->orderBy('r.id', 'ASC')
                             ->getQuery();
+        }else{
+            $query = $queryBuilder->andWhere('r.isArchived = :isArchived') 
+                            ->setParameter('isArchived', true)
+                            ->orderBy('r.id', 'ASC')
+                            ->getQuery();
+        }
         
         return PaginatorService::pageInator($query, $page, $limit);
     }

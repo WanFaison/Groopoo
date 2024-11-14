@@ -147,11 +147,14 @@ export class GroupsComponent implements OnInit{
           });
   }
 
-  refresh(liste:number=0, page:number=0){
-    this.groupeService.findAll(liste, page).subscribe(data=>this.groupResponse=data);
+  refresh(liste:number=0, page:number=0, limit:number=10){
+    this.groupeService.findAll(liste, page, limit).subscribe(data=>this.groupResponse=data);
   }
   paginate(page:number){
     this.refresh(this.liste, page)
+  }
+  filter(index:number) {
+    this.refresh(this.liste, index, 1)
   }
 
   pages(start: number, end: number | undefined = 5): number[] {

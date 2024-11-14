@@ -60,10 +60,11 @@ class ListeController extends AbstractController
         $keyword = $request->query->getString('keyword', '');
         $annee = $request->query->getInt('annee', 0);
         $ecole = $request->query->getInt('ecole', 0);
+        $archived = $request->query->getInt('archived', 0);
 
         if($annee == 0){$annee = null;} 
         if($ecole == 0){$ecole = null;} 
-        $listes = $listeRepository->findAllPaginated($page, $limit, $keyword, $annee, $ecole);
+        $listes = $listeRepository->findAllPaginated($page, $limit, $keyword, $annee, $ecole, $archived);
         
         $dtos = [];
         foreach ($listes as $liste) {
@@ -128,7 +129,7 @@ class ListeController extends AbstractController
         }else if($motif == 'deverr'){
             $liste->setComplete(false);
         }else{
-            $liste->setArchived(true);
+            $liste->setArchived(!$liste->isArchived());
         }
 
         $this->listeRepository->addOrUpdate($liste);

@@ -14,6 +14,7 @@ import { NotFoundComponent } from './core/pages/404/404.component';
 import { JoursComponent } from './core/pages/jours/jours.component';
 import { AttendanceComponent } from './core/pages/attendance/attendance.component';
 import { NotesComponent } from './core/pages/notes/notes.component';
+import { ArchivedComponent } from './core/pages/archived/archived.component';
 
 export const routes: Routes = [
     {
@@ -23,6 +24,11 @@ export const routes: Routes = [
     {
         path:"app/home",
         component:HomeComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path:"app/archived",
+        component:ArchivedComponent,
         canActivate: [AuthGuard]
     },
     {

@@ -21,6 +21,9 @@
         <li class="nav-item" *ngIf="user?.role == 'ROLE_ADMIN'">
           <a class="nav-link text-dark" [routerLink]="['/app/users']" routerLinkActive="active">Utilisateurs</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/app/archived']" routerLinkActive="active">Archives <span class="sr-only"></span></a>
+        </li>
       </ul>
       
     </div>

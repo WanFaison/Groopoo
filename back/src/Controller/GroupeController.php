@@ -173,7 +173,6 @@ class GroupeController extends AbstractController
                     'nom' => $e->getNom(),
                     'prenom' => $e->getPrenom(),
                     'sexe' => $e->getSexe(),
-                    'nationalite' => $e->getNationalite(),
                     'classe' => $e->getClasse(),
                     'niveau' => $e->getNiveau(),
                     'filiere' => $e->getFiliere(),
@@ -813,14 +812,12 @@ class GroupeController extends AbstractController
                 $newEtd->setMatricule($theEtd->getMatricule())
                     ->setNom($theEtd->getNom())
                     ->setPrenom($theEtd->getPrenom())
-                    ->setSexe($theEtd->getSexe())
-                    ->setNationalite($theEtd->getNationalite());
+                    ->setSexe($theEtd->getSexe());
             }else{
                 $newEtd->setMatricule($etudiant['Matricule'])
                     ->setNom($etudiant['Nom'])
                     ->setPrenom($etudiant['Prenom'])
-                    ->setSexe($etudiant['Sexe'])
-                    ->setNationalite($etudiant['Nationalite'] ?? 'unknown');
+                    ->setSexe($etudiant['Sexe']);
             }
 
             $this->entityManager->persist($newEtd);

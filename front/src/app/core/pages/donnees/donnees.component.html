@@ -94,7 +94,7 @@
                   </a>
                 </li>
   
-                @for (item of pages(1,anneeResponse?.totalPages); track $index){
+                @for (item of getPageRange(anneeResponse?.currentPage , anneeResponse?.totalPages); track $index){
                   <li class="page-item" [ngClass]="{'active':item-1==anneeResponse?.currentPage}">
                     <a (click)="paginate(item - 1)" class="page-link">{{item}}</a>
                   </li>
@@ -119,7 +119,7 @@
                   </a>
                 </li>
   
-                @for (item of pages(1,ecoleResponse?.totalPages); track $index){
+                @for (item of getPageRange(ecoleResponse?.currentPage, ecoleResponse?.totalPages); track $index){
                   <li class="page-item" [ngClass]="{'active':item-1==ecoleResponse?.currentPage}">
                     <a (click)="paginate(item - 1)" class="page-link">{{item}}</a>
                   </li>

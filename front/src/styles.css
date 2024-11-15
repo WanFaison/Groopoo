@@ -129,8 +129,8 @@ html, body {
   }
 
 .custom-btn {
-    background-color: #237aa2;
-    border-color: #237aa2;
+    background-color: #32915a;
+    border-color: #32915a;
     color: white;
     font-size: 14px;
     border-radius: 14px;
@@ -140,8 +140,8 @@ html, body {
 }
 
 .custom-btn:hover {
-    background-color: darken(#237aa2, 10%); 
-    border-color: darken(#237aa2, 10%);
+    background-color: darken(#104547, 10%); 
+    border-color: darken(#104547, 10%);
 }
 
 .btn-orange{
@@ -159,7 +159,7 @@ html, body {
 }
 
 .title-label {
-    color: #237aa2;
+    color: #104547;
     font-weight: bold;
     letter-spacing: 1px;
     font-size: 3rem;
@@ -228,8 +228,8 @@ input::placeholder {
 }
 
 .logo-img{
-    height: 50px;
-    width: 40px;
+    height: 3rem;
+    width: 6rem;
     margin: 0 2rem 0 2rem;
 }
 

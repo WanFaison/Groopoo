@@ -80,7 +80,7 @@
                 </a>
               </li>
 
-              @for (item of pages(1,response?.totalPages); track $index){
+              @for (item of getPageRange(response?.currentPage , response?.totalPages); track $index){
                 <li class="page-item" [ngClass]="{'active':item-1==response?.currentPage}">
                   <a (click)="paginate(item - 1)" class="page-link">{{item}}</a>
                 </li>

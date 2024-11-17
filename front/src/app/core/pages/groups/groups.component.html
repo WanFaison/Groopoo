@@ -71,10 +71,15 @@
                         <td>{{etd.classe}}</td> 
                         <td *ngIf="user?.role != 'ROLE_VISITEUR'">{{etd.noteEtd}}</td> 
                         <td *ngIf="user?.role != 'ROLE_VISITEUR'">{{etd.noteFinal}}</td> 
-                        <td *ngIf="!listeResponse?.results?.isComplet">
-                          <button class="btn btn-secondary"
+                        <td *ngIf="!listeResponse?.results?.isComplet && user?.role != 'ROLE_VISITEUR'">
+                          <button class="btn btn-secondary me-2"
                           (click)="findEtd(etd.id)"
                           data-bs-toggle="modal" data-bs-target="#transfererModal">Transferer</button>
+                          <a class="btn btn-danger me-2"
+                          (click)="findEtd(etd.id)" 
+                          data-bs-toggle="modal" data-bs-target="#retirerModal"
+                          role="button" style="color: white;">
+                            Retirer</a>
                         </td>
                     </tr>
                 </tbody>
@@ -158,6 +163,28 @@
           </div>
           <div class="modal-footer d-flex">
               <button (click)="transferEtd(grp)" type="button" 
+              class="btn btn-success">Confirmer</button>
+              <button type="button" class="btn btn-secondary" 
+              data-bs-dismiss="modal">Close</button>
+          </div>
+      </div>
+      </div>
+    </div>
+
+    <!-- Modal retirer-->
+    <div class="modal fade" id="retirerModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+      <div class="modal-content row">
+          <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">{{ 'Retirer ' + etdResponse2?.results?.nom + ' ' + etdResponse2?.results?.prenom }}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <h4 class="form-label custom-label">Voulez vous retirer cet etudiant?</h4>
+            <p>NB: En confirment cette action, l'etudiant n'apparaitra plus en operant sur cette liste</p>
+        </div>
+          <div class="modal-footer d-flex">
+              <button (click)="deleteEtd()" type="button" 
               class="btn btn-success">Confirmer</button>
               <button type="button" class="btn btn-secondary" 
               data-bs-dismiss="modal">Close</button>

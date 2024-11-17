@@ -15,6 +15,7 @@ use App\Repository\FiliereRepository;
 use App\Repository\GroupeRepository;
 use App\Repository\NiveauRepository;
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use FPDF;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -38,8 +39,9 @@ class ListeController extends AbstractController
     private $groupeRepository;
     private $listeRepository;
     private $userRepository;
+    private $entityManager;
 
-    public function __construct(UserRepository $userRepository, EcoleRepository $ecoleRepository, AnneeRepository $anneeRepository, EtudiantRepository $etudiantRepository, NiveauRepository $niveauRepository, FiliereRepository $filiereRepository, ClasseRepository $classeRepository, GroupeRepository $groupeRepository, ListeRepository $listeRepository)
+    public function __construct(EntityManagerInterface $entityManager, UserRepository $userRepository, EcoleRepository $ecoleRepository, AnneeRepository $anneeRepository, EtudiantRepository $etudiantRepository, NiveauRepository $niveauRepository, FiliereRepository $filiereRepository, ClasseRepository $classeRepository, GroupeRepository $groupeRepository, ListeRepository $listeRepository)
     {
         $this->ecoleRepository = $ecoleRepository;
         $this->anneeRepository = $anneeRepository;
@@ -50,6 +52,28 @@ class ListeController extends AbstractController
         $this->groupeRepository = $groupeRepository;
         $this->listeRepository = $listeRepository;
         $this->userRepository = $userRepository;
+        $this->entityManager = $entityManager;
+    }
+
+    #[Route('/api/liste-delete', name: 'api_liste_delete', methods: ['GET'])]
+    public function deleteListe(Request $request): JsonResponse
+    {
+        $listeId = $request->query->getInt('liste', 0);
+        $liste = $this->listeRepository->find($listeId);
+
+        foreach($liste->getGroupes() as $grp){
+            foreach($grp->getEtudiant() as $etd){
+                $this->entityManager->remove($etd);
+            }
+            $this->entityManager->remove($grp);
+            $this->entityManager->flush();
+        }
+
+        if($this->listeRepository->deleteById($listeId)){
+            return DtoRestResponse::requestResponse('liste supprimer avec success', 0, JsonResponse::HTTP_OK);
+        }
+
+        return DtoRestResponse::requestResponse('liste non-trouve', 1, JsonResponse::HTTP_OK);
     }
 
     #[Route('/api/liste', name: 'api_liste', methods: ['GET'])]
@@ -79,7 +103,8 @@ class ListeController extends AbstractController
                 'annee' => $r->getAnnee(),
                 'ecole' => $r->getEcole(),
                 'date' => $r->getDate(),
-                'isComplet' => $r->isComplete()
+                'isComplet' => $r->isComplete(),
+                'isImport' => $r->isImported()
             ];
         }
 
@@ -104,7 +129,8 @@ class ListeController extends AbstractController
                     'ecole' => $dto->getEcole(),
                     'date' => $dto->getDate(),
                     'count' => $dto->getCount(),
-                    'isComplet' => $dto->isComplete()
+                    'isComplet' => $dto->isComplete(),
+                    'isImport' => $dto->isImported()
                 ];
         }
 

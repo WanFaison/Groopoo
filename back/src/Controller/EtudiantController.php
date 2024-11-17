@@ -7,6 +7,7 @@ use App\Controller\Dto\RestResponse;
 use App\Repository\EtudiantRepository;
 use App\Repository\GroupeRepository;
 use App\Repository\ListeRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,12 +19,14 @@ class EtudiantController extends AbstractController
     private $etudiantRepository;
     private $groupeRepository;
     private $listeRepository;
+    private $entityManager;
 
-    public function __construct(EtudiantRepository $etudiantRepository, GroupeRepository $groupeRepository, ListeRepository $listeRepository)
+    public function __construct(EntityManagerInterface $entityManager, EtudiantRepository $etudiantRepository, GroupeRepository $groupeRepository, ListeRepository $listeRepository)
     {
         $this->etudiantRepository = $etudiantRepository;
         $this->groupeRepository = $groupeRepository;
         $this->listeRepository = $listeRepository;
+        $this->entityManager = $entityManager;
     }
 
     #[Route('/api/liste-etudiant', name: 'api_etudiant_liste', methods: ['GET'])]
@@ -87,5 +90,19 @@ class EtudiantController extends AbstractController
         }else{
             return RestResponse::requestResponse('etudiant ou groupe non-trouve', 1, JsonResponse::HTTP_OK);
         }
+    }
+
+    #[Route('/api/etudiant-delete', name: 'api_etudiant_delete', methods: ['GET'])]
+    public function deleteEtudiant(Request $request): JsonResponse
+    {
+        $etudiantId = $request->query->getInt('etudiant', 0);
+        $etudiant = $this->etudiantRepository->find($etudiantId);
+        foreach($etudiant->getAbsences() as $abs){
+            $this->entityManager->remove($abs);
+        }
+        $this->entityManager->remove($etudiant);
+        $this->entityManager->flush();
+
+        return RestResponse::requestResponse('etudiant retirer avec success', 0, JsonResponse::HTTP_OK);
     }
 }

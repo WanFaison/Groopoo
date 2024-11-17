@@ -52,7 +52,9 @@
                       <th scope="row">
                         {{item.libelle}}
                         <i *ngIf="user?.role != 'ROLE_VISITEUR' && item.isComplet"
-                         class="bi bi-lock-fill" style="color: black;"></i>
+                         class="bi bi-lock-fill me-1" style="color: black;"></i>
+                        <i *ngIf="user?.role != 'ROLE_VISITEUR' && item.isImport" 
+                         class="fas fa-angles-down"></i>
                       </th>
                       <td>{{item.date}}</td>
                       <td>

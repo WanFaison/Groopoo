@@ -13,6 +13,10 @@ import { HttpClient } from "@angular/common/http";
 export class EtudiantServiceImpl implements EtudiantService{
     private apiUrl=`${environment.APIURL}/liste-etudiant`;
     constructor(private http:HttpClient){}
+
+    deleteEtudiant(etudiant: number): Observable<RequestResponse> {
+        return this.http.get<RequestResponse>(`${environment.APIURL}/etudiant-delete?etudiant=${etudiant}`);
+    }
     
     transferEtudiant(etudiant: number, groupe: number): Observable<RequestResponse> {
         return this.http.get<RequestResponse>(`${environment.APIURL}/etudiant-transfer?etudiant=${etudiant}&groupe=${groupe}`);

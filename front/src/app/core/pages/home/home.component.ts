@@ -91,6 +91,17 @@ export class HomeComponent implements OnInit{
           })
   }
 
+  deleteListe(liste: number) {
+    this.listeService.deleteListe(liste).subscribe(
+      response=>{
+            console.log(response.message)
+            this.reloadPage(); 
+          },        
+      error => {
+            console.error('Error sending data', error);
+          });
+  }
+
   refresh(page:number=0,keyword:string=this.keyword, annee:number=0, ecole:number = this.ecole){
     if(this.user){
       if (typeof window !== 'undefined' && localStorage && this.user?.role == 'ROLE_ECOLE_ADMIN'){

@@ -17,6 +17,7 @@ class ListeResponseDto
     private string $date;
     private int $count;
     private bool $isComplete;
+    private bool $isImported;
 
     public function getId(): ?int
     {
@@ -111,6 +112,18 @@ class ListeResponseDto
         return $this;
     }
 
+    public function isImported(): ?bool
+    {
+        return $this->isImported;
+    }
+
+    public function setImported(bool $isImported): static
+    {
+        $this->isImported = $isImported;
+
+        return $this;
+    }
+
     public function toDto(Liste $liste): ListeResponseDto
     {
         $dto = new ListeResponseDto();
@@ -123,6 +136,7 @@ class ListeResponseDto
         $dto->setDate($liste->getDate()->format('d-m-Y'));
         $dto->setCount($liste->getGroupes()->count());
         $dto->setComplete($liste->isComplete());
+        $dto->setImported($liste->isImported());
 
         return $dto;
     }

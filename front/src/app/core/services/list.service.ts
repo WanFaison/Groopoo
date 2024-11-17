@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 import { ListeModel } from "../models/liste.model";
-import { RestResponse } from "../models/rest.response";
+import { RequestResponse, RestResponse } from "../models/rest.response";
 
 export interface ListeService{
     findAll(page:number, keyword:string, annee:number, ecole:number, archived:number):Observable<RestResponse<ListeModel[]>>;
@@ -10,4 +10,5 @@ export interface ListeService{
     setNotes(data:any):Observable<any>;
     getTemplate(state:number):Observable<any>;
     importList(data:any):Observable<any>;
+    deleteListe(liste:number):Observable<RequestResponse>;
 }

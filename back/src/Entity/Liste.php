@@ -41,10 +41,14 @@ class Liste extends AbstractEntity
     #[ORM\OneToMany(targetEntity: Jour::class, mappedBy: 'liste')]
     private Collection $jours;
 
+    #[ORM\Column]
+    private ?bool $isImported = false;
+
     public function __construct()
     {
         $this->groupes = new ArrayCollection();
         $this->jours = new ArrayCollection();
+        $this->setImported(false);
     }
 
 
@@ -171,6 +175,18 @@ class Liste extends AbstractEntity
                 $jour->setListe(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isImported(): ?bool
+    {
+        return $this->isImported;
+    }
+
+    public function setImported(bool $isImported): static
+    {
+        $this->isImported = $isImported;
 
         return $this;
     }

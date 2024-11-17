@@ -66,6 +66,22 @@ export class GroupsComponent implements OnInit{
           });
   }
 
+  deleteEtd() {
+    if(this.etdResponse2)
+    this.etudiantService.deleteEtudiant(this.etdResponse2?.results.id).subscribe(
+      response=>{
+        if(response.data != 0){
+          console.log(response.message)
+        }else{
+          this.reloadPage(); 
+        } 
+      },        
+      error => {
+            console.error('Error sending data', error);
+          }
+    );
+  }
+
   printXls(motif:string = ''){
     this.apiService.getExcelSheet(this.liste, motif).subscribe((data: Blob) => {
       const downloadUrl = window.URL.createObjectURL(data);

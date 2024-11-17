@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 import { ListeModel } from "../../models/liste.model";
-import { RestResponse } from "../../models/rest.response";
+import { RequestResponse, RestResponse } from "../../models/rest.response";
 import { ListeService } from "../list.service";
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
@@ -21,6 +21,10 @@ export class ListeServiceImpl implements ListeService{
     constructor(private http:HttpClient) { 
         // this.todayString = this.today.toISOString().slice(0,10);
         // this.testString = new Date('2022-02-12').toISOString().slice(0,10);
+    }
+
+    deleteListe(liste: number): Observable<RequestResponse> {
+        return this.http.get<RequestResponse>(`${environment.APIURL}/liste-delete?liste=${liste}`);
     }
 
     importList(data: any): Observable<any> {

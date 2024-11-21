@@ -35,7 +35,7 @@ export class NotesComponent implements OnInit{
     if(this.user?.role == 'ROLE_VISITEUR'){
       this.router.navigate(['/app/not-found'])
     }
-    alert('Avant d’attribuer des notes, vous devez vous assurer que toutes les absences ont été comptabilisées.')
+    alert('Avant d’attribuer des notes aux différents groupes, assurez-vous que toutes les absences ont été correctement enregistrées.')
     
     if (typeof window !== 'undefined' && localStorage){
       this.liste = parseInt(localStorage.getItem('newListe') || '1', 10);

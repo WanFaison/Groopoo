@@ -5,7 +5,7 @@
         <div class="flex-center my-3 flex-column">
             <div class="d-flex flex-column align-items-center my-3">
               <h4 *ngIf="groupResponse" class="underline-bold">{{ 'Notes: ' + groupResponse.results[0].listeT}}</h4>
-              <p class="fst-italic">Toutes les notes seront comptabilisées et attribuées aux étudiants en fonction de leur assiduité.</p>
+              <p class="w-50 fst-italic text-center flex-center">Après enregistrement, la note attribuée au groupe sera automatiquement comptabilisée et affectée à tous les membres. Par la suite, cette note sera ajustée individuellement en tenant compte du nombre d’absences de chaque membre, afin de calculer une note finale spécifique à chacun d’eux.</p>
             </div>
 
             <div *ngIf="msg.length >1" class="flex-center align-items-center">
@@ -18,7 +18,7 @@
                 (click)="onSubmit()" role="button" style="color: white;">
                     Enregistrer les notes
                 </a>
-                <button (click)="printXls('results')" class="btn btn-info col-md-4 me-2">Exporter Resultats</button>
+                <button (click)="printXls('results')" class="btn btn-info col-md-4 me-2">Exporter les notes</button>
                 <a class="btn btn-secondary me-2"
                 [routerLink]="['/app/view-jours']" routerLinkActive="active"
                 role="button" style="color: white;">
@@ -41,7 +41,7 @@
             <table class="table col-md-5 mb-5">
                 <thead class="thead-dark">
                     <tr>
-                        <th scope="col">Libelle</th>
+                        <th scope="col">Libellé</th>
                         <th scope="col">Note</th>
                     </tr>
                 </thead>
@@ -93,8 +93,8 @@
                 data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <h4 class="form-label custom-label">Voulez vous verrouiller cette liste?</h4>
-                <p>NB: en verrouillant cette liste, on suppose que l'événement correspondant est terminé; par conséquent d'autres modifications ne seront pas autorisées </p>
+                <h4 class="form-label custom-label">Êtes-vous sûr de vouloir verrouiller cette liste ?</h4>
+                <p>Note : Verrouiller cette liste signifie que l’événement correspondant sera considéré comme terminé. Par conséquent, aucune modification ultérieure ne sera autorisée.</p>
             </div>
             <div class="modal-footer d-flex">
                 <button (click)="archiverListe(liste, 'verr')" type="button" class="btn btn-success">Oui</button>

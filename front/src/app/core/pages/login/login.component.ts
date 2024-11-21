@@ -23,10 +23,15 @@ export class LoginComponent implements OnInit{
     this.authService.logout()
   }
 
+  getCurrentYear(): number {
+    const today = new Date();
+    return today.getFullYear();
+  }
+
   onLogin(): void {
     this.authService.login(this.username, this.password).subscribe(data=>{
       if(data.status==200){
-        console.log(data)
+        //console.log(data)
         localStorage.setItem('jwtToken', data.token);
         this.authService.setToken(data.token)
         this.authService.setUser(data.user)

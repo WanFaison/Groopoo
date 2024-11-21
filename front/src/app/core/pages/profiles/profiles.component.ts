@@ -43,15 +43,26 @@ export class ProfilesComponent implements OnInit{
     //this.router.navigate(['/app/view-groups']);
   }
 
-  archiveUser(user:number=0){
-    this.userService.modifUser(user).subscribe(
-      response=>{
-            console.log(response.message)
-            this.reloadPage(); 
-          },        
-      error => {
-            console.error('Error sending data', error);
-          })
+  archiveUser(user:number=0, motif:number =0){
+    if(motif == 0){
+      this.userService.modifUser(user).subscribe(
+        response=>{
+              console.log(response.message)
+              this.reloadPage(); 
+            },        
+        error => {
+              console.error('Error sending data', error);
+            })
+    }else{
+      this.userService.modifUser(user, motif).subscribe(
+        response=>{
+              console.log(response.message)
+              this.reloadPage(); 
+            },        
+        error => {
+              console.error('Error sending data', error);
+            })
+    }
   }
 
 

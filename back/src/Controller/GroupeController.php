@@ -484,7 +484,7 @@ class GroupeController extends AbstractController
         $ecole = $data['ecole'] ?? 0;
         $annee = $data['annee'] ?? 0;
         $taille = $data['taille'] ?? 0;
-        $nom = $data['nom'] ?? '';
+        $nom = $data['nom'] ?? '*Sans nom crée';
         $etudiants = $data['etudiants'] ?? [];
         $criteres = $data['criteres'] ?? [];
         $status = $data['status'] ?? 500;
@@ -805,19 +805,19 @@ class GroupeController extends AbstractController
         foreach ($etudiants as $key => $etudiant) {
             $newEtd = new Etudiant();
             $newEtd->setArchived(false)
-                    ->setClasse($classesMap[$etudiant['Classe']]);
+                    ->setClasse($classesMap[trim($etudiant['Classe'])]);
 
-            $theEtd = $this->etudiantRepository->findByMatricule($etudiant['Matricule']);
+            $theEtd = $this->etudiantRepository->findByMatricule(trim($etudiant['Matricule']));
             if($theEtd){                
                 $newEtd->setMatricule($theEtd->getMatricule())
                     ->setNom($theEtd->getNom())
                     ->setPrenom($theEtd->getPrenom())
                     ->setSexe($theEtd->getSexe());
             }else{
-                $newEtd->setMatricule($etudiant['Matricule'])
+                $newEtd->setMatricule(trim($etudiant['Matricule']))
                     ->setNom($etudiant['Nom'])
                     ->setPrenom($etudiant['Prenom'])
-                    ->setSexe($etudiant['Sexe']);
+                    ->setSexe(trim($etudiant['Sexe']));
             }
 
             $this->entityManager->persist($newEtd);
@@ -855,34 +855,34 @@ class GroupeController extends AbstractController
         }
 
         foreach ($etudiants as $etd) {
-            if (!isset($classesMap[$etd['Classe']])) {
+            if (!isset($classesMap[trim($etd['Classe'])])) {
                 $newClasse = new Classe();
                 $newClasse->setArchived(false);
-                $newClasse->setLibelle($etd['Classe']);
+                $newClasse->setLibelle(trim($etd['Classe']));
 
-                if (!isset($niveauxMap[$etd['Niveau']])) {
+                if (!isset($niveauxMap[trim($etd['Niveau'])])) {
                     $niveau = new Niveau();
                     $niveau->setArchived(false);
-                    $niveau->setLibelle($etd['Niveau']);
+                    $niveau->setLibelle(trim($etd['Niveau']));
                     $this->niveauRepository->addOrUpdate($niveau);
-                    $niveauxMap[$etd['Niveau']] = $niveau;
+                    $niveauxMap[trim($etd['Niveau'])] = $niveau;
                 }
-                $newClasse->setNiveau($niveauxMap[$etd['Niveau']]);
+                $newClasse->setNiveau($niveauxMap[trim($etd['Niveau'])]);
 
-                if (!isset($filieresMap[$etd['Filiere']])) {
+                if (!isset($filieresMap[trim($etd['Filiere'])])) {
                     $filiere = new Filiere();
                     $filiere->setArchived(false);
-                    $filiere->setLibelle($etd['Filiere']);
+                    $filiere->setLibelle(trim($etd['Filiere']));
                     $filiere->setEcole($ecole);
                     $this->filiereRepository->addOrUpdate($filiere);
-                    $filieresMap[$etd['Filiere']] = $filiere;
+                    $filieresMap[trim($etd['Filiere'])] = $filiere;
                 }
-                $newClasse->setFiliere($filieresMap[$etd['Filiere']]);
+                $newClasse->setFiliere($filieresMap[trim($etd['Filiere'])]);
 
                 $newClasse->setEcole($ecole);
                 $this->classeRepository->addOrUpdate($newClasse);
 
-                $classesMap[$etd['Classe']] = $newClasse;
+                $classesMap[trim($etd['Classe'])] = $newClasse;
             }
         }
     }
@@ -893,7 +893,7 @@ class GroupeController extends AbstractController
         $liste->setEcole($ecole)
             ->setAnnee($this->anneeRepository->find($annee))
             ->setDate(\DateTime::createFromFormat('Y-m-d', date('Y-m-d')))
-            ->setLibelle($nom)
+            ->setLibelle(trim($nom))
             ->setCritere($criteres)
             ->setArchived(false)
             ->setComplete(false);
@@ -919,16 +919,17 @@ class GroupeController extends AbstractController
 
         $ecole = $data['ecole'] ?? 0;
         $annee = $data['annee'] ?? 0;
-        $fileName = $data['fileName'] ?? '';
+        $fileName = $data['fileName'] ?? '*Sans nom importé';
         $etudiantGroups = $data['etudiantGroups'] ?? [];
 
         $nEcole = $this->ecoleRepository->find($ecole);
         $newListe = $this->setListe($nEcole, $annee, $fileName, []);
-        $this->manageImports($etudiantGroups, $newListe, $nEcole);
-
+        
         try {
+            $this->manageImports($etudiantGroups, $newListe, $nEcole);
             return RestResponse::requestResponse('Data received and list created', $newListe->getId(), JsonResponse::HTTP_OK);
         } catch (\Exception $e) {
+            //$this->cleanWhenError($newListe);
             return new JsonResponse(['error' => $e->getMessage()], 500);
         }
     }
@@ -966,5 +967,18 @@ class GroupeController extends AbstractController
             $this->entityManager->persist($newGrp);
             $this->entityManager->flush();
         }
+    }
+
+    private function cleanWhenError(Liste $liste)
+    {
+        foreach($liste->getGroupes() as $grp){
+            foreach($grp->getEtudiant() as $etd){
+                $this->entityManager->remove($etd);
+            }
+            $this->entityManager->remove($grp);
+            $this->entityManager->flush();
+        }
+        $this->entityManager->remove($liste);
+        $this->entityManager->flush();
     }
 }

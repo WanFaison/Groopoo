@@ -49,7 +49,7 @@ export class FormUserUpdateComponent implements OnInit{
   }
 
   onSubmit() {
-    console.log(this.updateForm.value);
+    //console.log(this.updateForm.value);
 
     if (typeof window !== 'undefined' && localStorage){
       const updateForm = localStorage.getItem('updateForm');

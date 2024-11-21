@@ -3,7 +3,7 @@
 
     <div class="mt-5 row justify-content-center align-items-center h-100">
         <div class="flex-center">
-            <h3 class="underline-bold">Creer une liste de groupe</h3>
+            <h3 class="underline-bold">Importer des groupes</h3>
         </div>
         <div class="flex-column w-75">
             <h5 class="mt-5">Televerser un fichier excel</h5>
@@ -17,14 +17,14 @@
             <div class="d-flex">
                 <div class="file-upload w-50 mb-2">
                     <div class="file-select">
-                      <div class="file-select-button" id="fileName">Choose File</div>
-                      <div class="file-select-name" id="noFile">No file chosen...</div> 
+                      <div class="file-select-button" id="fileName">Choisir Fichier</div>
+                      <div class="file-select-name" id="noFile">Aucun choisi...</div> 
                       <input type="file" (change)="onFileSelected($event)" name="chooseFile" id="chooseFile">
                     </div>
                 </div>
                 <div *ngIf="user?.role == 'ROLE_ADMIN'" class="input-group col-md-2">
                     <select [(ngModel)]="ecole" (ngModelChange)="saveEcole($event)" class="form-select form-select-sm" aria-label=".form-select-sm example">
-                      <option selected value="0">Choisir l'ecole...</option>
+                      <option selected value="0">Choisir l'organisation...</option>
                       <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
                     </select>
                 </div>
@@ -37,10 +37,10 @@
             </div>
             <div class="d-flex">
                 <a id="orange-btn" class="btn btn-orange col-md-2 me-2" 
-                [class.disabled]="ecole === 0 || !fileName.trim() || annee == 0"
-                (click)="onSubmit()" role="button">Importer Liste</a>
+                [class.disabled]="ecole === 0 || !fileName.trim() || annee == 0 || etudiantGroups.length < 1"
+                (click)="onSubmit()" role="button">Importer les groupes</a>
                 <a (click)="printTemplate()" class="btn btn-info col-md-2 text-white" 
-                role="button">Import template</a>
+                role="button">Télécharger template</a>
             </div>
         </div>
 

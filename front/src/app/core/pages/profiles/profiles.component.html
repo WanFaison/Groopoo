@@ -3,37 +3,37 @@
 
     <div class="mt-5 row justify-content-center align-items-center h-100">
         <div class="flex-center my-3">
-            <h4 class="underline-bold">Gerer Utilisateurs</h4>
+            <h4 class="underline-bold">Gérer les utilisateurs</h4>
         </div>
 
         <div class="flex-center my-3">
             <input type="text" [(ngModel)]="keyword" class="form-control input-black-border col-md-2 me-2" placeholder="Rechercher...">
             <div class="input-group col-md-2">
                 <select [(ngModel)]="ecole" class="form-select" aria-label=".form-select-sm example">
-                  <option selected value="0">ecole...</option>
+                  <option selected value="0">organisation...</option>
                   <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
                 </select>
             </div>
             <a id="orange-btn" class="btn btn-success col-md-1 me-4" (click)="filter(0, keyword, ecole)" role="button" style="color: white;">
-                Filtrer
+                Rechercher
             </a>
             <a class="btn btn-secondary col-md-1 me-2" (click)="refresh()" role="button" style="color: white;">
-                Reinitialiser
+                Réinitialiser
             </a>
             <a class="btn btn-info col-md-1"
                 [routerLink]="['/app/form-user']" routerLinkActive="active"
                 role="button" style="color: white;">
-                Ajouter/Creer
+                Ajouter
             </a>
         </div>
 
         <div class="flex-center">
-            <table class="table col-md-6">
+            <table class="table col-md-10">
                 <thead class="thead-dark">
                   <tr>
                     <th scope="col">Utilisateur</th>
-                    <th scope="col">Ecole</th>
-                    <th scope="col">Profiles</th>
+                    <th scope="col">Organisations</th>
+                    <th scope="col">Profil</th>
                     <th scope="col">Actions</th>
                   </tr>
                 </thead>
@@ -46,10 +46,14 @@
                         <p *ngFor="let p of item.roles; let i = index">{{p}},</p>
                       </td>
                       <td>
-                        <a (click)="userId = item.id" class="btn btn-danger" 
+                        <a (click)="userId = item.id" class="btn btn-danger me-2" 
                         data-bs-toggle="modal" data-bs-target="#ynModal"
                         role="button" style="color: white;">
                           Archiver</a>
+                        <a (click)="userId = item.id" class="btn btn-danger" 
+                        data-bs-toggle="modal" data-bs-target="#ynModal2"
+                        role="button" style="color: white;">
+                          Supprimer</a>
                       </td>
                    </tr> 
                   }
@@ -89,12 +93,12 @@
         <div class="modal-dialog">
         <div class="modal-content row">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Suppression</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Archivage</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <h4 class="form-label custom-label">Voulez vous archiver cette utiliser?</h4>
-                <p>NB: la suppression de cette entité, l'empêchera d'accéder a la plateforme </p>
+                <p>NB: en archivant cette entité, elle ne pourra accéder a la plateforme </p>
             </div>
             <div class="modal-footer d-flex">
                 <button (click)="archiveUser(userId)" type="button" class="btn btn-success">Oui</button>
@@ -103,6 +107,26 @@
         </div>
         </div>
     </div>
+
+    <!-- Modal yn2-->
+    <div class="modal fade" id="ynModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+      <div class="modal-content row">
+          <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Suppression</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <h4 class="form-label custom-label">Voulez vous supprimer cette utiliser?</h4>
+              <p>Note: la suppression de cet utilisateur n'affectera pas les listes crée par ce dernier </p>
+          </div>
+          <div class="modal-footer d-flex">
+              <button (click)="archiveUser(userId, 1)" type="button" class="btn btn-success">Oui</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+          </div>
+      </div>
+      </div>
+  </div>
 
     <app-foot></app-foot>
 </div>

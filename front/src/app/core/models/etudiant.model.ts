@@ -33,20 +33,20 @@ export interface EtudiantCreate{
 
 export interface EtudiantImportXlsx{
     matricule: string,
-    nom: string,
-    prenom: string,
-    sexe: string,
-    niveau: string,
-    filiere: string,
+    nom?: string,
+    prenom?: string,
+    sexe?: string,
+    niveau?: string,
+    filiere?: string,
     classe: string
 }
 
 export interface EtudiantCreateXlsx{
-    Matricule: string,
+    Matricule?: string,
     Nom: string,
     Prenom: string,
     Sexe: string,
     Niveau: string,
     Filiere: string,
-    Classe: string,
+    Classe?: string,
 }

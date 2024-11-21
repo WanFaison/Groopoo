@@ -96,16 +96,16 @@ export class SelectlistComponent implements OnInit{
               if (currentGroup.groupName) {
                 this.etudiantGroups.push(currentGroup);
               }
-              currentGroup = { groupName: row[0], groupNote: row[1], etudiants: [] };
+              currentGroup = { groupName: row[0]?.trim(), groupNote: row[1] ?? 0, etudiants: [] };
             } else if (row[0] && row[1]) {  
               const etdActu:EtudiantImportXlsx = {
-                matricule: row[0],
+                matricule: row[0]?.trim(),
                 nom: row[1],
                 prenom: row[2],
-                sexe: row[3],
-                classe: row[4],
-                niveau: row[5],
-                filiere: row[6]
+                sexe: row[3]?.trim(),
+                classe: row[4]?.trim(),
+                niveau: row[5]?.trim(),
+                filiere: row[6]?.trim()
               };
               currentGroup.etudiants.push(etdActu);
             }
@@ -123,7 +123,7 @@ export class SelectlistComponent implements OnInit{
   }
 
   private isGroupHeader(row: any[]): boolean {
-    return typeof row[0] === 'string' && row[0].includes('Group');
+    return typeof row[0] === 'string' && row[0].includes('Groupe');
   }
 
   onSubmit() {
@@ -132,7 +132,7 @@ export class SelectlistComponent implements OnInit{
     const data = {
       ecole: this.ecole,
       annee: this.annee,
-      fileName: this.fileName,
+      fileName: this.fileName.replace(/\.[^/.]+$/, ""),
       etudiantGroups: this.etudiantGroups
     }
 

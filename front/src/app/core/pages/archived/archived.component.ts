@@ -38,14 +38,13 @@ export class ArchivedComponent implements OnInit{
   constructor(private router:Router, private authService:AuthServiceImpl, private ecoleService:EcoleServiceImpl, private listeService:ListeServiceImpl, private anneeService:AnneeServiceImpl, private etudiantService:EtudiantServiceImpl){}
 
   ngOnInit(): void {
+    this.user = this.authService.getUser()
+    if(this.user?.role == 'ROLE_VISITEUR'){
+      this.router.navigate(['/app/not-found'])
+    }
     this.anneeService.findAll().subscribe(data=>this.anneeResponse=data);
     this.ecoleService.findAll().subscribe(data=>this.ecoleResponse=data);
-    this.user = this.authService.getUser();
-    if(this.user?.role == 'ROLE_ECOLE_ADMIN'){
-      if(!localStorage.getItem('ecoleListe')){
-        localStorage.setItem('ecoleListe', this.user.ecole[0])
-      }
-    }
+    
     this.filter()
   }
 

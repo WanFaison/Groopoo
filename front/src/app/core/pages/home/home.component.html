@@ -17,23 +17,23 @@
         </div>
 
         <div class="flex-center my-3">
-            <input type="text" [(ngModel)]="keyword" class="form-control input-black-border col-md-3" placeholder="Rechercher...">
+            <input type="text" [(ngModel)]="keyword" class="form-control input-black-border col-md-3" placeholder="Recherche...">
             <div class="input-group col-md-3">
               <select [(ngModel)]="annee" class="form-select col-md-6" aria-label=".form-select-sm example">
-                <option selected value="0">annee...</option>
+                <option selected value="0">année...</option>
                 <option *ngFor="let item of anneeResponse?.results" [value]="item.id">{{ item.libelle }}</option>
               </select>
 
               <select *ngIf="user?.role != 'ROLE_ECOLE_ADMIN'" [(ngModel)]="ecole" class="form-select col-md-6" aria-label=".form-select-sm example">
-                <option selected value="0">ecole...</option>
+                <option selected value="0">école...</option>
                 <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
               </select>
             </div>
             <a id="orange-btn" class="btn btn-success col-md-1 me-5" (click)="filter(0, keyword, annee, ecole)" role="button" style="color: white;">
-                Filtrer
+              Rechercher
             </a>
             <a class="btn btn-secondary col-md-1" (click)="refresh()" role="button" style="color: white;">
-                Reinitialiser
+                Réinitialiser
             </a>
         </div>
         
@@ -73,7 +73,7 @@
                         <a *ngIf="user?.role != 'ROLE_VISITEUR' && item.isComplet"
                         (click)="archiverListe(item.id, 'deverr')" class="btn btn-secondary me-2"
                         role="button" style="color: white;">
-                          Deverrouiller</a>
+                          Déverrouiller</a>
                         <a *ngIf="user?.role == 'ROLE_ADMIN'"
                         (click)="liste = item.id;" class="btn btn-danger me-2"
                         data-bs-toggle="modal" data-bs-target="#ynModal2" 
@@ -130,7 +130,7 @@
           </div>
           <div class="modal-body">
               <h4 class="form-label custom-label">Voulez vous supprimer cette liste?</h4>
-              <p>NB: la suppression de cette liste, causera la suppression de toute entite correspondantes </p>
+              <p>La suppression de cette liste entraînera automatiquement la suppression définitive de tous les groupes, notes et absences qui y sont associés. </p>
           </div>
           <div class="modal-footer d-flex">
               <button (click)="deleteListe(liste)" type="button" class="btn btn-success">Oui</button>
@@ -153,7 +153,8 @@
           </div>
           <div class="modal-body">
               <h4 class="form-label custom-label">Voulez vous archiver cette liste?</h4>
-              <p>NB: la l'archivage de cette liste, causera de meme de toute entite correspondantes </p>
+              <p>L'archivage de cette liste entraînera la sauvegarde de ses groupes, notes et absences, ainsi que son déplacement vers le menu d'archivage.
+              </p>
           </div>
           <div class="modal-footer d-flex">
               <button (click)="archiverListe(liste)" type="button" class="btn btn-success">Oui</button>
@@ -175,8 +176,8 @@
               data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-              <h4 class="form-label custom-label">Voulez vous verrouiller cette liste?</h4>
-              <p>NB: en verrouillant cette liste, on suppose que l'événement correspondant est terminé; par conséquent d'autres modifications ne seront pas autorisées </p>
+              <h4 class="form-label custom-label">Êtes-vous sûr de vouloir verrouiller cette liste ?</h4>
+              <p>Note : Verrouiller cette liste signifie que l’événement correspondant sera considéré comme terminé. Par conséquent, aucune modification ultérieure ne sera autorisée.</p>
           </div>
           <div class="modal-footer d-flex">
               <button (click)="archiverListe(liste, 'verr')" type="button" class="btn btn-success">Oui</button>

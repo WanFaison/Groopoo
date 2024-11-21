@@ -63,6 +63,9 @@ class ListeController extends AbstractController
 
         foreach($liste->getGroupes() as $grp){
             foreach($grp->getEtudiant() as $etd){
+                foreach($etd->getAbsences() as $abs){
+                    $this->entityManager->remove($abs);
+                }
                 $this->entityManager->remove($etd);
             }
             $this->entityManager->remove($grp);
@@ -270,7 +273,11 @@ class ListeController extends AbstractController
             $sheet->setCellValue('C'.$row, 'Classe');
 
             if($motif == 'results'){
-                $sheet->setCellValue('D'.$row, 'Note');
+                $sheet->setCellValue('D'.$row, 'Sexe');
+                $sheet->setCellValue('E'.$row, 'Niveau');
+                $sheet->setCellValue('F'.$row, 'Filiere');
+                $sheet->setCellValue('G'.$row, 'Matricule');
+                $sheet->setCellValue('H'.$row, 'Note');
             }else{
                 $sheet->setCellValue('D'.$row, 'Emargement 1');
                 $sheet->setCellValue('E'.$row, 'Emargement 2');
@@ -282,7 +289,11 @@ class ListeController extends AbstractController
                 $sheet->setCellValue('B'.$row, $etd->getPrenom());
                 $sheet->setCellValue('C'.$row, $etd->getClasse()->getLibelle());
                 if($motif == 'results'){
-                    $sheet->setCellValue('D'.$row, $etd->getNoteFinal());
+                    $sheet->setCellValue('D'.$row, $etd->getSexe());
+                    $sheet->setCellValue('E'.$row, $etd->getClasse()->getNiveau()->getLibelle());
+                    $sheet->setCellValue('F'.$row, $etd->getClasse()->getFiliere()->getLibelle());
+                    $sheet->setCellValue('G'.$row, $etd->getMatricule());
+                    $sheet->setCellValue('H'.$row, $etd->getNoteFinal());
                 }
             }
             $row+=2;

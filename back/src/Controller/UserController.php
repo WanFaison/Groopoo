@@ -64,7 +64,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/api/add-user', name: 'api_add_user', methods: ['POST'])]
-    public function addEcole(Request $request, UserRepository $userRepository, EcoleRepository $ecoleRepository): JsonResponse
+    public function addUser(Request $request, UserRepository $userRepository, EcoleRepository $ecoleRepository): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $email = $data['email'] ?? null;
@@ -98,15 +98,17 @@ class UserController extends AbstractController
     }
 
     #[Route('/api/user-modif', name: 'api_user_modif', methods: ['GET'])]
-    public function archiveList(Request $request, UserRepository $userRepository): JsonResponse
+    public function archiveUser(Request $request, UserRepository $userRepository): JsonResponse
     {
         $userId = $request->query->getInt('user', 0);
-        //$keyword = $request->query->getString('keyword', '');
+        $motif = $request->query->getInt('motif', 0);
 
         $user = $userRepository->find($userId);
-        if($user){
+        if($user && $motif == 0){
             $user->setArchived(true);
             $userRepository->addOrUpdate($user);
+        }else{
+            $userRepository->deleteById($userId);
         }
         
         return RestResponse::requestResponse('User has been updated', 1, JsonResponse::HTTP_OK);

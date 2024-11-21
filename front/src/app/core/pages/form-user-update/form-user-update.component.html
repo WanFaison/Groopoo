@@ -3,8 +3,8 @@
 
     <div class="mt-5 row justify-content-center align-items-center h-100">
         <div class="d-flex flex-column align-items-center my-3">
-            <h4 class="underline-bold">Modifier Profile</h4>
-            <p class="fst-italic">La modification se fait en fonction des champs entrés</p>
+            <h4 class="underline-bold">Modifier votre profil</h4>
+            <p class="fst-italic">Modifier les champs que vous souhaitez actualiser</p>
         </div>
 
         <div class="flex-center my-3">
@@ -12,7 +12,7 @@
                 <div *ngIf="error" class="text-danger">{{errorMsg}}</div>
 
                 <div data-mdb-input-init class="form-outline mb-4">
-                    <label class="form-label" for="username">Username:</label>
+                    <label class="form-label" for="username">Nom d'utilisateur:</label>
                     <input formControlName="username" id="username" 
                         class="form-control" />
                 </div>
@@ -27,7 +27,7 @@
                         class="form-control" type="password" minlength="6"/>
                 </div>
                 <div *ngIf="updateForm.get('pswd2')?.errors?.['minlength'] && updateForm.get('pswd2')?.touched" class="text-danger">
-                    Au moins 6 caracteres requis.
+                    Au moins 6 caractères requis.
                 </div>
                 
                 <button (click)="onSubmit()" data-mdb-ripple-init type="button" 

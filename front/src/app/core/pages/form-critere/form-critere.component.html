@@ -3,13 +3,13 @@
 
     <div class="mt-5 row justify-content-center align-items-center h-100">
         <div class="flex-center my-3">
-            <h4 class="underline-bold">Criteres Form</h4>
+            <h4 class="underline-bold">Definir les critères</h4>
         </div>
 
         <div>
             <form [formGroup]="form" (ngSubmit)="onSubmit()">
                 <div class="mx-auto w-50 mt-2">
-                    <p class="me-3 fs-5">Filiere</p>
+                    <p class="me-3 fs-5">Filière</p>
                 </div>
                 <div formArrayName="filiere">
                     <div *ngFor="let pair of filiere.controls; let i = index" [formGroupName]="i" class="flex-center mt-2 parent-filiere">

@@ -14,10 +14,10 @@ class Groupe extends AbstractEntity
 {
 
     #[ORM\Column]
-    private ?int $taille = null;
+    private ?int $taille = 0;
 
     #[ORM\Column(nullable: true)]
-    private ?float $note = null;
+    private ?float $note = 0;
 
     /**
      * @var Collection<int, Etudiant>

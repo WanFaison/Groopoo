@@ -17,23 +17,23 @@
         </div>
 
         <div class="flex-center my-3">
-            <input type="text" [(ngModel)]="keyword" class="form-control input-black-border col-md-3" placeholder="Rechercher...">
+            <input type="text" [(ngModel)]="keyword" class="form-control input-black-border col-md-3" placeholder="Recherche...">
             <div class="input-group col-md-3">
               <select [(ngModel)]="annee" class="form-select col-md-6" aria-label=".form-select-sm example">
-                <option selected value="0">annee...</option>
+                <option selected value="0">année...</option>
                 <option *ngFor="let item of anneeResponse?.results" [value]="item.id">{{ item.libelle }}</option>
               </select>
 
               <select *ngIf="user?.role != 'ROLE_ECOLE_ADMIN'" [(ngModel)]="ecole" class="form-select col-md-6" aria-label=".form-select-sm example">
-                <option selected value="0">ecole...</option>
+                <option selected value="0">organisation..</option>
                 <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
               </select>
             </div>
             <a id="orange-btn" class="btn btn-success col-md-1 me-5" (click)="filter(0, keyword, annee, ecole)" role="button" style="color: white;">
-                Filtrer
+                Rechercher
             </a>
             <a class="btn btn-secondary col-md-1" (click)="refresh()" role="button" style="color: white;">
-                Reinitialiser
+                Réinitialiser
             </a>
         </div>
         
@@ -65,7 +65,7 @@
                         (click)="liste = item.id;" class="btn btn-danger"
                         data-bs-toggle="modal" data-bs-target="#ynModal" 
                         role="button" style="color: white;">
-                            Récupérer</a>
+                            Déarchiver</a>
                       </td>
                    </tr> 
                   }

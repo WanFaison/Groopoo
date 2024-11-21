@@ -4,6 +4,11 @@ html, body {
     margin: 0;
 }
 
+.foot-text {
+    font-size: 0.8em;
+    line-height: 1.5;
+}
+
 .loader-overlay {
     position: fixed;
     top: 0;

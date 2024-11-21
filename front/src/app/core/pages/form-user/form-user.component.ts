@@ -63,7 +63,7 @@ export class FormUserComponent implements OnInit{
   }
 
   onSubmit() {
-    console.log(this.profileForm.value);
+    //console.log(this.profileForm.value);
 
     if (typeof window !== 'undefined' && localStorage){
       const profileForm = localStorage.getItem('profileForm');

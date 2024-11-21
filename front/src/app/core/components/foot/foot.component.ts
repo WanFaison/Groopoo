@@ -11,4 +11,9 @@ export class FootComponent implements OnInit{
   ngOnInit(): void {
   }
 
+  getCurrentYear(): number {
+    const today = new Date();
+    return today.getFullYear();
+  }
+
 }

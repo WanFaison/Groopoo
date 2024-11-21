@@ -3,7 +3,7 @@
 
     <div class="mt-2 row justify-content-center align-items-center h-100">
         <div class="flex-center my-3">
-            <h4 class="underline-bold">Créer Utilisateur</h4>
+            <h4 class="underline-bold">Créer un utilisateur</h4>
         </div>
         <div *ngIf="error" class="flex-center align-items-center">
             <p class="fw-bold text-danger">Une erreur s'est produite </p>
@@ -12,7 +12,7 @@
         <div class="flex-center my-3">
             <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" style="width: 22rem;">
                 <div data-mdb-input-init class="form-outline mb-4">
-                    <label class="form-label" for="email">Email address:</label>
+                    <label class="form-label" for="email">Adresse email:</label>
                     <input formControlName="email" type="email" id="email" 
                         class="form-control" />
                     <div *ngIf="emailControl?.touched && emailControl?.errors?.['required']" class="text-danger">
@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 <div class="mb-4">
-                    <label class="form-label" for="email">Ecole:</label>
+                    <label class="form-label" for="email">Organisation:</label>
                     <p class="fst-italic"><small>Maintenez le bouton Ctrl/Command(Cmd) enfoncé pour activer la sélection multiple.</small></p>
                     <select multiple formControlName="ecole" class=" form-select form-select-sm  me-2" aria-label=".form-select-sm example">
                         <option [value]="0" selected>Tous</option>
@@ -28,7 +28,7 @@
                     </select>
                 </div>
                 <div class="mb-4">
-                    <label class="form-label me-3">Profiles: </label>
+                    <label class="form-label me-3">Profil: </label>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="checkbox" id="inlineCheckbox1" formControlName="option1">
                         <label class="form-check-label" for="inlineCheckbox1">Admin</label>

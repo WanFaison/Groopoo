@@ -76,7 +76,7 @@
                 <button (click)="modifEnt(liste, libelle)" type="button" 
                 class="btn btn-success">Modifier</button>
                 <button (click)="libelle = ''; error = false;" type="button" class="btn btn-secondary" 
-                data-bs-dismiss="modal">Close</button>
+                data-bs-dismiss="modal">Quitter</button>
             </div>
         </div>
         </div>
@@ -87,7 +87,7 @@
         <div class="modal-dialog">
         <div class="modal-content row">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Nouvelle Journee</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Nouvelle Journée</h5>
                 <button (click)="date = ''; error = false;" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -106,7 +106,7 @@
                 <button (click)="addJr()" type="button" 
                 class="btn btn-success">Ajouter</button>
                 <button (click)="date = ''; error = false;" type="button" class="btn btn-secondary" 
-                data-bs-dismiss="modal">Close</button>
+                data-bs-dismiss="modal">Quitter</button>
             </div>
         </div>
         </div>
@@ -122,8 +122,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <h4 class="form-label custom-label">Voulez vous supprimer cette journée?</h4>
-                <p>NB: la suppression de cette entite, causera la suppression de toute absences correspondantes </p>
+                <h4 class="form-label custom-label">Êtes-vous sûr de vouloir supprimer cette journée ?</h4>
+                <p>NB: La suppression de cette entité entraînera également la suppression de toutes les absences associées. </p>
             </div>
             <div class="modal-footer d-flex">
                 <button (click)="archJr()" type="button" class="btn btn-success">Oui</button>

@@ -97,7 +97,6 @@ export class AttendanceComponent implements OnInit{
             console.error('Error sending data', error);
           }
         )
-        this.router.navigate(['/app/view-jours'])
       }else{
         this.msg = 'Aucune absence enregistrée'
       }

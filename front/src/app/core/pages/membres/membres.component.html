@@ -9,14 +9,14 @@
         <div class="flex-center my-3">
             <div class="file-upload w-25">
                 <div class="file-select">
-                  <div class="file-select-button" id="fileName">Choose File</div>
-                  <div class="file-select-name" id="noFile">No file chosen...</div> 
+                  <div class="file-select-button" id="fileName">Choisir Fichier</div>
+                  <div class="file-select-name" id="noFile">Aucun choisi...</div> 
                   <input type="file" (change)="importExcel($event)" name="chooseFile" id="chooseFile">
                 </div>
             </div>
             <div *ngIf="user?.role == 'ROLE_ADMIN'" class="input-group col-md-2">
                 <select [(ngModel)]="ecole" (ngModelChange)="saveEcole($event)" class="form-select" aria-label=".form-select-sm example">
-                  <option selected value="0">Choisir l'ecole...</option>
+                  <option selected value="0">Choisir l'organisation...</option>
                   <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
                 </select>
             </div>
@@ -51,16 +51,16 @@
 
         <div class="flex-center mt-2 w-50 mx-auto" style="margin-bottom: 2rem;">
             <a [routerLink]="['/app/form-critere']" class="btn btn-secondary text-white me-3" 
-            role="button" [class.disabled]="ecole === 0 || tailleGrp < 2 || annee == 0">Modifier critères</a>
+            role="button" [class.disabled]="ecole === 0 || tailleGrp < 2 || annee == 0">Modifier les critères</a>
             <a (click)="createGroups()" class="btn btn-info text-white me-3" 
             role="button" [class.disabled]="ecole === 0 || annee == 0 || tailleGrp < 2 || criteres.length > 0 || etudiants.length < 1">
             Aléatoire</a>
             <a (click)="printTemplate()" class="btn btn-info text-white me-3" 
-            role="button">Template Excel</a>
+            role="button">Télécharger template</a>
         </div>
         <div class="flex-center mt-2 w-50 mx-auto" style="margin-bottom: 2rem;">
             <a (click)="clearEtd()" class="btn btn-secondary text-white me-3" 
-            role="button">Vider tableau</a>
+            role="button">Vider le tableau</a>
         </div>
 
         <div class="flex-center">
@@ -69,11 +69,11 @@
                   <tr>
                     <th scope="col">Matricule</th>
                     <th scope="col">Nom</th>
-                    <th scope="col">Prenom</th>
+                    <th scope="col">Prénom</th>
                     <th scope="col">Sexe</th>
                     <th scope="col">Classe</th>
                     <th scope="col">Niveau</th>
-                    <th scope="col">Filiere</th>
+                    <th scope="col">Filière</th>
                     <th scope="col">Action</th>
                   </tr>
                 </thead>

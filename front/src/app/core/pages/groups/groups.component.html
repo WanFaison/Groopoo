@@ -15,6 +15,7 @@
                 <button (click)="printXls('results')" class="btn btn-info col-md-4 mb-2 me-2">Exporter les Groupes</button>
                 <button (click)="printXls()" class="btn btn-info mb-2 me-2">Liste d'Emargement</button>
                 <button class="btn btn-secondary mb-2 me-2"
+                *ngIf="user?.role != 'ROLE_VISITEUR'"
                 [routerLink]="['/app/view-jours']" routerLinkActive="active"
                 >Liste des Journées</button>
               </div>
@@ -44,7 +45,7 @@
                 <option *ngFor="let item of grpReq?.results; let i = index" [value]="item.id">{{ item.libelle }}</option>
               </select>
               <a class="btn btn-secondary col-md-2" (click)="reloadPage()" role="button" style="color: white;">
-                Reinitialiser</a>
+                Réinitialiser</a>
             </div>
 
             <table *ngFor="let grp of groupResponse?.results; let i = index" class="table col-md-9 mb-5">
@@ -181,7 +182,7 @@
           </div>
           <div class="modal-body">
             <h4 class="form-label custom-label">Voulez vous retirer cet etudiant?</h4>
-            <p>NB: En confirment cette action, l'etudiant n'apparaitra plus en operant sur cette liste</p>
+            <p>Note: En confirment cette action, l'etudiant n'apparaitra plus en operant sur cette liste</p>
         </div>
           <div class="modal-footer d-flex">
               <button (click)="deleteEtd()" type="button" 
@@ -198,13 +199,13 @@
       <div class="modal-dialog">
       <div class="modal-content row">
           <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Refaire la liste</h5>
+              <h5 class="modal-title" id="exampleModalLabel">Reformation des groupes</h5>
               <button type="button" class="btn-close"
               data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-              <h4 class="form-label custom-label">Voulez vous reformer cette liste?</h4>
-              <p>NB: La réforme de cette liste mettrait en péril l'ordre des notes déjà enregistrées </p>
+              <h4 class="form-label custom-label">Êtes-vous sûr de vouloir réorganiser les groupes de cette liste ?</h4>
+              <p>Note: La réorganisation des groupes de la liste entraînera automatiquement la suppression définitive de toutes les notes déjà enregistrées. </p>
           </div>
           <div class="modal-footer d-flex">
               <button (click)="reDoList()" type="button" class="btn btn-success">Oui</button>

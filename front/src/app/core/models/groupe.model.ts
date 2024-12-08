@@ -6,7 +6,9 @@ export type GroupeModel = {
     liste: number,
     listeT: string,
     etudiants: EtudiantModel[],
-    note: number
+    note: number,
+    coach?: string,
+    salle?: string
 }
 
 export type GroupeJourModel = {

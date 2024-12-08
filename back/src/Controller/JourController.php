@@ -8,6 +8,7 @@ use App\Entity\Jour;
 use App\Repository\AbsenceRepository;
 use App\Repository\JourRepository;
 use App\Repository\ListeRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,12 +20,14 @@ class JourController extends AbstractController
     private $jourRepository;
     private $listeRepository;
     private $absenceRepository;
+    private $entityManager;
 
-    public function __construct(JourRepository $jourRepository, ListeRepository $listeRepository, AbsenceRepository $absenceRepository)
+    public function __construct(EntityManagerInterface $entityManager, JourRepository $jourRepository, ListeRepository $listeRepository, AbsenceRepository $absenceRepository)
     {
         $this->jourRepository = $jourRepository;
         $this->listeRepository = $listeRepository;
         $this->absenceRepository = $absenceRepository;
+        $this->entityManager = $entityManager;
     }
 
     #[Route('/api/find-jour', name: 'app_find_jour', methods: ['GET'])]
@@ -102,15 +105,11 @@ class JourController extends AbstractController
 
         $jour = $this->jourRepository->find($jourId);
         $liste = $jour->getListe();
-        $abs = $jour->getAbsences();
-        if($abs->count() >0){
-            foreach($abs as $a){
-                $a->setArchived(false);
-                $this->absenceRepository->addOrUpdate($a);
-            }
+        foreach($jour->getAbsences() as $abs){
+            $this->entityManager->remove($abs);
         }
-        $jour->setArchived(true);
-        $this->jourRepository->addOrUpdate($jour);
+        $this->entityManager->flush();
+        $this->jourRepository->deleteById($jourId);
         $this->reOrderJours($this->jourRepository->findAllByListeAndUnarchived($liste));
         
         return RestResponse::requestResponse('Jour has been updated', 0, JsonResponse::HTTP_OK);

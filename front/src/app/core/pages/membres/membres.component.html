@@ -55,10 +55,13 @@
             <a (click)="createGroups()" class="btn btn-info text-white me-3" 
             role="button" [class.disabled]="ecole === 0 || annee == 0 || tailleGrp < 2 || criteres.length > 0 || etudiants.length < 1">
             Aléatoire</a>
+            <a (click)="createGroups(1)" class="btn btn-info text-white me-3" 
+            role="button" [class.disabled]="ecole === 0 || annee == 0 || tailleGrp < 2 || criteres.length > 0 || etudiants.length < 1">
+            Grouper par classe</a>
             <a (click)="printTemplate()" class="btn btn-info text-white me-3" 
             role="button">Télécharger template</a>
         </div>
-        <div class="flex-center mt-2 w-50 mx-auto" style="margin-bottom: 2rem;">
+        <div class="flex-center mt-2 w-25 mx-auto" style="margin-bottom: 2rem;">
             <a (click)="clearEtd()" class="btn btn-secondary text-white me-3" 
             role="button">Vider le tableau</a>
         </div>

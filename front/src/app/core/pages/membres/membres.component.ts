@@ -205,7 +205,7 @@ export class MembresComponent implements OnInit{
     }
   }
 
-  createGroups(){
+  createGroups(stateM:number = 0){
     if(this.checkCorrect()){
       if (typeof window !== 'undefined' && localStorage){
         const formData = localStorage.getItem('formData');
@@ -221,7 +221,8 @@ export class MembresComponent implements OnInit{
           taille: taille, 
           nom: nom? nom:'',  
           etudiants: etds? JSON.parse(etds):[],  
-          criteres: formData? JSON.parse(formData) : [],  
+          criteres: formData? JSON.parse(formData) : [], 
+          state: stateM, 
           status: 200
         };
   

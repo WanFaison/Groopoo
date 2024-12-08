@@ -26,9 +26,7 @@ export class AnneeServiceImpl implements AnneeService{
     }
 
     addAnnee(data:any): Observable<any>{
-        const headers = new HttpHeaders({
-          'Content-Type': 'application/json'
-        });
+        const headers = new HttpHeaders(environment.JSONHeaders);
         return this.http.post(`${this.apiUrlAdd}`, data, {headers});
     }
 

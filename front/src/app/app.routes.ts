@@ -15,6 +15,8 @@ import { JoursComponent } from './core/pages/jours/jours.component';
 import { AttendanceComponent } from './core/pages/attendance/attendance.component';
 import { NotesComponent } from './core/pages/notes/notes.component';
 import { ArchivedComponent } from './core/pages/archived/archived.component';
+import { FormCoachComponent } from './core/pages/form-coach/form-coach.component';
+import { JuryComponent } from './core/pages/jury/jury.component';
 
 export const routes: Routes = [
     {
@@ -59,6 +61,16 @@ export const routes: Routes = [
     {
         path:"app/form-notes",
         component:NotesComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path:"app/form-coach",
+        component:FormCoachComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path:"app/jury",
+        component:JuryComponent,
         canActivate: [AuthGuard]
     },
     {

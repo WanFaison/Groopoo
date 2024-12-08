@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Groupe;
 use App\Entity\Liste;
+use App\Entity\Salle;
 use App\Service\PaginatorService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -41,7 +42,7 @@ class GroupeRepository extends ServiceEntityRepository
         return true;
     }
 
-    public function findAllByListePaginated(int $page, int $limit, ?Liste $liste=null, ?Groupe $groupe=null): Paginator
+    public function findAllByListeGroupeSallePaginated(int $page, int $limit, ?Liste $liste=null, ?Groupe $groupe=null, ?Salle $salle=null): Paginator
     {
         $queryBuilder = $this->createQueryBuilder('r');
         if ($liste) {
@@ -51,6 +52,10 @@ class GroupeRepository extends ServiceEntityRepository
         if ($groupe) {
             $queryBuilder->andWhere('r.id = :id')
                          ->setParameter('id', $groupe->getId());
+        }
+        if ($salle) {
+            $queryBuilder->andWhere('r.liste = :liste')
+                         ->setParameter('liste', $salle);
         }
         $query = $queryBuilder->andWhere('r.isArchived = :isArchived')
                             ->setParameter('isArchived', false)
@@ -75,6 +80,7 @@ class GroupeRepository extends ServiceEntityRepository
 
         return $query;
     }
+    
 
 //    /**
 //     * @return Groupe[] Returns an array of Groupe objects

@@ -19,7 +19,7 @@ export class AuthServiceImpl implements AuthService{
     }
 
     login(username: string, password: string): Observable<AuthResponse> {
-        const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+        const headers = new HttpHeaders(environment.JSONHeaders);
         const body = { username, password };
     
         return this.http.post<any>(this.apiUrl, body, { headers });

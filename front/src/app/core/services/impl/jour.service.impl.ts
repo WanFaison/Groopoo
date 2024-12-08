@@ -23,9 +23,7 @@ export class JourServiceImpl implements JourService{
     }
 
     addJour(liste: any, date: any): Observable<any> {
-        const headers = new HttpHeaders({
-            'Content-Type': 'application/json'
-          });
+        const headers = new HttpHeaders(environment.JSONHeaders);
         return this.http.post<any>(`${environment.APIURL}/add-jour/${liste}`, date, {headers});
     }
 

@@ -28,9 +28,7 @@ export class ListeServiceImpl implements ListeService{
     }
 
     importList(data: any): Observable<any> {
-        const headers = new HttpHeaders({
-            'Content-Type': 'application/json'
-        });
+        const headers = new HttpHeaders(environment.JSONHeaders);
         return this.http.post(`${environment.APIURL}/create-groupe-import`, data, {headers});
     }
 
@@ -44,9 +42,7 @@ export class ListeServiceImpl implements ListeService{
     }
 
     setNotes(data: any): Observable<any> {
-        const headers = new HttpHeaders({
-            'Content-Type': 'application/json'
-        });
+        const headers = new HttpHeaders(environment.JSONHeaders);
         return this.http.post(`${environment.APIURL}/notes`, data, {headers});
     }
 

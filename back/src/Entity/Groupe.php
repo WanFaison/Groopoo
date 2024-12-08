@@ -29,6 +29,15 @@ class Groupe extends AbstractEntity
     #[ORM\JoinColumn(nullable: false)]
     private ?Liste $liste = null;
 
+    #[ORM\ManyToOne(inversedBy: 'groupes')]
+    private ?Salle $salle = null;
+
+    #[ORM\ManyToOne(inversedBy: 'groupes')]
+    private ?Coach $coach = null;
+
+    #[ORM\ManyToOne(inversedBy: 'groupes')]
+    private ?Jury $jury = null;
+
     public function __construct()
     {
         $this->etudiant = new ArrayCollection();
@@ -96,6 +105,42 @@ class Groupe extends AbstractEntity
     public function setListe(?Liste $liste): static
     {
         $this->liste = $liste;
+
+        return $this;
+    }
+
+    public function getSalle(): ?Salle
+    {
+        return $this->salle;
+    }
+
+    public function setSalle(?Salle $salle): static
+    {
+        $this->salle = $salle;
+
+        return $this;
+    }
+
+    public function getCoach(): ?Coach
+    {
+        return $this->coach;
+    }
+
+    public function setCoach(?Coach $coach): static
+    {
+        $this->coach = $coach;
+
+        return $this;
+    }
+
+    public function getJury(): ?Jury
+    {
+        return $this->jury;
+    }
+
+    public function setJury(?Jury $jury): static
+    {
+        $this->jury = $jury;
 
         return $this;
     }

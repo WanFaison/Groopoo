@@ -123,7 +123,7 @@ export class SelectlistComponent implements OnInit{
   }
 
   private isGroupHeader(row: any[]): boolean {
-    return typeof row[0] === 'string' && row[0].includes('Groupe');
+    return typeof row[0] === 'string' && (row[0].includes('Groupe') || row[0].includes('GROUPE'));
   }
 
   onSubmit() {

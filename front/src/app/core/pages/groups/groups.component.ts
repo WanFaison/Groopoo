@@ -34,7 +34,8 @@ export class GroupsComponent implements OnInit{
   grp:number = 0;
   user?:LogUser;
   libelle:string = ''
-  error:boolean = false
+  error:boolean = false;
+  coachs:Array<number> = [];
   constructor(private router:Router, private authService:AuthServiceImpl, private groupeService:GroupeServiceImpl, private listeService:ListeServiceImpl, private apiService:ApiService, private etudiantService:EtudiantServiceImpl) { }
 
   ngOnInit(): void {

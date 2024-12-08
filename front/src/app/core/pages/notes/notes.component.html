@@ -13,23 +13,24 @@
             </div>
 
             <div class="flex-center my-3">
-                <a id="orange-btn" class="btn btn-success col-md-5 me-5" 
+                <a id="orange-btn" class="btn btn-success col-md-3 me-5" 
                 [class.disabled] = "listeResponse?.results?.isComplet"
                 (click)="onSubmit()" role="button" style="color: white;">
                     Enregistrer les notes
                 </a>
-                <button (click)="printXls('results')" class="btn btn-info col-md-4 me-2">Exporter les notes</button>
+                <button (click)="printXls('results')" class="btn btn-info col-md-3 me-2">Exporter les notes</button>
+                <button (click)="printXls('classes')" class="btn btn-info col-md-3 me-2">Exporter par classe</button>
                 <a class="btn btn-secondary me-2"
                 [routerLink]="['/app/view-jours']" routerLinkActive="active"
                 role="button" style="color: white;">
                   Précedent
                 </a>
-                <a class="btn btn-danger col-md-4"
+                <a class="btn btn-danger col-md-3"
                 *ngIf="!listeResponse?.results?.isComplet"
                 data-bs-toggle="modal" data-bs-target="#ynvModal"
                 role="button" style="color: white;">
                     Verrouiller la liste</a>
-                <a class="btn btn-danger col-md-5"
+                <a class="btn btn-danger col-md-3"
                 *ngIf="listeResponse?.results?.isComplet"
                 (click)="archiverListe(liste, 'deverr')"
                 role="button" style="color: white;">

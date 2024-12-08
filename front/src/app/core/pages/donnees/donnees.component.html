@@ -1,31 +1,76 @@
 <div class="container-fluid min-vh-100">
     <app-nav></app-nav>
+
+    <nav class="navbar navbar-expand-md navbar-light bg-light navbar-bottom-border">
+      <div class="collapse navbar-collapse justify-content-center" id="navbarsExample04">
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" role="button"
+            (click)="changeState(0)">Années</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-dark" role="button"
+            (click)="changeState(1)">Organisations</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-dark" role="button"
+            (click)="changeState(2)">Salles</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-dark" role="button"
+            (click)="changeState(3)">Etages </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-dark" role="button"
+            (click)="changeState(4)">Coachs</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
     
     <div class="mt-5 row justify-content-center align-items-center h-100">
         <div class="flex-center my-3">
-            <div class="input-group col-md-3">
-                <select [(ngModel)]="state" (ngModelChange)="changeState($event)" class="form-select col-md-6" aria-label=".form-select-sm example">
-                  <option selected value="0">Année</option>
-                  <option value="1">Organisation</option>
-                </select>
-            </div>
-        </div>
-        <div class="flex-center my-3">
             <h4 *ngIf="state == 0" class="underline-bold">Gérer les années</h4>
             <h4 *ngIf="state == 1" class="underline-bold">Gérer les organisations</h4>
+            <h4 *ngIf="state == 2" class="underline-bold">Gérer les salles</h4>
+            <h4 *ngIf="state == 3" class="underline-bold">Gérer les étages</h4>
+            <h4 *ngIf="state == 4" class="underline-bold">Gérer les coachs</h4>
         </div>
 
         <div class="flex-center my-3">
-            <input type="text" [(ngModel)]="keyword" class="form-control input-black-border col-md-2 me-2" placeholder="Rechercher...">
-            <a id="orange-btn" class="btn btn-success col-md-1 me-4" (click)="filter(0, keyword)" role="button" style="color: white;">
+            <input type="text" [(ngModel)]="keyword" class="form-control input-black-border col-md-2 me-2" placeholder="Recherche...">
+            <select *ngIf="state >1" [(ngModel)]="ecole" 
+            class="form-select col-md-3 me-2" aria-label=".form-select-sm example">
+              <option selected value="0">organisation...</option>
+              <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
+            </select>
+            <a id="orange-btn" class="btn btn-success col-md-1 me-4" (click)="filter(0, keyword, ecole)" role="button" style="color: white;">
                 Rechercher
             </a>
-            <a class="btn btn-secondary col-md-1 me-2" (click)="refresh(); keyword = '' " role="button" style="color: white;">
+            <a class="btn btn-secondary col-md-1 me-2" (click)="refresh(); keyword = ''; ecole =0 " 
+            role="button" style="color: white;">
                 Réinitialiser
             </a>
-            <a class="btn btn-info col-md-1" data-bs-toggle="modal" data-bs-target="#addModal" 
+
+            <a *ngIf="state <2"
+            class="btn btn-info col-md-1" data-bs-toggle="modal" data-bs-target="#addModal" 
                 role="button" style="color: white;">
                 Ajouter
+            </a>
+            <a *ngIf="state ==2"
+            class="btn btn-info col-md-1" data-bs-toggle="modal" data-bs-target="#addSalleModal" 
+                role="button" style="color: white;">
+                Ajouter
+            </a>
+            <a *ngIf="state ==3"
+              class="btn btn-info col-md-1" data-bs-toggle="modal" data-bs-target="#addEtageModal" 
+                  role="button" style="color: white;">
+                  Ajouter
+            </a>
+            <a *ngIf="state ==4"
+              class="btn btn-info col-md-1" data-bs-toggle="modal" data-bs-target="#addCoachModal" 
+                  role="button" style="color: white;">
+                  Ajouter
             </a>
         </div>
 
@@ -84,6 +129,98 @@
             </table>
         </div>
 
+        <div *ngIf="state == 2" class="flex-center">
+          <table class="table col-md-10">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">Salle</th>
+                  <th scope="col">Organisation</th>
+                  <th scope="col">Etage</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of salleResponse?.results; track $index){
+                 <tr>
+                    <th scope="row">{{item.libelle}}</th>
+                    <td>{{item.ecole}}</td>
+                    <td>{{item.etage}}</td>
+                    <td>
+                      <a (click)="changeEnt(item.id, item.libelle)" class="btn btn-secondary me-2"
+                      data-bs-toggle="modal" data-bs-target="#modifModal" 
+                      role="button" style="color: white;">
+                          Modifier</a>
+                      <a (click)="changeEnt(item.id)" class="btn btn-danger" 
+                      data-bs-toggle="modal" data-bs-target="#ynModal"
+                      role="button" style="color: white;">
+                        Supprimer</a>
+                    </td>
+                 </tr> 
+                }
+              </tbody>
+          </table>
+        </div>
+        <div *ngIf="state == 3" class="flex-center">
+          <table class="table col-md-10">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">Etage</th>
+                  <th scope="col">Organisation</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of etageResponse?.results; track $index){
+                 <tr>
+                    <th scope="row">{{item.libelle}}</th>
+                    <td>{{item.ecole}}</td>
+                    <td>
+                      <a (click)="changeEnt(item.id, item.libelle)" class="btn btn-secondary me-2"
+                      data-bs-toggle="modal" data-bs-target="#modifModal" 
+                      role="button" style="color: white;">
+                          Modifier</a>
+                      <a (click)="changeEnt(item.id)" class="btn btn-danger" 
+                      data-bs-toggle="modal" data-bs-target="#ynModal"
+                      role="button" style="color: white;">
+                        Supprimer</a>
+                    </td>
+                 </tr> 
+                }
+              </tbody>
+          </table>
+        </div>
+        <div *ngIf="state == 4" class="flex-center">
+          <table class="table col-md-10">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">Noms</th>
+                  <th scope="col">Tel</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Etat</th>
+                  <th scope="col">Organisation</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of coachResponse?.results; track $index){
+                 <tr>
+                    <th scope="row">{{item.nom}} {{item.prenom}}</th>
+                    <td>{{item.tel}}</td>
+                    <td>{{item.email}}</td>
+                    <td>{{item.etat}}</td>
+                    <td>{{item.ecole}}</td>
+                    <td>
+                      <a (click)="changeEnt(item.id)" class="btn btn-danger" 
+                      data-bs-toggle="modal" data-bs-target="#ynModal"
+                      role="button" style="color: white;">
+                        Supprimer</a>
+                    </td>
+                 </tr> 
+                }
+              </tbody>
+          </table>
+        </div>
+
         <div *ngIf="state == 0" class="pagination-div" style="margin-bottom: 10rem;">
             <nav aria-label="Page navigation example">
               <ul class="pagination">
@@ -133,7 +270,83 @@
                 </li>
               </ul>
             </nav>
-        </div>   
+        </div> 
+        
+        <div *ngIf="state == 2" class="pagination-div" style="margin-bottom: 10rem;">
+          <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              <li *ngIf="salleResponse && salleResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': salleResponse.currentPage === 0}">
+                <a class="page-link" (click)="paginate(salleResponse.currentPage - 1)" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                  <span class="sr-only">Previous</span>
+                </a>
+              </li>
+
+              @for (item of getPageRange(salleResponse?.currentPage, salleResponse?.totalPages); track $index){
+                <li class="page-item" [ngClass]="{'active':item-1==salleResponse?.currentPage}">
+                  <a (click)="paginate(item - 1)" class="page-link">{{item}}</a>
+                </li>
+              }
+              
+              <li *ngIf="salleResponse && salleResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': salleResponse.currentPage +1 === salleResponse.totalPages}">
+                <a class="page-link" (click)="paginate(salleResponse.currentPage + 1)" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                  <span class="sr-only">Next</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div> 
+        <div *ngIf="state == 3" class="pagination-div" style="margin-bottom: 10rem;">
+          <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              <li *ngIf="etageResponse && etageResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': etageResponse.currentPage === 0}">
+                <a class="page-link" (click)="paginate(etageResponse.currentPage - 1)" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                  <span class="sr-only">Previous</span>
+                </a>
+              </li>
+
+              @for (item of getPageRange(etageResponse?.currentPage, etageResponse?.totalPages); track $index){
+                <li class="page-item" [ngClass]="{'active':item-1==etageResponse?.currentPage}">
+                  <a (click)="paginate(item - 1)" class="page-link">{{item}}</a>
+                </li>
+              }
+              
+              <li *ngIf="etageResponse && etageResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': etageResponse.currentPage +1 === etageResponse.totalPages}">
+                <a class="page-link" (click)="paginate(etageResponse.currentPage + 1)" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                  <span class="sr-only">Next</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div> 
+        <div *ngIf="state == 4" class="pagination-div" style="margin-bottom: 10rem;">
+          <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              <li *ngIf="coachResponse && coachResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': coachResponse.currentPage === 0}">
+                <a class="page-link" (click)="paginate(coachResponse.currentPage - 1)" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                  <span class="sr-only">Previous</span>
+                </a>
+              </li>
+
+              @for (item of getPageRange(coachResponse?.currentPage, coachResponse?.totalPages); track $index){
+                <li class="page-item" [ngClass]="{'active':item-1==coachResponse?.currentPage}">
+                  <a (click)="paginate(item - 1)" class="page-link">{{item}}</a>
+                </li>
+              }
+              
+              <li *ngIf="coachResponse && coachResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': coachResponse.currentPage +1 === coachResponse.totalPages}">
+                <a class="page-link" (click)="paginate(coachResponse.currentPage + 1)" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                  <span class="sr-only">Next</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div> 
     </div>
 
 
@@ -169,6 +382,159 @@
         </div>
     </div>
 
+    <!-- Modal salle-add-->
+    <div class="modal fade" id="addSalleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+      <div class="modal-content row">
+          <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Ajouter une Salle</h5>
+              <button (click)="reloadPage()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <label class="form-label custom-label" for="libelle">Libellé de la salle</label>
+              <input required id="libelle" #libelleAddInput="ngModel" [(ngModel)]="libelle" 
+              name="libelle" class="form-control form-control-lg custom-input mb-4" placeholder="Entrez le libellé..." />
+              <div *ngIf="libelleAddInput.invalid && libelleAddInput.touched && !ajout" class="text-danger">
+                  Le libellé est requis.
+              </div>
+
+              <select [(ngModel)]="ecole" (ngModelChange)="loadEtagesByEcole()" 
+                class="form-select col-md-8 mb-4" aria-label=".form-select-sm example">
+                  <option selected value="0">choisir l'organisation...</option>
+                  <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
+              </select>
+
+              <select [(ngModel)]="etage" 
+                class="form-select col-md-8" aria-label=".form-select-sm example">
+                  <option selected value="0">choisir l'etage...</option>
+                  <option *ngFor="let item of etageResponse?.results" [value]="item.id">{{ item.libelle }}</option>
+              </select>
+
+              <div *ngIf="ajout" class="text-success">
+                  L'ajout a été fait, vous pouvez ajouter à nouveau
+              </div>
+              <div *ngIf="error" class="text-danger">{{msg}}</div>
+          </div>
+          <div class="modal-footer d-flex">
+              <button (click)="checkCorrect()" type="button" class="btn btn-success">Confirmer</button>
+              <button (click)="reloadPage()" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Quitter</button>
+          </div>
+      </div>
+      </div>
+    </div>
+
+    <!-- Modal etage-add-->
+    <div class="modal fade" id="addEtageModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+      <div class="modal-content row">
+          <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Ajouter un Etage</h5>
+              <button (click)="reloadPage()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <label class="form-label custom-label" for="libelle">Libellé de l'étage</label>
+              <input required id="libelle" #libelleAddInput="ngModel" [(ngModel)]="libelle" 
+              name="libelle" class="form-control form-control-lg custom-input mb-4" placeholder="Entrez le libellé..." />
+              <div *ngIf="libelleAddInput.invalid && libelleAddInput.touched && !ajout" class="text-danger">
+                  Le libellé est requis.
+              </div>
+
+              <select [(ngModel)]="ecole"
+                class="form-select col-md-8 mb-4" aria-label=".form-select-sm example">
+                  <option selected value="0">choisir l'organisation...</option>
+                  <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
+              </select>
+
+              <div *ngIf="ajout" class="text-success">
+                  L'ajout a été fait, vous pouvez ajouter à nouveau
+              </div>
+              <div *ngIf="error" class="text-danger">{{msg}}</div>
+          </div>
+          <div class="modal-footer d-flex">
+              <button (click)="checkCorrect()" type="button" class="btn btn-success">Confirmer</button>
+              <button (click)="reloadPage()" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Quitter</button>
+          </div>
+      </div>
+      </div>
+    </div>
+
+    <!-- Modal coach-add-->
+    <div class="modal fade" id="addCoachModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+      <div class="modal-content row">
+          <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Ajouter un Coach</h5>
+              <button (click)="reloadPage()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <form [formGroup]="coachForm" class="col-md-10">
+                <div data-mdb-input-init class="form-outline mb-4">
+                  <label class="form-label custom-label" for="nom">Nom</label>
+                  <input required id="nom" formControlName="nom"
+                  name="nom" class="form-control form-control-lg custom-input" placeholder="Entrez le nom..." />
+                  <div *ngIf="nomControl?.invalid && nomControl?.touched && !ajout" class="text-danger">
+                      Le nom est requis.
+                  </div>
+                </div>
+                <div data-mdb-input-init class="form-outline mb-4">
+                  <label class="form-label custom-label" for="prenom">Prenom</label>
+                  <input required id="prenom" formControlName="prenom"
+                  name="prenom" class="form-control form-control-lg custom-input" placeholder="Entrez le prenom..." />
+                  <div *ngIf="prenomControl?.invalid && prenomControl?.touched && !ajout" class="text-danger">
+                      Le prenom est requis.
+                  </div>
+                </div>
+                <div data-mdb-input-init class="form-outline mb-4" style="width: 100%; max-width: 22rem">
+                  <label class="form-label" for="tel">Tel:</label>
+                  <input type="tel" id="tel" class="form-control"
+                  formControlName="tel" placeholder="+221 77-000-00-00"
+                  data-mdb-input-mask-init data-mdb-input-mask="+221 77-000-00-00" />
+                </div>
+                <div data-mdb-input-init class="form-outline mb-4">
+                    <label class="form-label" for="email">Adresse email:</label>
+                    <input formControlName="email" type="email" id="email" 
+                        class="form-control" />
+                    <div *ngIf="emailControl?.touched && emailControl?.errors?.['required']" class="text-danger">
+                        L'email est requis.
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">Organisation:</label>
+                    <select formControlName="ecole" class=" form-select form-select-sm me-2" aria-label=".form-select-sm example">
+                        <option [value]="0" selected>choisir l'organisation...</option>
+                        <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label me-3">Etat: </label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" formControlName="option1">
+                        <label class="form-check-label" for="inlineCheckbox1">Debutant</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="inlineCheckbox2" formControlName="option2">
+                        <label class="form-check-label" for="inlineCheckbox2">Moyen</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="inlineCheckbox3" formControlName="option3">
+                        <label class="form-check-label" for="inlineCheckbox3">Senior</label>
+                    </div>
+                </div>
+              </form>
+
+              <div *ngIf="ajout" class="text-success">
+                  L'ajout a été fait, vous pouvez ajouter à nouveau
+              </div>
+              <div *ngIf="error" class="text-danger">{{msg}}</div>
+          </div>
+          <div class="modal-footer d-flex">
+              <button (click)="checkCorrect()" type="button" class="btn btn-success">Confirmer</button>
+              <button (click)="reloadPage()" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Quitter</button>
+          </div>
+      </div>
+      </div>
+    </div>
+
     <!-- Modal 2-->
     <div class="modal fade" id="modifModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -176,19 +542,21 @@
             <div class="modal-header">
                 <h5 *ngIf="state == 0" class="modal-title" id="exampleModalLabel">Modifier Année</h5>
                 <h5 *ngIf="state == 1" class="modal-title" id="exampleModalLabel">Modifier Organisation</h5>
+                <h5 *ngIf="state == 2" class="modal-title" id="exampleModalLabel">Modifier Salle</h5>
+                <h5 *ngIf="state == 3" class="modal-title" id="exampleModalLabel">Modifier Etage</h5>
                 <button (click)="libelle = ''; error = false;" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <label *ngIf="state == 0" class="form-label custom-label" for="libelle">Libelle de l'année</label>
                 <label *ngIf="state == 1" class="form-label custom-label" for="libelle">Nom de l'organisation</label>
+                <label *ngIf="state == 2" class="form-label custom-label" for="libelle">Libelle de la salle</label>
+                <label *ngIf="state == 3" class="form-label custom-label" for="libelle">Libelle de l'étage</label>
                 <input required id="libelle" #libelleInput="ngModel" [(ngModel)]="libelle" 
                 name="libelle" class="form-control form-control-lg custom-input" placeholder="Entrez le nom..." />
                 <div *ngIf="libelleInput.invalid && libelleInput.touched" class="text-danger">
                     Le nom/libelle est requis.
                 </div>
-                <div *ngIf="error" class="text-danger">
-                    Cette entité existe deja
-                </div>
+                <div *ngIf="error" class="text-danger">{{msg}}</div>
             </div>
             <div class="modal-footer d-flex">
                 <button (click)="modifEnt(state, entity, libelle)" type="button" 
@@ -211,8 +579,11 @@
             <div class="modal-body">
                 <h4 *ngIf="state == 0" class="form-label custom-label">Voulez vous supprimer cette année?</h4>
                 <h4 *ngIf="state == 1" class="form-label custom-label">Voulez vous supprimer cette organisation?</h4>
-                <p>La suppression de l'année entraînera la suppression définitive ses listes, groupes, notes et absences qui y sont associés. </p>
-            </div>
+                <h4 *ngIf="state == 2" class="form-label custom-label">Voulez vous supprimer cette salle?</h4>
+                <h4 *ngIf="state == 3" class="form-label custom-label">Voulez vous supprimer cette étage?</h4>
+                <h4 *ngIf="state == 4" class="form-label custom-label">Voulez vous archiver ce coach?</h4>
+                <p *ngIf="state < 2">La suppression de cette entité entraînera la suppression définitive ses listes, groupes, notes et absences qui y sont associés. </p>
+              </div>
             <div class="modal-footer d-flex">
                 <button (click)="modifEnt(state, entity, libelle)" type="button" class="btn btn-success">Oui</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>

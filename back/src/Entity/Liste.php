@@ -44,11 +44,18 @@ class Liste extends AbstractEntity
     #[ORM\Column]
     private ?bool $isImported = false;
 
+    /**
+     * @var Collection<int, Jury>
+     */
+    #[ORM\OneToMany(targetEntity: Jury::class, mappedBy: 'liste')]
+    private Collection $juries;
+
     public function __construct()
     {
         $this->groupes = new ArrayCollection();
         $this->jours = new ArrayCollection();
         $this->setImported(false);
+        $this->juries = new ArrayCollection();
     }
 
 
@@ -187,6 +194,36 @@ class Liste extends AbstractEntity
     public function setImported(bool $isImported): static
     {
         $this->isImported = $isImported;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Jury>
+     */
+    public function getJuries(): Collection
+    {
+        return $this->juries;
+    }
+
+    public function addJury(Jury $jury): static
+    {
+        if (!$this->juries->contains($jury)) {
+            $this->juries->add($jury);
+            $jury->setListe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeJury(Jury $jury): static
+    {
+        if ($this->juries->removeElement($jury)) {
+            // set the owning side to null (unless already changed)
+            if ($jury->getListe() === $this) {
+                $jury->setListe(null);
+            }
+        }
 
         return $this;
     }

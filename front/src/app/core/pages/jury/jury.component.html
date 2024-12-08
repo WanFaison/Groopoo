@@ -1,0 +1,177 @@
+<div class="container-fluid min-vh-100">
+    <app-nav></app-nav>
+    
+    <div class="mt-5 row justify-content-center align-items-center h-100">
+        <div class="flex-center my-3 flex-column">
+            <div class="d-flex justify-content-between">
+                <h4 *ngIf="listeResponse" class="underline-bold">Liste des jurys: {{ listeResponse.results.libelle }}</h4>
+            </div>
+        </div>
+
+        <div class="flex-center my-3">
+            <input type="text" [(ngModel)]="keyword" class="form-control input-black-border col-md-3 me-2" placeholder="Recherche...">
+            <a class="btn btn-info col-md-1 me-4" (click)="filter()" role="button" style="color: white;">
+                Rechercher
+            </a>
+            <a class="btn btn-secondary col-md-1 me-2" (click)="refresh(); keyword = ''" 
+            role="button" style="color: white;">
+                Réinitialiser
+            </a>
+        </div>
+        
+        <div class="d-flex flex-column justify-content-center align-items-center">
+            <table *ngFor="let jury of juryResponse?.results; let i = index" class="table col-md-9 mb-5">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">{{jury.libelle}}</th>
+                        <th scope="col" *ngIf="jury.groupes">
+                            <button class="btn btn-secondary me-2"
+                            (click)="showJuryGroups(jury.groupes, jury.libelle)"
+                            data-bs-toggle="modal" data-bs-target="#grpModal">Voir groupes</button>
+                        </th>
+                        <th scope="col">
+                            <button class="btn btn-success me-2"
+                            (click)="findCoachesLeft(jury)"
+                            data-bs-toggle="modal" data-bs-target="#addModal">Ajouter coach</button>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th scope="col">Coach</th>
+                        <th scope="col">Tel</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Etat</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let coach of jury.coachs; let i = index">
+                        <th scope="row">{{coach.nom}} {{coach.prenom}}</th>
+                        <td>{{coach.tel}}</td>
+                        <td>{{coach.email}}</td>
+                        <td>{{coach.etat}}</td>
+                        <td *ngIf="!listeResponse?.results?.isComplet">
+                          <button class="btn btn-secondary me-2"
+                          (click)="findCoach(coach.id)"
+                          data-bs-toggle="modal" data-bs-target="#transferModal">Transferer</button>
+                        </td>
+                    </tr>
+                </tbody>
+              </table>
+        </div>
+
+        <div *ngIf="juryResponse && juryResponse.results.length > 1" class="pagination-div" style="margin-bottom: 8rem;">
+          <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              <li *ngIf="juryResponse && juryResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': juryResponse.currentPage === 0}">
+                <a class="page-link" (click)="paginate(juryResponse.currentPage - 1)" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                  <span class="sr-only">Previous</span>
+                </a>
+              </li>
+              
+              @for (item of getPageRange(juryResponse.currentPage, juryResponse.totalPages); track $index){
+                <li class="page-item" [ngClass]="{'active':item-1==juryResponse?.currentPage}">
+                  <a (click)="paginate(item - 1)" class="page-link">{{item}}</a>
+                </li>
+              }
+
+              <li *ngIf="juryResponse && juryResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': juryResponse.currentPage +1 === juryResponse.totalPages}">
+                <a class="page-link" (click)="paginate(juryResponse.currentPage + 1)" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                  <span class="sr-only">Next</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>    
+    </div>
+
+
+    <!-- Modal grp-->
+    <div class="modal fade" id="grpModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content row">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">{{juryName}}</h5>
+                <button type="button" class="btn-close"
+                data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table>
+                    <tbody>
+                        <tr *ngFor="let grp of groups; let i = index">
+                            <td>{{grp.libelle}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer d-flex">
+                <button type="button" class="btn btn-secondary" 
+                data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+        </div>
+    </div>
+    
+    <!-- Modal transfer-->
+    <div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+      <div class="modal-content row">
+          <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Transferer {{coachResponse?.results?.nom}} {{coachResponse?.results?.prenom}} vers...</h5>
+              <button type="button" class="btn-close"
+              data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <label class="form-label custom-label" for="libelle">Choisir son nouveau jury</label>
+            <div class="input-group me-2">
+              <select [(ngModel)]="newJury" class="form-select" aria-label=".form-select-sm example">
+                <option selected value="0">jury...</option>
+                <option *ngFor="let item of juryRequest?.results" [value]="item.id">{{ item.libelle }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer d-flex">
+            <button (click)="transferCoach(coachResponse?.results?.id, newJury)" type="button" 
+            [class.disabled]="newJury == 0"
+            class="btn btn-success">Confirmer</button>
+            <button type="button" class="btn btn-secondary" 
+            data-bs-dismiss="modal">Close</button>
+          </div>
+      </div>
+      </div>
+    </div>
+
+    <!-- Modal add-->
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content row">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ajouter a {{juryName}}</h5>
+                <button type="button" class="btn-close"
+                data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <label class="form-label custom-label" for="libelle">Choisir le coach</label>
+              <div class="input-group me-2">
+                <select [(ngModel)]="newCoach" class="form-select" aria-label=".form-select-sm example">
+                  <option selected value="0">coach...</option>
+                  <option *ngFor="let item of coachRequest?.results" [value]="item.id">{{ item.nom }} {{ item.prenom }}</option>
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer d-flex">
+              <button (click)="transferCoach(newCoach, newJury)" type="button" 
+              [class.disabled]="newCoach == 0"
+              class="btn btn-success">Confirmer</button>
+              <button type="button" class="btn btn-secondary" 
+              data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+
+    <app-foot></app-foot>
+</div>
+

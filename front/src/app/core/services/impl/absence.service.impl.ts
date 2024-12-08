@@ -12,9 +12,7 @@ export class AbsenceImplService implements AbsenceService{
     constructor(private http: HttpClient) {}
 
     sendAbsences(data: any): Observable<any> {
-        const headers = new HttpHeaders({
-            'Content-Type': 'application/json'
-        });
+        const headers = new HttpHeaders(environment.JSONHeaders);
         return this.http.post(`${environment.APIURL}/mark-absence`, data, {headers});
     }
 

@@ -93,7 +93,7 @@ class GroupeController extends AbstractController
         $groupeId = $request->query->getInt('groupe', 0);
 
         $jour = $this->jourRepository->find($jourId);
-        $groupes = $this->groupeRepository->findAllByListePaginated($page, $limit, $jour->getListe(), $this->groupeRepository->find($groupeId));
+        $groupes = $this->groupeRepository->findAllByListeGroupeSallePaginated($page, $limit, $jour->getListe(), $this->groupeRepository->find($groupeId));
 
         $results = $this->grpJourDto($groupes, $jour);
         $totalItems = $groupes->count();
@@ -148,7 +148,7 @@ class GroupeController extends AbstractController
         $page = $request->query->getInt('page', 0);
         $limit = $request->query->getInt('limit', 10);
         $liste = $request->query->getInt('liste', 0);
-        $groupes = $this->groupeRepository->findAllByListePaginated($page, $limit, $this->listeRepository->find($liste));
+        $groupes = $this->groupeRepository->findAllByListeGroupeSallePaginated($page, $limit, $this->listeRepository->find($liste));
 
         $results = $this->grpListeDto($groupes);
         $totalItems = $groupes->count();
@@ -193,7 +193,9 @@ class GroupeController extends AbstractController
                 'liste' => $d->getListe(),
                 'listeT' => $d->getListeT(),
                 'etudiants' => $d->getEtudiants(),
-                'note' => $d->getNote()
+                'note' => $d->getNote(),
+                'coach' => $d->getCoach(),
+                'salle' => $d->getSalle()
             ];
         }
 
@@ -246,7 +248,10 @@ class GroupeController extends AbstractController
     private function marksPerPeriod(Liste $liste): float
     {
         $periods = ($liste->getJours()->count())*2;
-        return  20.0/$periods;
+        if($periods>0){
+            return  20.0/$periods;
+        }
+        return 20.0;
     }
     private function checkNote(float $note):float
     {
@@ -487,10 +492,11 @@ class GroupeController extends AbstractController
         $nom = $data['nom'] ?? '*Sans nom crée';
         $etudiants = $data['etudiants'] ?? [];
         $criteres = $data['criteres'] ?? [];
+        $state = $data['state'] ?? 0;
         $status = $data['status'] ?? 500;
 
         if($status != 500){
-            $newListe = $this->manageData($ecole, $annee, $taille, $nom, $etudiants, $criteres);
+            $newListe = $this->manageData($ecole, $annee, $taille, $nom, $etudiants, $criteres, $state);
         }
 
         try {
@@ -501,13 +507,15 @@ class GroupeController extends AbstractController
         
     }
 
-    private function manageData($ecoleId, $annee, $taille, $nom, $etudiants, $criteres): ?Liste
+    private function manageData($ecoleId, $annee, $taille, $nom, $etudiants, $criteres, $state): ?Liste
     {
         $ecole = $this->ecoleRepository->find($ecoleId);
         $this->setClasses($etudiants, $ecole); //fonction qui vérifie si toutes les classes de la liste existent dans la base de données (si ce n'est pas le cas, elle les crée)
         $newListe = $this->setListe($ecole, $annee, $nom, $criteres);
         $newEtds = $this->loadEtudiants($etudiants, $ecole);
-        $this->loadGroups($criteres, $newEtds, $taille, $newListe);
+
+        if($state == 0){$this->loadGroups($criteres, $newEtds, $taille, $newListe);}
+        else{$this->loadGroupsPerClasse($newEtds, $taille, $newListe);}
         
         return $newListe;
     }
@@ -690,6 +698,48 @@ class GroupeController extends AbstractController
             $num++; 
         }
         $this->entityManager->flush();
+    }
+
+    private function loadGroupsPerClasse($etudiants, $taille, Liste $liste): void
+    {
+        $existingClasses = [];
+        foreach($etudiants as $e){
+            in_array($e->getClasse(), $existingClasses, false) ? null : $existingClasses[] = $e->getClasse();
+        }
+
+        $etds = $etudiants;
+        shuffle($etds);
+        $num = 1;
+        foreach($existingClasses as $classe){
+            $filteredEtds = array_filter($etds, function (Etudiant $etudiant) use ($classe) {
+                return $etudiant->getClasse() === $classe;
+                });
+            
+            if(count($filteredEtds)>0){
+                $t = 0;
+                $group = [];
+                $newGrp = new Groupe();
+                $newGrp->setArchived(false)
+                        ->setListe($liste)
+                        ->setLibelle('Groupe '.$num);
+
+                while((count($group) < $taille) && (count($filteredEtds) > 0)){
+                    $group[] = $filteredEtds[$t];
+                    $newGrp->addEtudiant($filteredEtds[$t]);
+                    unset($filteredEtds[$t]);
+                    $filteredEtds = array_values($filteredEtds);
+                    $t = -1;
+                }
+                $newGrp->setTaille(count($newGrp->getEtudiant()));
+                $this->entityManager->persist($newGrp);
+
+                if($num % 10 === 0){
+                    $this->entityManager->flush();
+                }
+                $num++; 
+            }
+            $this->entityManager->flush();
+        }
     }
 
     private function checkTaille($givenTaille):int
@@ -896,7 +946,8 @@ class GroupeController extends AbstractController
             ->setLibelle(trim($nom))
             ->setCritere($criteres)
             ->setArchived(false)
-            ->setComplete(false);
+            ->setComplete(false)
+            ->setImported(false);
         $this->listeRepository->addOrUpdate($liste);
         $newListe = $this->listeRepository->findByLibelle($nom);
 
@@ -924,6 +975,8 @@ class GroupeController extends AbstractController
 
         $nEcole = $this->ecoleRepository->find($ecole);
         $newListe = $this->setListe($nEcole, $annee, $fileName, []);
+        $newListe->setImported(true);
+        $this->listeRepository->addOrUpdate($newListe);
         
         try {
             $this->manageImports($etudiantGroups, $newListe, $nEcole);

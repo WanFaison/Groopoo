@@ -12,6 +12,8 @@ class GroupeResponseDto
     private string $listeT;
     private array $etudiants;
     private float $note;
+    private string $salle;
+    private string $coach;
 
     public function getId(): ?int
     {
@@ -78,15 +80,39 @@ class GroupeResponseDto
         return $this;
     }
 
+    public function getSalle(): ?string
+    {
+        return $this->salle;
+    }
+    public function setSalle(string $salle): static
+    {
+        $this->salle = $salle;
+
+        return $this;
+    }
+
+    public function getCoach(): ?string
+    {
+        return $this->coach;
+    }
+    public function setCoach(string $coach): static
+    {
+        $this->coach = $coach;
+
+        return $this;
+    }
+
     public function toDto(Groupe $groupe, array $etds): GroupeResponseDto
     {
         $dto = new GroupeResponseDto();
 
-        $dto->setId($groupe->getId());
-        $dto->setLibelle($groupe->getLibelle());
-        $dto->setListe($groupe->getListe()->getId());
-        $dto->setListeT($groupe->getListe()->getLibelle());
-        $dto->setEtudiants($etds);
+        $dto->setId($groupe->getId())
+            ->setLibelle($groupe->getLibelle())
+            ->setListe($groupe->getListe()->getId())
+            ->setListeT($groupe->getListe()->getLibelle())
+            ->setEtudiants($etds)
+            ->setSalle($groupe->getSalle() ? $groupe->getSalle()->getLibelle() : '')
+            ->setCoach($groupe->getCoach() ? $groupe->getCoach()->getNom(). ' ' .$groupe->getCoach()->getPrenom() : '');
         $n = $groupe->getNote();
         $dto->setNote($n !== null ? $n : 0);
 

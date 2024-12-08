@@ -5,5 +5,6 @@ export interface ReturnResponse{
     nom: string,
     etudiants: any,
     criteres: any,
+    state: any,
     status: number
 }

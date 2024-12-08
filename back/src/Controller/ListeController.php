@@ -4,16 +4,19 @@ namespace App\Controller;
 
 use App\Controller\Dto\Response\ListeResponseDto;
 use App\Controller\Dto\RestResponse as DtoRestResponse;
+use App\Entity\Etudiant;
 use App\Entity\Groupe;
 use App\Entity\Liste;
 use App\Repository\AnneeRepository;
 use App\Repository\ListeRepository;
 use App\Repository\ClasseRepository;
+use App\Repository\CoachRepository;
 use App\Repository\EcoleRepository;
 use App\Repository\EtudiantRepository;
 use App\Repository\FiliereRepository;
 use App\Repository\GroupeRepository;
 use App\Repository\NiveauRepository;
+use App\Repository\SalleRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FPDF;
@@ -39,9 +42,11 @@ class ListeController extends AbstractController
     private $groupeRepository;
     private $listeRepository;
     private $userRepository;
+    private $coachRepository;
+    private $salleRepository;
     private $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager, UserRepository $userRepository, EcoleRepository $ecoleRepository, AnneeRepository $anneeRepository, EtudiantRepository $etudiantRepository, NiveauRepository $niveauRepository, FiliereRepository $filiereRepository, ClasseRepository $classeRepository, GroupeRepository $groupeRepository, ListeRepository $listeRepository)
+    public function __construct(EntityManagerInterface $entityManager, SalleRepository $salleRepository, CoachRepository $coachRepository, UserRepository $userRepository, EcoleRepository $ecoleRepository, AnneeRepository $anneeRepository, EtudiantRepository $etudiantRepository, NiveauRepository $niveauRepository, FiliereRepository $filiereRepository, ClasseRepository $classeRepository, GroupeRepository $groupeRepository, ListeRepository $listeRepository)
     {
         $this->ecoleRepository = $ecoleRepository;
         $this->anneeRepository = $anneeRepository;
@@ -52,6 +57,8 @@ class ListeController extends AbstractController
         $this->groupeRepository = $groupeRepository;
         $this->listeRepository = $listeRepository;
         $this->userRepository = $userRepository;
+        $this->coachRepository = $coachRepository;
+        $this->salleRepository = $salleRepository;
         $this->entityManager = $entityManager;
     }
 
@@ -71,6 +78,10 @@ class ListeController extends AbstractController
             $this->entityManager->remove($grp);
             $this->entityManager->flush();
         }
+        foreach($liste->getJours() as $jr){
+            $this->entityManager->remove($jr);
+        }
+        $this->entityManager->flush();
 
         if($this->listeRepository->deleteById($listeId)){
             return DtoRestResponse::requestResponse('liste supprimer avec success', 0, JsonResponse::HTTP_OK);
@@ -235,7 +246,7 @@ class ListeController extends AbstractController
         $motif = $request->query->getString('motif', '');
         $listeId = $request->query->getInt('liste', 0);
         $liste = $this->listeRepository->find($listeId);
-        $excelFile = $this->makeSheet($liste, $motif);
+        $motif == 'classes' ? $excelFile = $this->makeSheetPerClasse($liste) : $excelFile = $this->makeSheet($liste, $motif);
 
         return new BinaryFileResponse($excelFile);
     }
@@ -299,6 +310,60 @@ class ListeController extends AbstractController
             $row+=2;
         }
 
+        $writer = new Xlsx($spreadsheet);
+        $temp_file = tempnam(sys_get_temp_dir(), $liste->getLibelle().'.xlsx');
+        $writer->save($temp_file);
+
+        return $temp_file;
+    }
+
+    public function makeSheetPerClasse($liste)
+    {
+        $etudiants = [];
+        foreach($liste->getGroupes() as $g){
+            $etudiants = array_merge($etudiants, $g->getEtudiant()->toArray());
+        }
+        $existingClasses = [];
+        foreach($etudiants as $e){
+            in_array($e->getClasse(), $existingClasses, false) ? null : $existingClasses[] = $e->getClasse();
+        }
+
+        $spreadsheet = new Spreadsheet();
+        $sheetIndex = 0;
+        foreach($existingClasses as $classe){
+            $filteredEtds = array_filter($etudiants, function (Etudiant $etudiant) use ($classe) {
+                return $etudiant->getClasse() === $classe;});
+
+            $sheetIndex>0 ? $spreadsheet->createSheet():null;
+            $spreadsheet->setActiveSheetIndex($sheetIndex);
+            $sheet = $spreadsheet->getActiveSheet();
+            $sheet->setTitle($classe->getLibelle());
+
+            $row = 3;
+            $sheet->setCellValue('A1', $classe->getLibelle());
+            $sheet->setCellValue('A2', 'Nom');
+            $sheet->setCellValue('B2', 'Prenom');
+            $sheet->setCellValue('C2', 'Classe');
+            $sheet->setCellValue('D2', 'Sexe');
+            $sheet->setCellValue('E2', 'Niveau');
+            $sheet->setCellValue('F2', 'Filiere');
+            $sheet->setCellValue('G2', 'Matricule');
+            $sheet->setCellValue('H2', 'Note');
+
+            foreach($filteredEtds as $etd){
+                $sheet->setCellValue('A'.$row, $etd->getNom());
+                $sheet->setCellValue('B'.$row, $etd->getPrenom());
+                $sheet->setCellValue('C'.$row, $etd->getClasse()->getLibelle());
+                $sheet->setCellValue('D'.$row, $etd->getSexe());
+                $sheet->setCellValue('E'.$row, $etd->getClasse()->getNiveau()->getLibelle());
+                $sheet->setCellValue('F'.$row, $etd->getClasse()->getFiliere()->getLibelle());
+                $sheet->setCellValue('G'.$row, $etd->getMatricule());
+                $sheet->setCellValue('H'.$row, $etd->getNoteFinal());
+                $row++;
+            }
+            $sheetIndex++;
+        }
+        
         $writer = new Xlsx($spreadsheet);
         $temp_file = tempnam(sys_get_temp_dir(), $liste->getLibelle().'.xlsx');
         $writer->save($temp_file);

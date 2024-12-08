@@ -39,6 +39,19 @@ class JourRepository extends ServiceEntityRepository
         $this->entityManager->flush();
     }
 
+    public function deleteById(int $id): bool
+    {
+        $jour = $this->find($id);
+
+        if (!$jour) {
+            return false;
+        }
+        $this->entityManager->remove($jour);
+        $this->entityManager->flush(); 
+
+        return true;
+    }
+
 //    /**
 //     * @return Jour[] Returns an array of Jour objects
 //     */

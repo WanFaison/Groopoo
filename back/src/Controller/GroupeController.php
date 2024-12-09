@@ -716,7 +716,6 @@ class GroupeController extends AbstractController
                 });
             
             if(count($filteredEtds)>0){
-                $t = 0;
                 $group = [];
                 $newGrp = new Groupe();
                 $newGrp->setArchived(false)
@@ -724,11 +723,9 @@ class GroupeController extends AbstractController
                         ->setLibelle('Groupe '.$num);
 
                 while((count($group) < $taille) && (count($filteredEtds) > 0)){
-                    $group[] = $filteredEtds[$t];
-                    $newGrp->addEtudiant($filteredEtds[$t]);
-                    unset($filteredEtds[$t]);
-                    $filteredEtds = array_values($filteredEtds);
-                    $t = -1;
+                    $etd = array_shift($filteredEtds);
+                    $group[] = $etd;
+                    $newGrp->addEtudiant($etd);
                 }
                 $newGrp->setTaille(count($newGrp->getEtudiant()));
                 $this->entityManager->persist($newGrp);

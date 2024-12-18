@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FootComponent } from '../../components/foot/foot.component';
 import { NavComponent } from '../../components/nav/nav.component';
-import { RestResponse } from '../../models/rest.response';
+import { RequestResponse, RestResponse } from '../../models/rest.response';
 import { GroupeModel, GroupeReqModel } from '../../models/groupe.model';
 import { GroupeServiceImpl } from '../../services/impl/groupe.service.impl';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { ListeModel } from '../../models/liste.model';
 import { ListeServiceImpl } from '../../services/impl/list.service.impl';
@@ -16,27 +16,55 @@ import { HttpResponse } from '@angular/common/http';
 import { response } from 'express';
 import { LogUser } from '../../models/user.model';
 import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
+import { ClasseModel } from '../../models/classe.model';
+import { ClasseServiceImpl } from '../../services/impl/classe.service.impl';
 
 @Component({
   selector: 'app-groups',
   standalone: true,
-  imports: [NavComponent, FootComponent, RouterLink, RouterLinkActive, CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './groups.component.html',
   styleUrl: './groups.component.css'
 })
 export class GroupsComponent implements OnInit{
+  etdForm:FormGroup;
   liste: number = 0;
   listeResponse?: RestResponse<ListeModel>;
   etdResponse?: RestResponse<EtudiantCreateXlsx[]>;
   etdResponse2?: RestResponse<EtudiantModel>;
   groupResponse?: RestResponse<GroupeModel[]>;
   grpReq?:RestResponse<GroupeReqModel[]>
+  classeResponse?:RestResponse<ClasseModel[]>
   grp:number = 0;
   user?:LogUser;
   libelle:string = ''
   error:boolean = false;
   coachs:Array<number> = [];
-  constructor(private router:Router, private authService:AuthServiceImpl, private groupeService:GroupeServiceImpl, private listeService:ListeServiceImpl, private apiService:ApiService, private etudiantService:EtudiantServiceImpl) { }
+  msg: string='';
+  ajout: any;
+  constructor(private router:Router, private fb:FormBuilder, private classeService:ClasseServiceImpl, private authService:AuthServiceImpl, private groupeService:GroupeServiceImpl, private listeService:ListeServiceImpl, private apiService:ApiService, private etudiantService:EtudiantServiceImpl) 
+  {
+    this.etdForm = this.fb.group({
+      nom: ['', Validators.required],
+      prenom: ['', Validators.required],
+      matricule: ['', Validators.required],
+      classe: ['', Validators.required],
+      sexe: true
+    })
+  }
+
+  get nomControl() {
+    return this.etdForm.get('nom');
+  }
+  get prenomControl() {
+    return this.etdForm.get('prenom');
+  }
+  get matriculeControl() {
+    return this.etdForm.get('matricule');
+  }
+  get classeId() {
+    return this.etdForm.get('classe')?.value;
+  }
 
   ngOnInit(): void {
     this.user = this.authService.getUser();
@@ -46,10 +74,42 @@ export class GroupsComponent implements OnInit{
       this.groupeService.findAllReq(this.liste).subscribe(data=>this.grpReq=data)
     }
     this.refresh(this.liste);
+
+    this.etdForm.valueChanges.subscribe(value => {
+      console.log(this.etdForm.value)
+    });
   }
 
   findEtd(id:number){
     this.etudiantService.findById(id).subscribe(data=>this.etdResponse2=data);
+  }
+  findClasses(group:number) {
+    this.grp = group;
+    this.classeService.findAllByEcoleOrListe(this.liste).subscribe(data=>this.classeResponse=data);
+  }
+  
+  checkCorrect() {
+    if(this.classeId == 0){
+      this.error = true
+      this.setMsg('Choissisez une classe!')
+    }else{
+
+    }
+  }
+
+  addEtdToGrp(){
+    this.etudiantService.addEtudiantToListe(this.etdForm.value, this.grp)
+    .subscribe((response:RequestResponse) =>{
+            console.log('Response from back-end:', response);
+            if(response.data != 0){
+              this.error = true;
+              this.setMsg('Cette entité existe deja dans cette organisation')
+            }else{
+              this.ajout = true;
+            }
+          }, error => {
+            console.error('Error:', error);
+          });
   }
 
   transferEtd(grp:number = this.grp){
@@ -162,6 +222,10 @@ export class GroupsComponent implements OnInit{
       error => {
             console.error('Error sending data', error);
           });
+  }
+
+  setMsg(msg:string = ''){
+    this.msg = msg;
   }
 
   refresh(liste:number=0, page:number=0, limit:number=10){

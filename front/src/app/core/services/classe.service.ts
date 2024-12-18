@@ -5,5 +5,5 @@ import { FiliereModel } from "../models/filiere.model";
 import { ClasseModel } from "../models/classe.model";
 
 export interface ClasseService{
-    findAll(ecole:number):Observable<RestResponse<ClasseModel[]>>;
+    findAllByEcoleOrListe(ecole:number, liste:number):Observable<RestResponse<ClasseModel[]>>;
 }

@@ -1,101 +1,90 @@
-<div class="container-fluid min-vh-100">
-    <app-nav></app-nav>
-    
-    <div class="mt-5 row justify-content-center align-items-center h-100">
-        <div class="flex-center my-3 flex-column">
-            <div class="d-flex justify-content-between">
-              <h4 *ngIf="listeResponse" class="underline-bold">Liste des coachs: {{ listeResponse.results.libelle }}</h4>
-            </div>
-            <div class="flex-center">
-                <div *ngFor="let item of coachForm" class="bg-black d-flex me-2 align-items-center border-black thick-border rounded">
-                    <div *ngIf="item.add" class="d-flex">
-                        <p class="text-white mb-0 me-4">{{ item.nom }}</p>
-                        <a class="btn btn-success text-white" role="button">O</a>
-                    </div>
+<div class="mt-5 row justify-content-center align-items-center h-100">
+    <div class="flex-center my-3 flex-column">
+        <div class="d-flex justify-content-between">
+          <h4 *ngIf="listeResponse" class="underline-bold">Liste des coachs: {{ listeResponse.results.libelle }}</h4>
+        </div>
+        <div class="flex-center">
+            <div *ngFor="let item of coachForm" class="bg-black d-flex me-2 align-items-center border-black thick-border rounded">
+                <div *ngIf="item.add" class="d-flex">
+                    <p class="text-white mb-0 me-4">{{ item.nom }}</p>
+                    <a class="btn btn-success text-white" role="button">O</a>
                 </div>
             </div>
+        </div>
 
-            <div *ngIf="msg.length >1" class="flex-center align-items-center">
-                <p class="fw-bold text-danger">{{ msg }} </p>
-            </div>
-
-            <div class="flex-center my-3">
-                <a id="orange-btn" class="btn btn-success col-md-6 me-5" 
-                [class.disabled] = "listeResponse?.results?.isComplet"
-                (click)="assignCoaches()" role="button" style="color: white;">
-                    Enregistrer</a>
-                <a class="btn btn-secondary me-3"
-                [routerLink]="['/app/view-groups']" routerLinkActive="active"
-                role="button" style="color: white;">
-                    Précedent</a>
-                <button class="btn btn-success col-md-4"
-                *ngIf="!listeResponse?.results?.isComplet"
-                [routerLink]="['/app/jury']" routerLinkActive="active"
-                >Gérer jury</button>
-            </div>
+        <div *ngIf="msg.length >1" class="flex-center align-items-center">
+            <p class="fw-bold text-danger">{{ msg }} </p>
         </div>
 
         <div class="flex-center my-3">
-            <input type="text" [(ngModel)]="keyword" class="form-control input-black-border col-md-3 me-2" placeholder="Recherche...">
-            <a class="btn btn-info col-md-1 me-4" (click)="filter()" role="button" style="color: white;">
-                Rechercher
-            </a>
-            <a class="btn btn-secondary col-md-1 me-2" (click)="refresh(); keyword = ''; ecole =0 " 
-            role="button" style="color: white;">
-                Réinitialiser
-            </a>
+            <a id="orange-btn" class="btn btn-success col-md-6 me-5" 
+            [class.disabled] = "listeResponse?.results?.isComplet"
+            (click)="assignCoaches()" role="button" style="color: white;">
+                Enregistrer</a>
+            <button class="btn btn-success col-md-4"
+            *ngIf="!listeResponse?.results?.isComplet"
+            [routerLink]="['/app/jury']" routerLinkActive="active"
+            >Gérer jury</button>
         </div>
-        
-        <div class="d-flex flex-column justify-content-center align-items-center">
-            <table class="table col-md-9 mb-5">
-                <thead class="thead-dark">
-                    <tr>
-                        <th scope="col">Noms</th>
-                        <th scope="col">Tel</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Etat</th>
-                        <th scope="col">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let item of coachResponse?.results; let i = index">
-                        <th scope="row">{{item.nom}} {{item.prenom}}</th>
-                        <td>{{item.tel}}</td>
-                        <td>{{item.email}}</td>
-                        <td>{{item.etat}}</td>
-                        <td class="text-center justify-content-center align-items-center">
-                            <input class="form-check-input" 
-                            [checked]="checkAdded(item.id)"
-                            (change)="onFormChange(item.id, item.nom, $event)"
-                            type="checkbox" role="switch" id="flexSwitchCheckChecked">
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="pagination-div" style="margin-bottom: 8rem;">
-          <nav aria-label="Page navigation example">
-            <ul class="pagination">
-              <li *ngIf="coachResponse && coachResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': coachResponse.currentPage === 0}">
-                <a class="page-link" (click)="paginate(coachResponse.currentPage - 1)" aria-label="Previous">
-                  <span aria-hidden="true">&laquo;</span>
-                  <span class="sr-only">Previous</span>
-                </a>
-              </li>
-              
-              <li *ngIf="coachResponse && coachResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': coachResponse.currentPage +1 === coachResponse.totalPages}">
-                <a class="page-link" (click)="paginate(coachResponse.currentPage + 1)" aria-label="Next">
-                  <span aria-hidden="true">&raquo;</span>
-                  <span class="sr-only">Next</span>
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>    
     </div>
 
+    <div class="flex-center my-3">
+        <input type="text" [(ngModel)]="keyword" class="form-control input-black-border col-md-3 me-2" placeholder="Recherche...">
+        <a class="btn btn-info col-md-1 me-4" (click)="filter()" role="button" style="color: white;">
+            Rechercher
+        </a>
+        <a class="btn btn-secondary col-md-1 me-2" (click)="refresh(); keyword = ''; ecole =0 " 
+        role="button" style="color: white;">
+            Réinitialiser
+        </a>
+    </div>
+    
+    <div class="d-flex flex-column justify-content-center align-items-center">
+        <table class="table col-md-9 mb-5">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Noms</th>
+                    <th scope="col">Tel</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Etat</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of coachResponse?.results; let i = index">
+                    <th scope="row">{{item.nom}} {{item.prenom}}</th>
+                    <td>{{item.tel}}</td>
+                    <td>{{item.email}}</td>
+                    <td>{{item.etat}}</td>
+                    <td class="text-center justify-content-center align-items-center">
+                        <input class="form-check-input" 
+                        [checked]="checkAdded(item.id)"
+                        (change)="onFormChange(item.id, item.nom, $event)"
+                        type="checkbox" role="switch" id="flexSwitchCheckChecked">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-    <app-foot></app-foot>
+    <div class="pagination-div" style="margin-bottom: 8rem;">
+      <nav aria-label="Page navigation example">
+        <ul class="pagination">
+          <li *ngIf="coachResponse && coachResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': coachResponse.currentPage === 0}">
+            <a class="page-link" (click)="paginate(coachResponse.currentPage - 1)" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+              <span class="sr-only">Previous</span>
+            </a>
+          </li>
+          
+          <li *ngIf="coachResponse && coachResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': coachResponse.currentPage +1 === coachResponse.totalPages}">
+            <a class="page-link" (click)="paginate(coachResponse.currentPage + 1)" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+              <span class="sr-only">Next</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>    
 </div>
 

@@ -6,4 +6,5 @@ export type CoachModel={
     email?: string,
     etat?: any,
     ecole?: string,
+    ecoleId?: number
 }

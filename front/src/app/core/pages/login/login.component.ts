@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 export class LoginComponent implements OnInit{
   username: string = '';
   password: string = '';
+  showPassword: boolean = false;
   errorMessage: any
   error:boolean = false
 
@@ -21,6 +22,10 @@ export class LoginComponent implements OnInit{
 
   ngOnInit(): void {
     this.authService.logout()
+  }
+
+  togglePswd(): void {
+    this.showPassword = !this.showPassword;
   }
 
   getCurrentYear(): number {

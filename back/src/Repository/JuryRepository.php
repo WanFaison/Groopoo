@@ -28,7 +28,7 @@ class JuryRepository extends ServiceEntityRepository
         $this->entityManager->flush();
     }
 
-    public function findAllByListePaginated(int $page, int $limit, string $keyword, ?Liste $liste): Paginator
+    public function findAllNotFinalByListePaginated(int $page, int $limit, string $keyword, ?Liste $liste): Paginator
     {
         $queryBuilder = $this->createQueryBuilder('r');
         if ($liste) {
@@ -42,10 +42,30 @@ class JuryRepository extends ServiceEntityRepository
         
         $query = $queryBuilder->andWhere('r.isArchived = :isArchived') 
                             ->setParameter('isArchived', false)
+                            ->andWhere('r.isFinal = :isFinal') 
+                            ->setParameter('isFinal', false)
                             ->orderBy('r.id', 'ASC')
                             ->getQuery();
         
         return PaginatorService::pageInator($query, $page, $limit);
+    }
+
+    public function findFinalistJuryByList(?Liste $liste)
+    {
+        $queryBuilder = $this->createQueryBuilder('r');
+        if ($liste) {
+            $queryBuilder->andWhere('r.liste = :liste')
+                ->setParameter('liste', $liste);
+        }
+        $query = $queryBuilder->andWhere('r.isArchived = :isArchived') 
+                            ->setParameter('isArchived', false)
+                            ->andWhere('r.isFinal = :isFinal') 
+                            ->setParameter('isFinal', true)
+                            ->orderBy('r.id', 'ASC')
+                            ->setMaxResults(1)
+                            ->getQuery()
+                            ->getOneOrNullResult();
+        return $query;
     }
 
 //    /**

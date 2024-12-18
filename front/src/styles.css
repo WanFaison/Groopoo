@@ -4,9 +4,39 @@ html, body {
     margin: 0;
 }
 
+.active{
+    font-weight: 800;
+}
+
+.navbar-nav li:hover{
+    color: white;
+    font-weight: bold;
+}
+
+.navbar {
+  overflow: hidden;
+  background-color: #bebdbd;
+}
+
+.navbar li {
+  float: left;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+}
+
 .foot-text {
     font-size: 0.7em;
     line-height: 1.2;
+}
+
+.pswd-toggle {
+    border: none; 
+    background: transparent; 
+    position: absolute; 
+    right: 10px; 
+    top: 50%; 
+    transform: translateY(-50%);
 }
 
 .loader-overlay {

@@ -19,6 +19,7 @@ class CoachResponseDto
     private string $email;
     private string $etat;
     private string $ecole;
+    private int $ecoleId;
 
     public function getId(): ?int
     {
@@ -102,6 +103,16 @@ class CoachResponseDto
         return $this;
     }
 
+    public function getEcoleId(): ?int
+    {
+        return $this->ecoleId;
+    }
+    public function setEcoleId(int $ecoleId): static
+    {
+        $this->ecoleId = $ecoleId;
+        return $this;
+    }
+
     public function toDto(Coach $coach): CoachResponseDto
     {
         $dto = new CoachResponseDto;
@@ -113,6 +124,7 @@ class CoachResponseDto
         $dto->setEmail($coach->getEmail());
         $dto->setEtat($coach->getEtat()->value);
         $dto->setEcole($coach->getEcole()->getLibelle());
+        $dto->setEcoleId($coach->getEcole()->getId());
 
         return $dto;
     }

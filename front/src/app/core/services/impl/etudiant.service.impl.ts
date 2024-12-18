@@ -4,7 +4,7 @@ import { Observable, retry } from "rxjs";
 import { EtudiantCreate, EtudiantCreateXlsx, EtudiantModel } from "../../models/etudiant.model";
 import { RequestResponse, RestResponse } from "../../models/rest.response";
 import { environment } from "../../../../environments/environment.development";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 
 @Injectable({
     providedIn: 'root'
@@ -13,6 +13,11 @@ import { HttpClient } from "@angular/common/http";
 export class EtudiantServiceImpl implements EtudiantService{
     private apiUrl=`${environment.APIURL}/liste-etudiant`;
     constructor(private http:HttpClient){}
+
+    addEtudiantToListe(data: any, groupe: number): Observable<any> {
+        const headers = new HttpHeaders(environment.JSONHeaders);
+                return this.http.post(`${environment.APIURL}/etudiant-to-liste`, {etdForm: data, groupe: groupe}, {headers});
+    }
 
     deleteEtudiant(etudiant: number): Observable<RequestResponse> {
         return this.http.get<RequestResponse>(`${environment.APIURL}/etudiant-delete?etudiant=${etudiant}`);

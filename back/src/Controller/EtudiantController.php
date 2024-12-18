@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Controller\Dto\Response\EtudiantResponseDto;
 use App\Controller\Dto\RestResponse;
+use App\Entity\Etudiant;
+use App\Repository\ClasseRepository;
 use App\Repository\EtudiantRepository;
 use App\Repository\GroupeRepository;
 use App\Repository\ListeRepository;
@@ -19,13 +21,15 @@ class EtudiantController extends AbstractController
     private $etudiantRepository;
     private $groupeRepository;
     private $listeRepository;
+    private $classeRepository;
     private $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager, EtudiantRepository $etudiantRepository, GroupeRepository $groupeRepository, ListeRepository $listeRepository)
+    public function __construct(EntityManagerInterface $entityManager, ClasseRepository $classeRepository, EtudiantRepository $etudiantRepository, GroupeRepository $groupeRepository, ListeRepository $listeRepository)
     {
         $this->etudiantRepository = $etudiantRepository;
         $this->groupeRepository = $groupeRepository;
         $this->listeRepository = $listeRepository;
+        $this->classeRepository = $classeRepository;
         $this->entityManager = $entityManager;
     }
 
@@ -104,5 +108,35 @@ class EtudiantController extends AbstractController
         $this->entityManager->flush();
 
         return RestResponse::requestResponse('etudiant retirer avec success', 0, JsonResponse::HTTP_OK);
+    }
+
+    #[Route('/api/etudiant-to-liste', name: 'api_etudiant_to_liste', methods: ['POST'])]
+    public function addEtudiantToListe(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $groupeId = $data['groupe'] ?? 0;
+        $nom = $data['etdForm']['nom'] ?? null;
+        $prenom = $data['etdForm']['prenom'] ?? null;
+        $matricule = $data['etdForm']['matricule'] ?? null;
+        $classeId = $data['etdForm']['classe'] ?? 0;
+        $sexe = $data['etdForm']['sexe'] ?? null;
+
+        $groupe = $groupeId!=0 ? $this->groupeRepository->find($groupeId) : null;
+        $classe = $classeId!=0 ? $this->classeRepository->find($classeId) : null;
+        $newEtd = new Etudiant();
+        $newEtd->setArchived(false)
+                ->setNom($nom)
+                ->setPrenom($prenom)
+                ->setMatricule($matricule)
+                ->setClasse($classe)
+                ->setSexe($sexe ? 'Masculine':'Feminin');
+        $this->etudiantRepository->addOrUpdate($newEtd);
+
+        $groupe->addEtudiant($newEtd);
+        $this->entityManager->persist($groupe);
+        $this->entityManager->persist($newEtd);
+        $this->entityManager->flush();
+
+        return RestResponse::requestResponse('etudiant ajoutee avec success', 0, JsonResponse::HTTP_OK);
     }
 }

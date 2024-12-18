@@ -64,6 +64,11 @@ export class JoursComponent implements OnInit{
     this.router.navigate(['/app/attendance'])
   }
 
+  showNotes(){
+    localStorage.setItem('stateListeMenu', '2');
+    this.reloadPage()
+  }
+
   addJr() {
     this.jourService.addJour(this.liste, this.date).subscribe(
       response=>{
@@ -79,10 +84,6 @@ export class JoursComponent implements OnInit{
             console.error('Error sending data', error);
           }
     );
-  }
-
-  viewGrps() {
-    this.router.navigate(['/app/view-groups']);
   }
 
   modifEnt(ent: any,lib: string) {

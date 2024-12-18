@@ -16,8 +16,8 @@ export class ClasseServiceImpl implements ClasseService{
     private apiUrl=`${environment.APIURL}/classe`;
     constructor(private http:HttpClient){}
     
-    findAll(ecole: number =0): Observable<RestResponse<ClasseModel[]>> {
-        return this.http.get<RestResponse<ClasseModel[]>>(`${this.apiUrl}?ecole=${ecole}`);
+    findAllByEcoleOrListe(ecole: number =0, liste:number=0): Observable<RestResponse<ClasseModel[]>> {
+        return this.http.get<RestResponse<ClasseModel[]>>(`${this.apiUrl}?ecole=${ecole}&liste=${liste}`);
     }
 
 }

@@ -8,6 +8,7 @@ use App\Controller\Dto\Response\JuryResponseDto;
 use App\Controller\Dto\RestResponse;
 use App\Entity\Jury;
 use App\Repository\CoachRepository;
+use App\Repository\GroupeRepository;
 use App\Repository\JuryRepository;
 use App\Repository\ListeRepository;
 use App\Repository\SalleRepository;
@@ -25,14 +26,16 @@ class JuryController extends AbstractController
     private $coachRepository;
     private $listeRepository;
     private $salleRepository;
+    private $groupeRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, SalleRepository $salleRepository, JuryRepository $juryRepository, CoachRepository $coachRepository, ListeRepository $listeRepository)
+    public function __construct(EntityManagerInterface $entityManager, GroupeRepository $groupeRepository, SalleRepository $salleRepository, JuryRepository $juryRepository, CoachRepository $coachRepository, ListeRepository $listeRepository)
     {
         $this->entityManager = $entityManager;
         $this->juryRepository = $juryRepository;
         $this->coachRepository = $coachRepository;
         $this->listeRepository = $listeRepository;
         $this->salleRepository = $salleRepository;
+        $this->groupeRepository = $groupeRepository;
     }
 
     #[Route('/api/all-jury', name: 'app_all_jury', methods: ['GET'])]
@@ -92,7 +95,7 @@ class JuryController extends AbstractController
         //$salleId = $request->query->getInt('salle', 0);
 
         $liste = $this->listeRepository->find($listeId);
-        $jurys = $this->juryRepository->findAllByListePaginated($page, $limit, $keyword, $liste);
+        $jurys = $this->juryRepository->findAllNotFinalByListePaginated($page, $limit, $keyword, $liste);
         $results = $this->juryCoachesDto($jurys);
 
         $totalItems = count($results);
@@ -101,7 +104,7 @@ class JuryController extends AbstractController
         return RestResponse::paginateResponse($results, $page, $totalItems, $totalPages, JsonResponse::HTTP_OK);
     }
 
-    private function juryCoachesDto($jurys):array
+    private function juryCoachesDto($jurys, ?array $groupesFinalistes = []):array
     {
         $dtos = [];
         foreach($jurys as $jury){
@@ -121,7 +124,8 @@ class JuryController extends AbstractController
             }
 
             $grps = [];
-            foreach($jury->getGroupes() as $group){ $grps[] = (new GroupeResponseDto())->toDto($group, []); }
+            if(count($groupesFinalistes)>0){foreach($groupesFinalistes as $group){ $grps[] = (new GroupeResponseDto())->toDto($group, []); }}
+            else{foreach($jury->getGroupes() as $group){ $grps[] = (new GroupeResponseDto())->toDto($group, []); }}
             $groups = [];
             foreach($grps as $group){
                 $groups[] = [
@@ -144,5 +148,75 @@ class JuryController extends AbstractController
         }
 
         return $results;
+    }
+
+    #[Route('/api/remove-coach', name: 'api_remove_coach', methods: ['GET'])]
+    public function removeCoach(Request $request): JsonResponse
+    {
+        $coachId = $request->query->getInt('coach', 0);
+        $juryId = $request->query->getInt('jury', 0);
+        $coach = $this->coachRepository->find($coachId);
+        $jury = $this->juryRepository->find($juryId);
+
+        if($coach && $jury){
+            $jury->removeCoach($coach);
+            $this->juryRepository->addOrUpdate($jury);
+            $this->coachRepository->addOrUpdate($coach);
+            return RestResponse::requestResponse('coach removed', 0, JsonResponse::HTTP_OK);
+        }
+        return RestResponse::requestResponse('coach or jury not found', 1, JsonResponse::HTTP_BAD_REQUEST);
+    }
+
+    #[Route('/api/final-jury', name: 'api_final_jury', methods: ['GET'])]
+    public function showFinalJury(Request $request): JsonResponse
+    {
+        $listeId = $request->query->getInt('liste', 0);
+        $liste = $this->listeRepository->find($listeId);
+
+        $finalJury = $this->juryRepository->findFinalistJuryByList($liste);
+        $results = [];
+
+        if($finalJury){
+            $results = $this->juryCoachesDto([$finalJury], $this->groupeRepository->findAllFinalByListe($liste));
+        }else{
+            foreach($liste->getGroupes() as $grp){
+                if($grp->getNote() > 0){
+                    $groupes = $this->getTop10($liste->getGroupes()->toArray());
+                    $groupes = $this->setToFinal($groupes);
+                    $newJury = new Jury();
+                    $newJury->setListe($liste)
+                            ->setArchived(false)
+                            ->setFinal(true)
+                            ->setLibelle('Jury Finaliste');
+                    $this->juryRepository->addOrUpdate($newJury);
+                    $results = $this->juryCoachesDto([$newJury], $groupes);
+
+                    $totalItems = count($results);
+                    return RestResponse::paginateResponse($results, 0, $totalItems, 1, JsonResponse::HTTP_OK);
+                }
+            }
+        }
+        
+        $totalItems = count($results);
+        return RestResponse::paginateResponse($results, 0, $totalItems, 1, JsonResponse::HTTP_OK);
+    }
+
+    private function getTop10(array $groupes): array
+    {
+        usort($groupes, function ($a, $b) {
+            return $b->getNote() <=> $a->getNote(); 
+        });
+
+        return array_slice($groupes, 0, 10);
+    }
+
+    private function setToFinal(array $groupes): array
+    {
+        foreach($groupes as $grp){
+            $grp->setFinal(true);
+            $this->entityManager->persist($grp);
+        }
+        $this->entityManager->flush();
+        return $groupes;
     }
 }

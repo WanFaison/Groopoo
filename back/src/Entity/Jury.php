@@ -29,6 +29,9 @@ class Jury extends AbstractEntity
     #[ORM\OneToMany(targetEntity: Groupe::class, mappedBy: 'jury')]
     private Collection $groupes;
 
+    #[ORM\Column]
+    private ?bool $isFinal = null;
+
     public function __construct()
     {
         $this->coaches = new ArrayCollection();
@@ -112,6 +115,18 @@ class Jury extends AbstractEntity
                 $groupe->setJury(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isFinal(): ?bool
+    {
+        return $this->isFinal;
+    }
+
+    public function setFinal(bool $isFinal): static
+    {
+        $this->isFinal = $isFinal;
 
         return $this;
     }

@@ -7,4 +7,5 @@ export interface EtudiantService{
     findById(etudiant:number):Observable<RestResponse<EtudiantModel>>;
     transferEtudiant(etudiant:number, groupe:number):Observable<RequestResponse>;
     deleteEtudiant(etudiant:number):Observable<RequestResponse>;
+    addEtudiantToListe(data:any, groupe:number):Observable<any>
 }

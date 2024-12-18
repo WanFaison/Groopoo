@@ -60,7 +60,7 @@ export class FormCritereComponent implements OnInit{
     }
     this.niveauService.findAll().subscribe(data=>this.nivResponse=data);
     this.filiereService.findAll(this.ecole).subscribe(data=>this.filResponse=data);
-    this.classeService.findAll(this.ecole).subscribe(data=>this.classeResponse=data);
+    this.classeService.findAllByEcoleOrListe(this.ecole).subscribe(data=>this.classeResponse=data);
     if (this.nivResponse?.results) { this.numNiv = this.nivResponse?.results.length }
     this.loadForm();
 

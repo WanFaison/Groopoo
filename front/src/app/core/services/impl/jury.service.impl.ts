@@ -13,6 +13,14 @@ import { environment } from "../../../../environments/environment.development";
 export class JuryServiceImpl implements JuryService{
     constructor(private http:HttpClient){}
 
+    finalJury(liste: number): Observable<RestResponse<JuryModel[]>> {
+        return this.http.get<RestResponse<JuryModel[]>>(`${environment.APIURL}/final-jury?liste=${liste}`);
+    }
+
+    removeCoach(coach: number, jury: number): Observable<any> {
+        return this.http.get<any>(`${environment.APIURL}/remove-coach?coach=${coach}&jury=${jury}`);
+    }
+
     findAllButOne(liste: number, coach: number): Observable<RestResponse<JuryModel[]>> {
         return this.http.get<RestResponse<JuryModel[]>>(`${environment.APIURL}/all-jury?coach=${coach}&liste=${liste}`);
     }

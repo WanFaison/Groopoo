@@ -54,8 +54,8 @@ class GroupeRepository extends ServiceEntityRepository
                          ->setParameter('id', $groupe->getId());
         }
         if ($salle) {
-            $queryBuilder->andWhere('r.liste = :liste')
-                         ->setParameter('liste', $salle);
+            $queryBuilder->andWhere('r.salle = :salle')
+                         ->setParameter('salle', $salle);
         }
         $query = $queryBuilder->andWhere('r.isArchived = :isArchived')
                             ->setParameter('isArchived', false)
@@ -74,6 +74,24 @@ class GroupeRepository extends ServiceEntityRepository
         }
         $query = $queryBuilder->andWhere('r.isArchived = :isArchived')
                             ->setParameter('isArchived', false)
+                            ->orderBy('r.id', 'ASC')
+                            ->getQuery()
+                            ->getResult();
+
+        return $query;
+    }
+
+    public function findAllFinalByListe(?Liste $liste=null):array
+    {
+        $queryBuilder = $this->createQueryBuilder('r');
+        if ($liste) {
+            $queryBuilder->andWhere('r.liste = :liste')
+                         ->setParameter('liste', $liste);
+        }
+        $query = $queryBuilder->andWhere('r.isArchived = :isArchived')
+                            ->setParameter('isArchived', false)
+                            ->andWhere('r.isFinal = :isFinal')
+                            ->setParameter('isFinal', true)
                             ->orderBy('r.id', 'ASC')
                             ->getQuery()
                             ->getResult();

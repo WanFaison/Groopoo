@@ -38,6 +38,9 @@ class Groupe extends AbstractEntity
     #[ORM\ManyToOne(inversedBy: 'groupes')]
     private ?Jury $jury = null;
 
+    #[ORM\Column]
+    private ?bool $isFinal = false;
+
     public function __construct()
     {
         $this->etudiant = new ArrayCollection();
@@ -141,6 +144,18 @@ class Groupe extends AbstractEntity
     public function setJury(?Jury $jury): static
     {
         $this->jury = $jury;
+
+        return $this;
+    }
+
+    public function isFinal(): ?bool
+    {
+        return $this->isFinal;
+    }
+
+    public function setFinal(bool $isFinal): static
+    {
+        $this->isFinal = $isFinal;
 
         return $this;
     }

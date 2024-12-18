@@ -1,0 +1,40 @@
+<div class="container-fluid min-vh-100">
+    <app-nav></app-nav>
+
+    <nav class="navbar navbar-expand-md navbar-bottom-border">
+        <div class="collapse navbar-collapse justify-content-center" id="navbarsExample04">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a [class.active]="state==0" class="nav-link" role="button"
+              (click)="changeState(0)">Groupes</a>
+            </li>
+            <li class="nav-item" *ngIf="user?.role != 'ROLE_VISITEUR'">
+              <a [class.active]="state==1" class="nav-link" role="button"
+              (click)="changeState(1)">Journées</a>
+            </li>
+            <li class="nav-item" *ngIf="user?.role != 'ROLE_VISITEUR'">
+              <a [class.active]="state==2" class="nav-link" role="button"
+              (click)="changeState(2)">Notes </a>
+            </li>
+            <li class="nav-item" *ngIf="user?.role != 'ROLE_VISITEUR'">
+              <a [class.active]="state==3" class="nav-link" role="button"
+              (click)="changeState(3)">Coach & Jury</a>
+            </li>
+            <li class="nav-item" *ngIf="user?.role != 'ROLE_VISITEUR'">
+                <a [class.active]="state==4" class="nav-link" role="button"
+                (click)="changeState(4)">Finalistes</a>
+            </li>
+          </ul>
+        </div>
+    </nav>
+
+    <div>
+        <app-groups *ngIf="state==0"></app-groups>
+        <app-jours *ngIf="state==1"></app-jours>
+        <app-notes *ngIf="state==2"></app-notes>
+        <app-form-coach *ngIf="state==3"></app-form-coach>
+        <app-finalist *ngIf="state==4"></app-finalist>
+    </div>
+
+    <app-foot></app-foot>
+</div>

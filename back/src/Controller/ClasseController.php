@@ -11,16 +11,30 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 use App\Controller\Dto\RestResponse;
 use App\Repository\EcoleRepository;
+use App\Repository\ListeRepository;
 
 class ClasseController extends AbstractController
 {
+    private $classeRepository;
+    private $ecoleRepository;
+    private $listeRepository;
+
+    public function __construct(ListeRepository $listeRepository, ClasseRepository $classeRepository, EcoleRepository $ecoleRepository)
+    {
+        $this->classeRepository = $classeRepository;
+        $this->ecoleRepository = $ecoleRepository;
+        $this->listeRepository = $listeRepository;
+    }
+
     #[Route('/api/classe', name: 'app_classe', methods: ['GET'])]
     public function listerClasse(Request $request, ClasseRepository $classeRepository, EcoleRepository $ecoleRepository): JsonResponse
     {
         $ecole = $request->query->getInt('ecole', 0);
+        $listeId = $request->query->getInt('liste', 0);
+        $liste = $listeId!=0 ? $this->listeRepository->find($listeId) : null;
 
         if($ecole ==0){
-            $classes = $classeRepository->findAllByEcole();
+            $classes = $classeRepository->findAllByEcole($liste->getEcole());
         }else{
             $classes = $classeRepository->findAllByEcole($ecoleRepository->find($ecole));
         }
@@ -43,4 +57,6 @@ class ClasseController extends AbstractController
 
         return RestResponse::linearResponse($results, $totalItems, JsonResponse::HTTP_OK);
     }
+
+
 }

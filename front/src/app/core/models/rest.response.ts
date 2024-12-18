@@ -1,7 +1,7 @@
 import { LogUser } from "./user.model"
 
 export interface RestResponse<T>{
-    totalItems?: number,
+    totalItems: number,
     totalPages?: number,
     currentPage?: number,
     results: T

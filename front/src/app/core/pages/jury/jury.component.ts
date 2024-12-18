@@ -14,6 +14,7 @@ import { ListeModel } from '../../models/liste.model';
 import { JuryServiceImpl } from '../../services/impl/jury.service.impl';
 import { GroupeReqModel } from '../../models/groupe.model';
 import { CoachModel } from '../../models/coach.model';
+import { response } from 'express';
 
 @Component({
   selector: 'app-jury',
@@ -35,13 +36,12 @@ export class JuryComponent implements OnInit{
   newJury:number = 0;
   newCoach:number = 0;
   user?:LogUser;
-
   constructor(private router:Router, private juryService:JuryServiceImpl, private authService:AuthServiceImpl, private listeService:ListeServiceImpl, private coachService:CoachServiceImpl){}
   
   ngOnInit(): void {
     this.user = this.authService.getUser();
     if(this.user?.role == 'ROLE_VISITEUR'){
-      this.router.navigate(['/app/view-groups'])
+      this.router.navigate(['/app/liste-menu'])
     }
 
     if (typeof window !== 'undefined' && localStorage){
@@ -73,14 +73,23 @@ export class JuryComponent implements OnInit{
     if(coachId){
       this.coachService.transferCoach(coachId, juryId).subscribe(
         response=>{
-          if(response.data == 0){
-            this.reloadPage();
-          }
+          if(response.data == 0){ this.reloadPage(); }
         },        
-        error => {
-              console.error('Error sending data', error);
-            });
+        error => {console.error('Error sending data', error);});
     }
+  }
+
+  retirerCoach(coachId:number, juryId:number){
+    this.juryService.removeCoach(coachId, juryId).subscribe(
+      response=>{
+        if(response.data == 0){ this.reloadPage(); }
+      },        
+      error => { console.error('Error sending data', error); });
+  }
+
+  extractNumber(input: string): string {
+    const match = input.match(/\d+/);
+    return match ? match[0] : ''; 
   }
 
   refresh(page:number=0, liste:number=this.liste, limit:number=10, keyword:string=''){

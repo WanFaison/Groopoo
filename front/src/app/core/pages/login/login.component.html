@@ -36,7 +36,13 @@
                                     <label class="form-label custom-label" for="password">Mot de passe</label>
                                     <!--<p class="small mb-5 pb-lg-2 p-2 ms-auto"><a class="text-dark text-decoration-underline" href="#!">Oublié?</a></p>-->
                                 </div>
-                                <input required type="password" id="password" #passwordInput="ngModel" [(ngModel)]="password" name="password" minlength="5" class="form-control form-control-lg custom-input" placeholder="Min. 5 caractères" />
+                                <p class="d-flex">
+                                    <input required [type]="showPassword ? 'text' : 'password'" id="password" #passwordInput="ngModel" [(ngModel)]="password" name="password" minlength="5" class="form-control form-control-lg custom-input" placeholder="Min. 5 caractères" />
+                                    <button type="button" class="btn"
+                                        (click)="togglePswd()" aria-label="Toggle password visibility">
+                                        <i [class]="showPassword ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
+                                    </button>
+                                </p>
                                 <div *ngIf="passwordInput.invalid && passwordInput.touched" class="text-danger">
                                     Le mot de passe doit comporter au moins 5 caractères.
                                 </div>

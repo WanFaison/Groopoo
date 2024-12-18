@@ -12,6 +12,7 @@ use App\Enums\Etat;
 use App\Repository\CoachRepository;
 use App\Repository\EcoleRepository;
 use App\Repository\GroupeRepository;
+use App\Repository\JuryRepository;
 use App\Repository\ListeRepository;
 use App\Repository\SalleRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,8 +30,9 @@ class CoachController extends AbstractController
     private $salleRepository;
     private $listeRepository;
     private $groupeRepository;
+    private $juryRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, GroupeRepository $groupeRepository, ListeRepository $listeRepository, SalleRepository $salleRepository, EcoleRepository $ecoleRepository, CoachRepository $coachRepository)
+    public function __construct(EntityManagerInterface $entityManager, JuryRepository $juryRepository, GroupeRepository $groupeRepository, ListeRepository $listeRepository, SalleRepository $salleRepository, EcoleRepository $ecoleRepository, CoachRepository $coachRepository)
     {
         $this->entityManager = $entityManager;
         $this->ecoleRepository = $ecoleRepository;
@@ -38,6 +40,7 @@ class CoachController extends AbstractController
         $this->salleRepository = $salleRepository;
         $this->listeRepository = $listeRepository;
         $this->groupeRepository = $groupeRepository;
+        $this->juryRepository = $juryRepository;
     }
 
     #[Route('/api/coach-find', name: 'api_coach_find', methods: ['GET'])]
@@ -50,7 +53,12 @@ class CoachController extends AbstractController
             $dto = [
                     'id' => $dto->getId(),
                     'nom' => $dto->getNom(),
-                    'prenom' => $dto->getPrenom()
+                    'prenom' => $dto->getPrenom(),
+                    'tel' => $dto->getTel(),
+                    'email' => $dto->getEmail(),
+                    'etat' => $dto->getEtat(),
+                    'ecole' => $dto->getEcole(),
+                    'ecoleId' => $dto->getEcoleId()
                 ];
         }
 
@@ -60,11 +68,18 @@ class CoachController extends AbstractController
     #[Route('/api/coach-find-unaffected', name: 'api_coach_find_unaffected', methods: ['GET'])]
     public function findCoachNotAffected(Request $request): JsonResponse
     {
+        $final = $request->query->getInt('final', 0);
         $listeId = $request->query->getInt('liste', 0);
         $liste = $this->listeRepository->find($listeId);
+
         $coachsListe = [];
-        foreach($liste->getJuries() as $jury){
-            $coachsListe = array_merge($coachsListe, $jury->getCoaches()->toArray());
+        if($final == 0){
+            foreach($liste->getJuries() as $jury){
+                $coachsListe = array_merge($coachsListe, $jury->getCoaches()->toArray());
+            }
+        }else{
+            $jury = $this->juryRepository->findFinalistJuryByList($liste);
+            $coachsListe = $jury->getCoaches()->toArray();
         }
 
         $coachs = $this->coachRepository->findAllByEcoleUnarchived($liste->getEcole());
@@ -168,18 +183,19 @@ class CoachController extends AbstractController
     public function addCoach(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $nom = $data['nom'] ?? null;
-        $prenom = $data['prenom'] ?? null;
-        $tel = $data['tel'] ?? null;
-        $email = $data['email'] ?? null;
-        $ecoleId = $data['ecole'] ?? null;
-        $option1 = $data['option1'] ?? null;
-        $option2 = $data['option2'] ?? null;
-        $option3 = $data['option3'] ?? null;
+        $id = $data['coachId'] ?? 0;
+        $nom = $data['coach']['nom'] ?? null;
+        $prenom = $data['coach']['prenom'] ?? null;
+        $tel = $data['coach']['tel'] ?? null;
+        $email = $data['coach']['email'] ?? null;
+        $ecoleId = $data['coach']['ecole'] ?? 0;
+        $option1 = $data['coach']['option1'] ?? null;
+        $option2 = $data['coach']['option2'] ?? null;
+        $option3 = $data['coach']['option3'] ?? null;
 
-        $ecole = $this->ecoleRepository->find($ecoleId);
+        $ecole = $ecoleId > 0 ? $this->ecoleRepository->find($ecoleId) : null;
         if($tel){
-            $coach = new Coach();
+            $coach = $id > 0 ? $this->coachRepository->find($id) : new Coach();
             $coach->setNom($nom)
                     ->setPrenom($prenom)
                     ->setTelephone($tel)

@@ -1,0 +1,88 @@
+<div *ngIf="juryResponse" class="mt-5 row justify-content-center align-items-center h-100">
+    <div class="flex-center my-3 flex-column">
+        <div class="d-flex justify-content-between">
+            <h4 *ngIf="listeResponse" class="underline-bold">Jury Finalistes: {{ listeResponse?.results?.libelle }}</h4>
+        </div>
+    </div>
+    
+    <div *ngIf="juryResponse.totalItems > 0" class="d-flex flex-column justify-content-center align-items-center">
+        <table *ngFor="let jury of juryResponse?.results; let i = index" class="table col-md-10 mb-5">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">{{jury.libelle}}</th>
+                    <th scope="col">
+                        <button class="btn btn-success me-2"
+                        (click)="findCoachesLeft(jury)"
+                        data-bs-toggle="modal" data-bs-target="#addModal">Ajouter coach</button>
+                    </th>
+                </tr>
+                <tr class="d-flex">
+                    <th>Groupes</th>
+                    <div class="d-flex flex-wrap">
+                        <ng-container *ngFor="let grp of jury.groupes; let i = index">
+                            <p class="m-0 me-2">
+                                {{ extractNumber(grp.libelle) }}<span *ngIf="jury.groupes && i < jury.groupes.length - 1">,</span>
+                            </p>
+                        </ng-container>
+                    </div>
+                </tr>
+                <tr>
+                    <th scope="col">Coach</th>
+                    <th scope="col">Tel</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Etat</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let coach of jury.coachs; let i = index">
+                    <th scope="row">{{coach.nom}} {{coach.prenom}}</th>
+                    <td>{{coach.tel}}</td>
+                    <td>{{coach.email}}</td>
+                    <td>{{coach.etat}}</td>
+                    <td *ngIf="!listeResponse?.results?.isComplet">
+                      <button class="btn btn-danger me-2"
+                      (click)="retirerCoach(coach.id, jury.id)">Retirer</button>
+                    </td>
+                </tr>
+            </tbody>
+          </table>
+    </div>
+
+    <div *ngIf="juryResponse.totalItems < 1" class="d-flex flex-column justify-content-center align-items-center">
+      <div class="alert alert-warning" role="alert">
+        Aucune note n'a été enregistré! Enregistrez-en au moins 1 pour obtenir des résultats sur cette page.
+      </div>
+    </div>
+
+</div>
+
+
+<!-- Modal add-->
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+    <div class="modal-content row">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Ajouter a {{juryName}}</h5>
+            <button type="button" class="btn-close"
+            data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <label class="form-label custom-label" for="libelle">Choisir le coach</label>
+          <div class="input-group me-2">
+            <select [(ngModel)]="newCoach" class="form-select" aria-label=".form-select-sm example">
+              <option selected value="0">coach...</option>
+              <option *ngFor="let item of coachRequest?.results" [value]="item.id">{{ item.nom }} {{ item.prenom }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer d-flex">
+          <button (click)="transferCoach(newCoach, newJury)" type="button" 
+          [class.disabled]="newCoach == 0"
+          class="btn btn-success">Confirmer</button>
+          <button type="button" class="btn btn-secondary" 
+          data-bs-dismiss="modal">Close</button>
+        </div>
+    </div>
+    </div>
+</div>

@@ -16,7 +16,7 @@ import { LogUser } from '../../models/user.model';
 @Component({
   selector: 'app-form-coach',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, FootComponent, NavComponent, CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [RouterLink, RouterLinkActive, CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './form-coach.component.html',
   styleUrl: './form-coach.component.css'
 })
@@ -34,11 +34,6 @@ export class FormCoachComponent implements OnInit{
   constructor(private router:Router, private authService:AuthServiceImpl, private listeService:ListeServiceImpl, private formBuilder: FormBuilder, private coachService:CoachServiceImpl){}
 
   ngOnInit(): void {
-    this.user = this.authService.getUser();
-    if(this.user?.role == 'ROLE_VISITEUR'){
-      this.router.navigate(['/app/view-groups'])
-    }
-
     if (typeof window !== 'undefined' && localStorage){
       this.liste = parseInt(localStorage.getItem('newListe') || '1', 10);
       this.listeService.findById(this.liste).subscribe(data=>this.listeResponse=data);
@@ -109,7 +104,7 @@ export class FormCoachComponent implements OnInit{
               this.msg = "Erreur! Vous essayez d'affecter plus de coachs que de salles disponibles"
             }else{
               localStorage.removeItem('coachForm');
-              this.router.navigate(['/app/view-groups'])
+              this.router.navigate(['/app/jury'])
             }
           },
           error => {

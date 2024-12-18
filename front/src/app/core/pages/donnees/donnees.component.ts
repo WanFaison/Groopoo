@@ -23,7 +23,7 @@ import { CoachServiceImpl } from '../../services/impl/coach.service.impl';
 @Component({
   selector: 'app-donnees',
   standalone: true,
-  imports: [NavComponent, FootComponent, FormsModule, ReactiveFormsModule, CommonModule, RouterLink, RouterLinkActive],
+  imports: [NavComponent, FootComponent, FormsModule, ReactiveFormsModule, CommonModule],
   templateUrl: './donnees.component.html',
   styleUrl: './donnees.component.css'
 })
@@ -35,6 +35,7 @@ export class DonneesComponent implements OnInit{
   salleResponse?: RestResponse<SalleModel[]>;
   etageResponse?: RestResponse<EtageModel[]>;
   coachResponse?: RestResponse<CoachModel[]>;
+  coachRequest?: RestResponse<CoachModel>;
   keyword:string = '';
   ecole:number = 0;
   etage:number = 0;
@@ -78,6 +79,7 @@ export class DonneesComponent implements OnInit{
     }
     this.coachForm.valueChanges.subscribe(value => {
       console.log(this.coachForm.value)
+      console.log(this.coachRequest?.results)
     });
 
     if(typeof window !== 'undefined' && localStorage){
@@ -158,7 +160,7 @@ export class DonneesComponent implements OnInit{
 
   addObj(){
     if(this.state == 4){
-      this.coachService.addCoach(this.coachForm.value)
+      this.coachService.addCoach(this.coachForm.value, this.coachRequest?.results.id ?? 0)
       .subscribe((response:RequestResponse) =>{
         console.log('Response from back-end:', response);
         if(response.data != 0){
@@ -243,6 +245,22 @@ export class DonneesComponent implements OnInit{
     }else{
       this.addObj()
     }
+  }
+
+  setCoachModif(coachId:number){
+    this.coachService.findById(coachId).subscribe(data=>{
+      this.coachRequest=data;
+      this.coachForm = this.formBuilder.group({
+        nom: [this.coachRequest?.results.nom, Validators.required],
+        prenom: [this.coachRequest?.results.prenom, Validators.required],
+        tel: [this.coachRequest?.results.tel, Validators.required],
+        email: [this.coachRequest?.results.email, [Validators.required, Validators.email]],
+        ecole: [this.coachRequest?.results.ecoleId, Validators.required],
+        option1: this.coachRequest?.results.etat == 'Debutant' ?  true : false,
+        option2: this.coachRequest?.results.etat == 'Moyen' ?  true : false,
+        option3: this.coachRequest?.results.etat == 'Senior' ?  true : false
+      });
+    });
   }
 
   changeState(val:any){

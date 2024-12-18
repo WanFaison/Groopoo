@@ -60,7 +60,7 @@ export class HomeComponent implements OnInit{
     if(typeof window !== 'undefined' && localStorage){
       localStorage.setItem('newListe', liste);
     }
-    this.router.navigate(['/app/view-jours']);
+    this.router.navigate(['/app/liste-menu']);
   }
 
   useListe(liste:any){

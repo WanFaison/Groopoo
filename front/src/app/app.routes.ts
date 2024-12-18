@@ -17,6 +17,7 @@ import { NotesComponent } from './core/pages/notes/notes.component';
 import { ArchivedComponent } from './core/pages/archived/archived.component';
 import { FormCoachComponent } from './core/pages/form-coach/form-coach.component';
 import { JuryComponent } from './core/pages/jury/jury.component';
+import { ListeMenuComponent } from './core/components/liste-menu/liste-menu.component';
 
 export const routes: Routes = [
     {
@@ -44,13 +45,8 @@ export const routes: Routes = [
         canActivate: [AuthGuard]
     },
     {
-        path:"app/view-jours",
-        component:JoursComponent,
-        canActivate: [AuthGuard]
-    },
-    {
-        path:"app/view-groups",
-        component:GroupsComponent,
+        path:"app/liste-menu",
+        component:ListeMenuComponent,
         canActivate: [AuthGuard]
     },
     {

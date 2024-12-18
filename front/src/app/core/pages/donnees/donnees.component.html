@@ -1,32 +1,33 @@
 <div class="container-fluid min-vh-100">
     <app-nav></app-nav>
 
-    <nav class="navbar navbar-expand-md navbar-light bg-light navbar-bottom-border">
+    <nav class="navbar navbar-expand-md navbar-bottom-border">
       <div class="collapse navbar-collapse justify-content-center" id="navbarsExample04">
         <ul class="navbar-nav">
-          <li class="nav-item active">
-            <a class="nav-link" role="button"
+          <li class="nav-item">
+            <a [class.active]="state==0" class="nav-link" role="button"
             (click)="changeState(0)">Années</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-dark" role="button"
+            <a [class.active]="state==1" class="nav-link" role="button"
             (click)="changeState(1)">Organisations</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-dark" role="button"
-            (click)="changeState(2)">Salles</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link text-dark" role="button"
+            <a [class.active]="state==3" class="nav-link" role="button"
             (click)="changeState(3)">Etages </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-dark" role="button"
+            <a [class.active]="state==2" class="nav-link" role="button"
+            (click)="changeState(2)">Salles</a>
+          </li>
+          <li class="nav-item">
+            <a [class.active]="state==4" class="nav-link" role="button"
             (click)="changeState(4)">Coachs</a>
           </li>
         </ul>
       </div>
     </nav>
+    
     
     <div class="mt-5 row justify-content-center align-items-center h-100">
         <div class="flex-center my-3">
@@ -210,6 +211,11 @@
                     <td>{{item.etat}}</td>
                     <td>{{item.ecole}}</td>
                     <td>
+                      <a (click)="setCoachModif(item.id)"
+                      class="btn btn-secondary col-md-4 me-2" 
+                      data-bs-toggle="modal" data-bs-target="#addCoachModal" 
+                      role="button" style="color: white;">
+                          Modifier</a>
                       <a (click)="changeEnt(item.id)" class="btn btn-danger" 
                       data-bs-toggle="modal" data-bs-target="#ynModal"
                       role="button" style="color: white;">
@@ -463,7 +469,7 @@
       <div class="modal-dialog">
       <div class="modal-content row">
           <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Ajouter un Coach</h5>
+              <h5 class="modal-title" id="exampleModalLabel">Ajouter/Modifier un Coach</h5>
               <button (click)="reloadPage()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -523,7 +529,7 @@
               </form>
 
               <div *ngIf="ajout" class="text-success">
-                  L'ajout a été fait, vous pouvez ajouter à nouveau
+                  L'ajout/modification a été fait
               </div>
               <div *ngIf="error" class="text-danger">{{msg}}</div>
           </div>

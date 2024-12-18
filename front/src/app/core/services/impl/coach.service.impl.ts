@@ -17,8 +17,8 @@ export class CoachServiceImpl implements CoachService{
         return this.http.get<any>(`${environment.APIURL}/coach-modif?coach=${coach}`);
     }
 
-    findAllNotInListe(liste: number): Observable<RestResponse<CoachModel[]>> {
-        return this.http.get<RestResponse<CoachModel[]>>(`${environment.APIURL}/coach-find-unaffected?liste=${liste}`);
+    findAllNotInListe(liste: number, final:number=0): Observable<RestResponse<CoachModel[]>> {
+        return this.http.get<RestResponse<CoachModel[]>>(`${environment.APIURL}/coach-find-unaffected?liste=${liste}&final=${final}`);
     }
 
     transferCoach(coach: number, jury: number): Observable<RequestResponse> {
@@ -38,9 +38,9 @@ export class CoachServiceImpl implements CoachService{
         return this.http.get<RestResponse<CoachModel[]>>(`${environment.APIURL}/get-coach?liste=${liste}`);
     }
 
-    addCoach(data: any): Observable<any> {
+    addCoach(data: any, coachId:number = 0): Observable<any> {
         const headers = new HttpHeaders(environment.JSONHeaders);
-        return this.http.post(`${environment.APIURL}/add-coach`, data, {headers});
+        return this.http.post(`${environment.APIURL}/add-coach`, {coach: data, coachId: coachId}, {headers});
     }
 
     findAllPg(page: number, keyword: string='', ecole: number, liste:number=0): Observable<RestResponse<CoachModel[]>> {

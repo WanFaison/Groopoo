@@ -11,11 +11,12 @@ import { LogUser, UserModel } from '../../models/user.model';
 import { EcoleModel } from '../../models/ecole.model';
 import { EcoleServiceImpl } from '../../services/impl/ecole.service.impl';
 import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
+import { PaginatorService } from '../../services/pagination.service';
 
 @Component({
   selector: 'app-profiles',
   standalone: true,
-  imports: [NavComponent, FootComponent, FormsModule, CommonModule, RouterLink, RouterLinkActive],
+  imports: [FormsModule, CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './profiles.component.html',
   styleUrl: './profiles.component.css'
 })
@@ -24,23 +25,16 @@ export class ProfilesComponent implements OnInit{
   ecoleResponse?:RestResponse<EcoleModel[]>;
   keyword:string = '';
   ecole:number = 0;
-  userId:number =0;
-  user?:LogUser
-  constructor(private router:Router, private http:HttpClient, private authService:AuthServiceImpl, private userService:UserServiceImpl, private ecoleService:EcoleServiceImpl){}
+  userId:number = 0;
+  constructor(private router:Router, private paginatorService:PaginatorService, private http:HttpClient, private authService:AuthServiceImpl, private userService:UserServiceImpl, private ecoleService:EcoleServiceImpl){}
 
   ngOnInit(): void {
-    this.user = this.authService.getUser()
-    if(this.user?.role != 'ROLE_ADMIN'){
-      this.router.navigate(['/app/not-found'])
-    }
-
     this.ecoleService.findAll().subscribe(data=>this.ecoleResponse = data)
     this.filter();
   }
 
   saveUtilisateur(value: any) {
     localStorage.setItem('utilisateurId', value);
-    //this.router.navigate(['/app/view-groups']);
   }
 
   archiveUser(user:number=0, motif:number =0){
@@ -76,18 +70,12 @@ export class ProfilesComponent implements OnInit{
     this.refresh(page,keyword, ecole)
   }
 
-  pages(start: number, end: number | undefined = 5): number[] {
-    return Array(end - start + 1).fill(0).map((_, idx) => start + idx);
-  }
   getPageRange(currentPage:any, totalPages:any): number[] {
-    const start = Math.max(currentPage - 3, 1);
-    const end = Math.min(currentPage + 3, totalPages);
-      
-    return this.pages(start, end);
+    return this.paginatorService.getPageRange(currentPage, totalPages)
   }
 
   reloadPage() {
-    window.location.reload();
+    return this.paginatorService.reloadPage();
   }
 
 }

@@ -6,7 +6,7 @@
     </div>
     
     <div *ngIf="juryResponse.totalItems > 0" class="d-flex flex-column justify-content-center align-items-center">
-        <table *ngFor="let jury of juryResponse?.results; let i = index" class="table col-md-10 mb-5">
+        <table *ngFor="let jury of juryResponse?.results; let i = index" class="table col-md-7 mb-5">
             <thead class="thead-dark">
                 <tr>
                     <th scope="col">{{jury.libelle}}</th>
@@ -18,7 +18,7 @@
                 </tr>
                 <tr class="d-flex">
                     <th>Groupes</th>
-                    <div class="d-flex flex-wrap">
+                    <div class="d-flex flex-wrap bg-orange-400">
                         <ng-container *ngFor="let grp of jury.groupes; let i = index">
                             <p class="m-0 me-2">
                                 {{ extractNumber(grp.libelle) }}<span *ngIf="jury.groupes && i < jury.groupes.length - 1">,</span>

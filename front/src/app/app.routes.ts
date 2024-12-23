@@ -18,6 +18,8 @@ import { ArchivedComponent } from './core/pages/archived/archived.component';
 import { FormCoachComponent } from './core/pages/form-coach/form-coach.component';
 import { JuryComponent } from './core/pages/jury/jury.component';
 import { ListeMenuComponent } from './core/components/liste-menu/liste-menu.component';
+import { HomeMenuComponent } from './core/components/home-menu/home-menu.component';
+import { UserMenuComponent } from './core/components/user-menu/user-menu.component';
 
 export const routes: Routes = [
     {
@@ -26,17 +28,7 @@ export const routes: Routes = [
     },
     {
         path:"app/home",
-        component:HomeComponent,
-        canActivate: [AuthGuard]
-    },
-    {
-        path:"app/archived",
-        component:ArchivedComponent,
-        canActivate: [AuthGuard]
-    },
-    {
-        path:"app/liste-membre",
-        component:MembresComponent,
+        component:HomeMenuComponent,
         canActivate: [AuthGuard]
     },
     {
@@ -81,7 +73,7 @@ export const routes: Routes = [
     },
     {
         path:"app/users",
-        component:ProfilesComponent,
+        component:UserMenuComponent,
         canActivate: [AuthGuard]
     },
     {

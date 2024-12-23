@@ -10,6 +10,7 @@
       <div class="d-flex justify-content-between mt-2">
         <div class="col-md-8">
           <button (click)="printXls('results')" class="btn btn-info col-md-4 mb-2 me-2">Exporter les Groupes</button>
+          <button (click)="printSalleXls('salle')" class="btn btn-info col-md-4 mb-2 me-2">Repartition des Salles</button>
           <button (click)="printXls()" class="btn btn-info mb-2 me-2">Liste d'Emargement</button>
         </div>
         <div class="ml-4" *ngIf="user?.role != 'ROLE_VISITEUR'">

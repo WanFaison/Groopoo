@@ -16,11 +16,12 @@ import { EcoleModel } from '../../models/ecole.model';
 import { EcoleServiceImpl } from '../../services/impl/ecole.service.impl';
 import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 import { LogUser } from '../../models/user.model';
+import { PaginatorService } from '../../services/pagination.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [NavComponent, FootComponent, RouterLink, RouterLinkActive, CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -36,7 +37,7 @@ export class HomeComponent implements OnInit{
   selectedEcole: number = 0; 
   liste: number = 0;
   user?:LogUser
-  constructor(private router:Router, private authService:AuthServiceImpl, private ecoleService:EcoleServiceImpl, private listeService:ListeServiceImpl, private anneeService:AnneeServiceImpl, private etudiantService:EtudiantServiceImpl){}
+  constructor(private router:Router, private paginatorService:PaginatorService, private authService:AuthServiceImpl, private ecoleService:EcoleServiceImpl, private listeService:ListeServiceImpl, private anneeService:AnneeServiceImpl, private etudiantService:EtudiantServiceImpl){}
   
   ngOnInit(): void {
     this.anneeService.findAll().subscribe(data=>this.anneeResponse=data);
@@ -123,18 +124,12 @@ export class HomeComponent implements OnInit{
     this.refresh(page, keyword, annee, ecole)
   }
 
-  pages(start: number, end: number | undefined = 5): number[] {
-    return Array(end - start + 1).fill(0).map((_, idx) => start + idx);
-  }
   getPageRange(currentPage:any, totalPages:any): number[] {
-    const start = Math.max(currentPage - 3, 1);
-    const end = Math.min(currentPage + 3, totalPages);
-      
-    return this.pages(start, end);
+    return this.paginatorService.getPageRange(currentPage, totalPages)
   }
 
   reloadPage() {
-    window.location.reload();
+    return this.paginatorService.reloadPage();
   }
 
   clearData(){

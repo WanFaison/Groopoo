@@ -14,11 +14,12 @@ import { ListeModel } from '../../models/liste.model';
 import { ListeServiceImpl } from '../../services/impl/list.service.impl';
 import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { response } from 'express';
+import { PaginatorService } from '../../services/pagination.service';
 
 @Component({
   selector: 'app-jours',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterModule, NavComponent, FootComponent, NgbDatepickerModule],
+  imports: [FormsModule, CommonModule, RouterModule, NgbDatepickerModule],
   templateUrl: './jours.component.html',
   styleUrl: './jours.component.css'
 })
@@ -32,7 +33,7 @@ export class JoursComponent implements OnInit{
   error:boolean = false
   errMsg:string = ''
   user?:LogUser
-  constructor(private router:Router, private http:HttpClient, private authService:AuthServiceImpl, private jourService:JourServiceImpl, private listeService:ListeServiceImpl){}
+  constructor(private router:Router, private paginatorService:PaginatorService, private http:HttpClient, private authService:AuthServiceImpl, private jourService:JourServiceImpl, private listeService:ListeServiceImpl){}
 
   ngOnInit(): void {
     this.user = this.authService.getUser()
@@ -59,9 +60,10 @@ export class JoursComponent implements OnInit{
     )
   }
 
-  consAbs(jr: any) {
+  consAbs(jr: any, num: any = 6) {
     localStorage.setItem('jrListe', jr)
-    this.router.navigate(['/app/attendance'])
+    localStorage.setItem('stateListeMenu', num);
+    this.reloadPage()
   }
 
   showNotes(){
@@ -101,6 +103,6 @@ export class JoursComponent implements OnInit{
   }
 
   reloadPage() {
-    window.location.reload();
+    return this.paginatorService.reloadPage();
   }
 }

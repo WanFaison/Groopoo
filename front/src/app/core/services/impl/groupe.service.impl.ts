@@ -14,6 +14,10 @@ export class GroupeServiceImpl implements GroupeService{
     private apiUrl=`${environment.APIURL}/liste-groupe`;
     constructor(private http:HttpClient){}
 
+    getSalleSheet(liste:number, motif:string = 'salle'): Observable<any> {
+        return this.http.get(`${environment.APIURL}/coach-export?liste=${liste}&motif=${motif}`, { responseType: 'blob' });
+    }
+
     findByJour(jour: number, page: number=0, limit: number=1, groupe:number=0): Observable<RestResponse<GroupeJourModel[]>> {
         return this.http.get<RestResponse<GroupeJourModel[]>>(`${environment.APIURL}/etd-groupe?jour=${jour}&page=${page}&limit=${limit}&groupe=${groupe}`);
     }

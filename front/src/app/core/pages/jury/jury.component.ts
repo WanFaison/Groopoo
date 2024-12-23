@@ -15,11 +15,12 @@ import { JuryServiceImpl } from '../../services/impl/jury.service.impl';
 import { GroupeReqModel } from '../../models/groupe.model';
 import { CoachModel } from '../../models/coach.model';
 import { response } from 'express';
+import { PaginatorService } from '../../services/pagination.service';
 
 @Component({
   selector: 'app-jury',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, FootComponent, NavComponent, CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './jury.component.html',
   styleUrl: './jury.component.css'
 })
@@ -36,7 +37,7 @@ export class JuryComponent implements OnInit{
   newJury:number = 0;
   newCoach:number = 0;
   user?:LogUser;
-  constructor(private router:Router, private juryService:JuryServiceImpl, private authService:AuthServiceImpl, private listeService:ListeServiceImpl, private coachService:CoachServiceImpl){}
+  constructor(private router:Router, private paginatorService:PaginatorService, private juryService:JuryServiceImpl, private authService:AuthServiceImpl, private listeService:ListeServiceImpl, private coachService:CoachServiceImpl){}
   
   ngOnInit(): void {
     this.user = this.authService.getUser();
@@ -92,6 +93,16 @@ export class JuryComponent implements OnInit{
     return match ? match[0] : ''; 
   }
 
+  printJuryXls(motif:string = ''){
+    this.juryService.getJurySheet(this.liste, motif).subscribe((data: Blob) => {
+      const downloadUrl = window.URL.createObjectURL(data);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `${this.listeResponse?.results.libelle} - Repartition des Jury.xlsx`;
+      link.click();
+    });
+  }
+
   refresh(page:number=0, liste:number=this.liste, limit:number=10, keyword:string=''){
     this.juryService.findAllPg(page, liste, limit, keyword).subscribe(data => {
       this.juryResponse = data;
@@ -105,19 +116,12 @@ export class JuryComponent implements OnInit{
     this.refresh(page, this.liste)
   }
 
-  pages(start: number, end: number | undefined = 5): number[] {
-    return Array(end - start + 1).fill(0).map((_, idx) => start + idx);
-  }
-
   getPageRange(currentPage:any, totalPages:any): number[] {
-    const start = Math.max(currentPage - 3, 1);
-    const end = Math.min(currentPage + 3, totalPages);
-      
-    return this.pages(start, end);
+    return this.paginatorService.getPageRange(currentPage, totalPages)
   }
 
   reloadPage() {
-    window.location.reload();
+    return this.paginatorService.reloadPage();
   }
 
 }

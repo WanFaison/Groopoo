@@ -16,11 +16,12 @@ import { AbsenceImplService } from '../../services/impl/absence.service.impl';
 import { response } from 'express';
 import { JourModel } from '../../models/jour.model';
 import { JourServiceImpl } from '../../services/impl/jour.service.impl';
+import { PaginatorService } from '../../services/pagination.service';
 
 @Component({
   selector: 'app-attendance',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, CommonModule, RouterModule, NavComponent, FootComponent],
+  imports: [FormsModule, ReactiveFormsModule, CommonModule, RouterModule],
   templateUrl: './attendance.component.html',
   styleUrl: './attendance.component.css'
 })
@@ -35,7 +36,7 @@ export class AttendanceComponent implements OnInit{
   jour:any = 0
   msg:string = ''
   attendanceForm: { id: number; emargement1: boolean; emargement2: boolean }[] = [];
-  constructor(private router:Router, private jourService:JourServiceImpl, private absenceService:AbsenceImplService, private fb: FormBuilder, private groupeService:GroupeServiceImpl, private listeService:ListeServiceImpl, private authService:AuthServiceImpl)
+  constructor(private router:Router, private paginatorService:PaginatorService, private jourService:JourServiceImpl, private absenceService:AbsenceImplService, private fb: FormBuilder, private groupeService:GroupeServiceImpl, private listeService:ListeServiceImpl, private authService:AuthServiceImpl)
   {}
 
   ngOnInit(): void {
@@ -116,6 +117,6 @@ export class AttendanceComponent implements OnInit{
   }
 
   reloadPage() {
-    window.location.reload();
+    return this.paginatorService.reloadPage();
   }
 }

@@ -65,6 +65,30 @@ class GroupeRepository extends ServiceEntityRepository
         return PaginatorService::pageInator($query, $page, $limit);
     }
 
+    public function findAllByListeGroupeSalleUnArchived(?Liste $liste=null, ?Salle $salle=null, ?Groupe $groupe=null): array
+    {
+        $queryBuilder = $this->createQueryBuilder('r');
+        if ($liste) {
+            $queryBuilder->andWhere('r.liste = :liste')
+                         ->setParameter('liste', $liste);
+        }
+        if ($groupe) {
+            $queryBuilder->andWhere('r.id = :id')
+                         ->setParameter('id', $groupe->getId());
+        }
+        if ($salle) {
+            $queryBuilder->andWhere('r.salle = :salle')
+                         ->setParameter('salle', $salle);
+        }
+        $query = $queryBuilder->andWhere('r.isArchived = :isArchived')
+                            ->setParameter('isArchived', false)
+                            ->orderBy('r.id', 'ASC')
+                            ->getQuery()
+                            ->getResult();
+
+        return $query;
+    }
+
     public function findAllByListe(?Liste $liste=null):array
     {
         $queryBuilder = $this->createQueryBuilder('r');

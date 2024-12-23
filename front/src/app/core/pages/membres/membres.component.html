@@ -1,104 +1,98 @@
-<div class="container-fluid min-vh-100">
-    <app-nav></app-nav>
-
-    <div class="mt-5 row justify-content-center align-items-center h-100">
-        <div class="d-flex flex-column align-items-center my-3">
-            <h4 class="underline-bold">Créer une nouvelle liste</h4>
-            <p class="fst-italic">Pour créer des groupes à partir de cette nouvelle liste, veuillez compléter les champs ci-dessous: </p>
-        </div>
-        <div class="flex-center my-3">
-            <div class="file-upload w-25">
-                <div class="file-select">
-                  <div class="file-select-button" id="fileName">Choisir Fichier</div>
-                  <div class="file-select-name" id="noFile">Aucun choisi...</div> 
-                  <input type="file" (change)="importExcel($event)" name="chooseFile" id="chooseFile">
-                </div>
-            </div>
-            <div *ngIf="user?.role == 'ROLE_ADMIN'" class="input-group col-md-2">
-                <select [(ngModel)]="ecole" (ngModelChange)="saveEcole($event)" class="form-select" aria-label=".form-select-sm example">
-                  <option selected value="0">Choisir l'organisation...</option>
-                  <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
-                </select>
-            </div>
-            <div class="d-flex">
-                <input [(ngModel)]="tailleGrp" (ngModelChange)="saveTaille($event)" type="number" id="numberPicker" class="form-control" value="1" min="2" max="10">
-            </div>
-            <div class="input-group col-md-3">
-                <select [(ngModel)]="annee" (ngModelChange)="saveAnnee($event)" class="form-select col-md-6" aria-label=".form-select-sm example">
-                  <option selected value="0">Choisir l'année...</option>
-                  <option *ngFor="let item of anneeResponse?.results" [value]="item.id">{{ item.libelle }}</option>
-                </select>
+<div class="mt-5 row justify-content-center align-items-center h-100">
+    <div class="d-flex flex-column align-items-center my-3">
+        <h4 class="underline-bold">Créer une nouvelle liste</h4>
+        <p class="fst-italic">Pour créer des groupes à partir de cette nouvelle liste, veuillez compléter les champs ci-dessous: </p>
+    </div>
+    <div class="flex-center my-3">
+        <div class="file-upload w-25">
+            <div class="file-select">
+              <div class="file-select-button" id="fileName">Choisir Fichier</div>
+              <div class="file-select-name" id="noFile">Aucun choisi...</div> 
+              <input type="file" (change)="importExcel($event)" name="chooseFile" id="chooseFile">
             </div>
         </div>
-
-        <div *ngIf="error" class="flex-center align-items-center">
-        <p class="fw-bold text-danger">Erreur - Veuillez remplir tous les champs requis : Année, Critères, École et Nom de liste. </p>
+        <div *ngIf="user?.role == 'ROLE_ADMIN'" class="input-group col-md-2">
+            <select [(ngModel)]="ecole" (ngModelChange)="saveEcole($event)" class="form-select" aria-label=".form-select-sm example">
+              <option selected value="0">Choisir l'organisation...</option>
+              <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
+            </select>
         </div>
-
-        <div class="flex-center my-3">
-            <p class="me-3 fs-5">Nom de la liste</p>
-            <input [(ngModel)]="fileName" (ngModelChange)="saveNom($event)" type="text" class="me-5 form-control input-black-border col-md-3" placeholder="">
-            <a (click)="createGroups()" id="orange-btn" class="btn btn-orange col-md-1" 
-            role="button" [class.disabled]="ecole === 0 || tailleGrp < 2 || !critCheck">
-                Enregistrer</a>
+        <div class="d-flex">
+            <input [(ngModel)]="tailleGrp" (ngModelChange)="saveTaille($event)" type="number" id="numberPicker" class="form-control" value="1" min="2">
         </div>
-        <div class="flex-center">
-            <div *ngFor="let item of criteres" class="bg-black d-flex me-2 align-items-center border-black thick-border">
-                <p class="text-white mb-0 me-4">{{ item.choix }} {{ item.taille }}</p>
-                <a class="btn btn-orange text-white" role="button">O</a>
-            </div>
-        </div>
-
-        <div class="flex-center mt-2 w-50 mx-auto" style="margin-bottom: 2rem;">
-            <a [routerLink]="['/app/form-critere']" class="btn btn-secondary text-white me-3" 
-            role="button" [class.disabled]="ecole === 0 || tailleGrp < 2 || annee == 0">Modifier les critères</a>
-            <a (click)="createGroups()" class="btn btn-info text-white me-3" 
-            role="button" [class.disabled]="ecole === 0 || annee == 0 || tailleGrp < 2 || criteres.length > 0 || etudiants.length < 1">
-            Aléatoire</a>
-            <a (click)="createGroups(1)" class="btn btn-info text-white me-3" 
-            role="button" [class.disabled]="ecole === 0 || annee == 0 || tailleGrp < 2 || criteres.length > 0 || etudiants.length < 1">
-            Grouper par classe</a>
-            <a (click)="printTemplate()" class="btn btn-info text-white me-3" 
-            role="button">Télécharger template</a>
-        </div>
-        <div class="flex-center mt-2 w-25 mx-auto" style="margin-bottom: 2rem;">
-            <a (click)="clearEtd()" class="btn btn-secondary text-white me-3" 
-            role="button">Vider le tableau</a>
-        </div>
-
-        <div class="flex-center">
-            <table class="table col-md-9">
-                <thead class="thead-dark">
-                  <tr>
-                    <th scope="col">Matricule</th>
-                    <th scope="col">Nom</th>
-                    <th scope="col">Prénom</th>
-                    <th scope="col">Sexe</th>
-                    <th scope="col">Classe</th>
-                    <th scope="col">Niveau</th>
-                    <th scope="col">Filière</th>
-                    <th scope="col">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let etd of etudiants; let i = index">
-                        <th scope="row">{{etd.Matricule}}</th>
-                        <td>{{etd.Nom}}</td>
-                        <td>{{etd.Prenom}}</td>
-                        <td>{{etd.Sexe}}</td>
-                        <td>{{etd.Classe}}</td>
-                        <td>{{etd.Niveau}}</td>
-                        <td>{{etd.Filiere}}</td>
-                        <td><a (click)="deleteEtd(i)" class="btn btn-danger" 
-                            role="button" style="color: white;">
-                              Retirer
-                          </a></td>
-                    </tr>
-                </tbody>
-              </table>
+        <div class="input-group col-md-3">
+            <select [(ngModel)]="annee" (ngModelChange)="saveAnnee($event)" class="form-select col-md-6" aria-label=".form-select-sm example">
+              <option selected value="0">Choisir l'année...</option>
+              <option *ngFor="let item of anneeResponse?.results" [value]="item.id">{{ item.libelle }}</option>
+            </select>
         </div>
     </div>
 
-    <app-foot></app-foot>
+    <div *ngIf="error" class="flex-center align-items-center">
+    <p class="fw-bold text-danger">Erreur - Veuillez remplir tous les champs requis : Année, Critères, École et Nom de liste. </p>
+    </div>
+
+    <div class="flex-center my-3">
+        <p class="me-3 fs-5">Nom de la liste</p>
+        <input [(ngModel)]="fileName" (ngModelChange)="saveNom($event)" type="text" class="me-5 form-control input-black-border col-md-3" placeholder="">
+        <a (click)="createGroups()" id="orange-btn" class="btn btn-orange col-md-1" 
+        role="button" [class.disabled]="ecole === 0 || tailleGrp < 2 || !critCheck">
+            Enregistrer</a>
+    </div>
+    <div class="flex-center">
+        <div *ngFor="let item of criteres" class="bg-black d-flex me-2 align-items-center border-black thick-border">
+            <p class="text-white mb-0 me-4">{{ item.choix }} {{ item.taille }}</p>
+            <a class="btn btn-orange text-white" role="button">O</a>
+        </div>
+    </div>
+
+    <div class="flex-center mt-2 w-50 mx-auto" style="margin-bottom: 2rem;">
+        <a [routerLink]="['/app/form-critere']" class="btn btn-secondary text-white me-3" 
+        role="button" [class.disabled]="ecole === 0 || tailleGrp < 2 || annee == 0">Modifier les critères</a>
+        <a (click)="createGroups()" class="btn btn-info text-white me-3" 
+        role="button" [class.disabled]="ecole === 0 || annee == 0 || tailleGrp < 2 || criteres.length > 0 || etudiants.length < 1">
+        Aléatoire</a>
+        <a (click)="createGroups(1)" class="btn btn-info text-white me-3" 
+        role="button" [class.disabled]="ecole === 0 || annee == 0 || tailleGrp < 2 || criteres.length > 0 || etudiants.length < 1">
+        Grouper par classe</a>
+        <a (click)="printTemplate()" class="btn btn-info text-white me-3" 
+        role="button">Télécharger template</a>
+    </div>
+    <div class="flex-center mt-2 w-25 mx-auto" style="margin-bottom: 2rem;">
+        <a (click)="clearEtd()" class="btn btn-secondary text-white me-3" 
+        role="button">Vider le tableau</a>
+    </div>
+
+    <div class="flex-center">
+        <table class="table col-md-9">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Matricule</th>
+                <th scope="col">Nom</th>
+                <th scope="col">Prénom</th>
+                <th scope="col">Sexe</th>
+                <th scope="col">Classe</th>
+                <th scope="col">Niveau</th>
+                <th scope="col">Filière</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let etd of etudiants; let i = index">
+                    <th scope="row">{{etd.Matricule}}</th>
+                    <td>{{etd.Nom}}</td>
+                    <td>{{etd.Prenom}}</td>
+                    <td>{{etd.Sexe}}</td>
+                    <td>{{etd.Classe}}</td>
+                    <td>{{etd.Niveau}}</td>
+                    <td>{{etd.Filiere}}</td>
+                    <td><a (click)="deleteEtd(i)" class="btn btn-danger" 
+                        role="button" style="color: white;">
+                          Retirer
+                      </a></td>
+                </tr>
+            </tbody>
+          </table>
+    </div>
 </div>
 

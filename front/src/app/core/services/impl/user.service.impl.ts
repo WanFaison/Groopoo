@@ -15,6 +15,10 @@ export class UserServiceImpl implements UserService{
     private apiUrlModif=`${environment.APIURL}/user-modif`;
     constructor(private http:HttpClient){}
 
+    findAllArchived(page: number, keyword: string, ecole: number): Observable<RestResponse<UserModel[]>> {
+        return this.http.get<RestResponse<UserModel[]>>(`${this.apiUrlPg}?page=${page}&keyword=${keyword}&ecole=${ecole}&arch=${true}`);
+    }
+
     modifUser(user: number, motif:number = 0): Observable<any> {
         return this.http.get<any>(`${this.apiUrlModif}?user=${user}&motif=${motif}`);
     }

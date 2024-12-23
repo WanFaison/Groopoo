@@ -9,7 +9,7 @@
               (click)="changeState(0)">Groupes</a>
             </li>
             <li class="nav-item" *ngIf="user?.role != 'ROLE_VISITEUR'">
-              <a [class.active]="state==1" class="nav-link" role="button"
+              <a [class.active]="state==1 || state==6" class="nav-link" role="button"
               (click)="changeState(1)">Journées</a>
             </li>
             <li class="nav-item" *ngIf="user?.role != 'ROLE_VISITEUR'">
@@ -17,7 +17,7 @@
               (click)="changeState(2)">Notes </a>
             </li>
             <li class="nav-item" *ngIf="user?.role != 'ROLE_VISITEUR'">
-              <a [class.active]="state==3" class="nav-link" role="button"
+              <a [class.active]="state==3 || state==5" class="nav-link" role="button"
               (click)="changeState(3)">Coach & Jury</a>
             </li>
             <li class="nav-item" *ngIf="user?.role != 'ROLE_VISITEUR'">
@@ -34,6 +34,8 @@
         <app-notes *ngIf="state==2"></app-notes>
         <app-form-coach *ngIf="state==3"></app-form-coach>
         <app-finalist *ngIf="state==4"></app-finalist>
+        <app-jury *ngIf="state==5"></app-jury>
+        <app-attendance *ngIf="state==6"></app-attendance>
     </div>
 
     <app-foot></app-foot>

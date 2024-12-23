@@ -50,6 +50,25 @@ class JuryRepository extends ServiceEntityRepository
         return PaginatorService::pageInator($query, $page, $limit);
     }
 
+    public function findAllNotFinalByListeUnarchived(?Liste $liste): array
+    {
+        $queryBuilder = $this->createQueryBuilder('r');
+        if ($liste) {
+            $queryBuilder->andWhere('r.liste = :liste')
+                ->setParameter('liste', $liste);
+        }
+        
+        $query = $queryBuilder->andWhere('r.isArchived = :isArchived') 
+                            ->setParameter('isArchived', false)
+                            ->andWhere('r.isFinal = :isFinal') 
+                            ->setParameter('isFinal', false)
+                            ->orderBy('r.id', 'ASC')
+                            ->getQuery()
+                            ->getResult();
+        
+        return $query;
+    }
+
     public function findFinalistJuryByList(?Liste $liste)
     {
         $queryBuilder = $this->createQueryBuilder('r');

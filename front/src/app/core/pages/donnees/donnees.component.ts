@@ -19,6 +19,7 @@ import { EtageServiceImpl } from '../../services/impl/etage.service.impl';
 import { response } from 'express';
 import { CoachModel } from '../../models/coach.model';
 import { CoachServiceImpl } from '../../services/impl/coach.service.impl';
+import { PaginatorService } from '../../services/pagination.service';
 
 @Component({
   selector: 'app-donnees',
@@ -45,7 +46,7 @@ export class DonneesComponent implements OnInit{
   error:boolean = false;
   entity:number = 0;
   user?:LogUser
-  constructor(private router:Router, private formBuilder: FormBuilder, private http:HttpClient, private authService:AuthServiceImpl, private coachService:CoachServiceImpl, private etageService:EtageServiceImpl, private salleService:SalleServiceImpl, private ecoleService:EcoleServiceImpl, private anneeService:AnneeServiceImpl)
+  constructor(private router:Router, private paginatorService:PaginatorService, private formBuilder: FormBuilder, private http:HttpClient, private authService:AuthServiceImpl, private coachService:CoachServiceImpl, private etageService:EtageServiceImpl, private salleService:SalleServiceImpl, private ecoleService:EcoleServiceImpl, private anneeService:AnneeServiceImpl)
   {
     this.coachForm = this.formBuilder.group({
       nom: ['', Validators.required],
@@ -313,20 +314,14 @@ export class DonneesComponent implements OnInit{
     
   }
 
-  pages(start: number, end: number | undefined = 5): number[] {
-    return Array(end - start + 1).fill(0).map((_, idx) => start + idx);
-  }
   getPageRange(currentPage:any, totalPages:any): number[] {
-    const start = Math.max(currentPage - 3, 1);
-    const end = Math.min(currentPage + 3, totalPages);
-      
-    return this.pages(start, end);
+    return this.paginatorService.getPageRange(currentPage, totalPages)
   }
 
   reloadPage() {
-    window.location.reload();
     this.libelle ='';
     this.error = false;
+    return this.paginatorService.reloadPage();
   }
 
 }

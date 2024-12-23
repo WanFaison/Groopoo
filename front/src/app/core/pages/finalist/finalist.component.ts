@@ -13,11 +13,12 @@ import { FootComponent } from "../../components/foot/foot.component";
 import { NavComponent } from "../../components/nav/nav.component";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { PaginatorService } from '../../services/pagination.service';
 
 @Component({
   selector: 'app-finalist',
   standalone: true,
-  imports: [FootComponent, NavComponent, CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './finalist.component.html',
   styleUrl: './finalist.component.css'
 })
@@ -30,7 +31,7 @@ export class FinalistComponent implements OnInit{
   newJury:number = 0;
   newCoach:number = 0;
 
-  constructor(private juryService:JuryServiceImpl, private authService:AuthServiceImpl, private listeService:ListeServiceImpl, private coachService:CoachServiceImpl){}
+  constructor(private juryService:JuryServiceImpl, private paginatorService:PaginatorService, private authService:AuthServiceImpl, private listeService:ListeServiceImpl, private coachService:CoachServiceImpl){}
 
   ngOnInit(): void {
     if (typeof window !== 'undefined' && localStorage){
@@ -41,6 +42,7 @@ export class FinalistComponent implements OnInit{
   }
 
   findCoachesLeft(jury: JuryModel) {
+    this.newJury = jury.id;
     this.juryName = jury.libelle;
     this.coachService.findAllNotInListe(this.liste, 1).subscribe(data=>this.coachRequest=data);
   }
@@ -73,7 +75,7 @@ export class FinalistComponent implements OnInit{
   }
 
   reloadPage() {
-    window.location.reload();
+    return this.paginatorService.reloadPage();
   }
 
 }

@@ -26,9 +26,10 @@ class UserController extends AbstractController
         $limit = $request->query->getInt('limit', 10);
         $keyword = $request->query->getString('keyword', '');
         $ecole = $request->query->getInt('ecole', 0);
+        $arch = $request->query->getBoolean('arch', false);
 
         if($ecole == 0){$ecole = null;} 
-        $users = $userRepository->findAllPaginated($page, $limit, $keyword, $ecole);
+        $users = $userRepository->findAllPaginated($page, $limit, $keyword, $ecole, $arch);
         $results = $this->userListeDto($users);
 
         $totalItems = $users->count();
@@ -105,7 +106,7 @@ class UserController extends AbstractController
 
         $user = $userRepository->find($userId);
         if($user && $motif == 0){
-            $user->setArchived(true);
+            $user->setArchived(!$user->isArchived());
             $userRepository->addOrUpdate($user);
         }else{
             $userRepository->deleteById($userId);

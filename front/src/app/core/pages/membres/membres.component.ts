@@ -25,7 +25,7 @@ import { ListeServiceImpl } from '../../services/impl/list.service.impl';
 @Component({
   selector: 'app-membres',
   standalone: true,
-  imports: [NavComponent, FootComponent, FormsModule, CommonModule, RouterLink],
+  imports: [FormsModule, CommonModule, RouterLink],
   templateUrl: './membres.component.html',
   styleUrl: './membres.component.css'
 })
@@ -232,7 +232,7 @@ export class MembresComponent implements OnInit{
             console.log('Data successfully sent', response);
             this.clearData();
             localStorage.setItem('newListe', response.data);
-            this.router.navigate(['/app/view-groups']);
+            this.router.navigate(['/app/liste-menu']);
           },
           error => {
             console.error('Error sending data', error);

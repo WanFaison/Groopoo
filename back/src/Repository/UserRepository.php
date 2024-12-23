@@ -58,7 +58,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $user;
     }
     
-    public function findAllPaginated(int $page, int $limit, string $keyword, int $ecole = null): Paginator
+    public function findAllPaginated(int $page, int $limit, string $keyword, int $ecole = null, bool $arch = false): Paginator
     {
         $queryBuilder = $this->createQueryBuilder('r');
         if (!empty($keyword)) {
@@ -71,7 +71,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                      ->setParameter('ecoleId', $ecole);
         }
         $query = $queryBuilder->andWhere('r.isArchived = :isArchived') 
-                            ->setParameter('isArchived', false)
+                            ->setParameter('isArchived', $arch)
                             ->orderBy('r.id', 'ASC')
                             ->getQuery();
         

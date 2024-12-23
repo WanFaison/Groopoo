@@ -12,6 +12,7 @@ use App\Repository\GroupeRepository;
 use App\Repository\JuryRepository;
 use App\Repository\ListeRepository;
 use App\Repository\SalleRepository;
+use App\Service\NoteService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,8 +28,9 @@ class JuryController extends AbstractController
     private $listeRepository;
     private $salleRepository;
     private $groupeRepository;
+    private $noteService;
 
-    public function __construct(EntityManagerInterface $entityManager, GroupeRepository $groupeRepository, SalleRepository $salleRepository, JuryRepository $juryRepository, CoachRepository $coachRepository, ListeRepository $listeRepository)
+    public function __construct(EntityManagerInterface $entityManager, NoteService $noteService, GroupeRepository $groupeRepository, SalleRepository $salleRepository, JuryRepository $juryRepository, CoachRepository $coachRepository, ListeRepository $listeRepository)
     {
         $this->entityManager = $entityManager;
         $this->juryRepository = $juryRepository;
@@ -36,6 +38,7 @@ class JuryController extends AbstractController
         $this->listeRepository = $listeRepository;
         $this->salleRepository = $salleRepository;
         $this->groupeRepository = $groupeRepository;
+        $this->noteService = $noteService;
     }
 
     #[Route('/api/all-jury', name: 'app_all_jury', methods: ['GET'])]
@@ -181,8 +184,8 @@ class JuryController extends AbstractController
         }else{
             foreach($liste->getGroupes() as $grp){
                 if($grp->getNote() > 0){
-                    $groupes = $this->getTop10($liste->getGroupes()->toArray());
-                    $groupes = $this->setToFinal($groupes);
+                    $groupes = $this->noteService->getTop10($liste->getGroupes()->toArray());
+                    $groupes = $this->noteService->setToFinal($groupes, true);
                     $newJury = new Jury();
                     $newJury->setListe($liste)
                             ->setArchived(false)
@@ -201,22 +204,5 @@ class JuryController extends AbstractController
         return RestResponse::paginateResponse($results, 0, $totalItems, 1, JsonResponse::HTTP_OK);
     }
 
-    private function getTop10(array $groupes): array
-    {
-        usort($groupes, function ($a, $b) {
-            return $b->getNote() <=> $a->getNote(); 
-        });
-
-        return array_slice($groupes, 0, 10);
-    }
-
-    private function setToFinal(array $groupes): array
-    {
-        foreach($groupes as $grp){
-            $grp->setFinal(true);
-            $this->entityManager->persist($grp);
-        }
-        $this->entityManager->flush();
-        return $groupes;
-    }
+    
 }

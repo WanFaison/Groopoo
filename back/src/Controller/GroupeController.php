@@ -24,6 +24,7 @@ use App\Repository\GroupeRepository;
 use App\Repository\JourRepository;
 use App\Repository\ListeRepository;
 use App\Repository\NiveauRepository;
+use App\Service\NoteService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use PhpParser\Node\Expr\Cast\Array_;
@@ -46,8 +47,9 @@ class GroupeController extends AbstractController
     private $entityManager;
     private $jourRepository;
     private $absenceRepository;
+    private $noteService;
 
-    public function __construct(EntityManagerInterface $entityManager, AbsenceRepository $absenceRepository, JourRepository $jourRepository, EcoleRepository $ecoleRepository, AnneeRepository $anneeRepository, EtudiantRepository $etudiantRepository, NiveauRepository $niveauRepository, FiliereRepository $filiereRepository, ClasseRepository $classeRepository, GroupeRepository $groupeRepository, ListeRepository $listeRepository)
+    public function __construct(EntityManagerInterface $entityManager, NoteService $noteService, AbsenceRepository $absenceRepository, JourRepository $jourRepository, EcoleRepository $ecoleRepository, AnneeRepository $anneeRepository, EtudiantRepository $etudiantRepository, NiveauRepository $niveauRepository, FiliereRepository $filiereRepository, ClasseRepository $classeRepository, GroupeRepository $groupeRepository, ListeRepository $listeRepository)
     {
         $this->entityManager = $entityManager;
         $this->ecoleRepository = $ecoleRepository;
@@ -60,6 +62,7 @@ class GroupeController extends AbstractController
         $this->listeRepository = $listeRepository;
         $this->jourRepository = $jourRepository;
         $this->absenceRepository = $absenceRepository;
+        $this->noteService = $noteService;
     }
 
     #[Route('/api/all-groupe', name: 'app_all_groupe', methods: ['GET'])]
@@ -215,7 +218,9 @@ class GroupeController extends AbstractController
         if (!is_array($notes)) {
             return new JsonResponse(['error' => 'Invalid notes data format'], JsonResponse::HTTP_BAD_REQUEST);
         }
-        $this->manageNotes($notes);
+        $liste = $this->manageNotes($notes);
+        $groupes = $this->noteService->setToFinal($liste->getGroupes()->toArray(), false);
+        $groupes = $this->noteService->setToFinal($this->noteService->getTop10($groupes), true);
 
         try {
             return RestResponse::requestResponse('Data received and notes accounted for', 0, JsonResponse::HTTP_OK);
@@ -224,7 +229,7 @@ class GroupeController extends AbstractController
         }
     }
 
-    private function manageNotes(array $notes)
+    private function manageNotes(array $notes): Liste
     {
         $grp = $this->groupeRepository->find($notes[0]['id']);
         $pts = $this->marksPerPeriod($grp->getListe());
@@ -244,6 +249,8 @@ class GroupeController extends AbstractController
             $this->entityManager->flush();
             $this->groupeRepository->addOrUpdate($groupe);
         }
+
+        return $grp->getListe();
     }
     private function marksPerPeriod(Liste $liste): float
     {

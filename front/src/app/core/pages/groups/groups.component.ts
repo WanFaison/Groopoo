@@ -18,6 +18,7 @@ import { LogUser } from '../../models/user.model';
 import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 import { ClasseModel } from '../../models/classe.model';
 import { ClasseServiceImpl } from '../../services/impl/classe.service.impl';
+import { PaginatorService } from '../../services/pagination.service';
 
 @Component({
   selector: 'app-groups',
@@ -42,7 +43,7 @@ export class GroupsComponent implements OnInit{
   coachs:Array<number> = [];
   msg: string='';
   ajout: any;
-  constructor(private router:Router, private fb:FormBuilder, private classeService:ClasseServiceImpl, private authService:AuthServiceImpl, private groupeService:GroupeServiceImpl, private listeService:ListeServiceImpl, private apiService:ApiService, private etudiantService:EtudiantServiceImpl) 
+  constructor(private router:Router, private paginatorService:PaginatorService, private fb:FormBuilder, private classeService:ClasseServiceImpl, private authService:AuthServiceImpl, private groupeService:GroupeServiceImpl, private listeService:ListeServiceImpl, private apiService:ApiService, private etudiantService:EtudiantServiceImpl) 
   {
     this.etdForm = this.fb.group({
       nom: ['', Validators.required],
@@ -93,7 +94,7 @@ export class GroupsComponent implements OnInit{
       this.error = true
       this.setMsg('Choissisez une classe!')
     }else{
-
+      this.addEtdToGrp()
     }
   }
 
@@ -153,6 +154,16 @@ export class GroupsComponent implements OnInit{
       }else{
         link.download = `${this.listeResponse?.results.libelle}.xlsx`;
       }
+      link.click();
+    });
+  }
+
+  printSalleXls(motif:string = ''){
+    this.groupeService.getSalleSheet(this.liste, motif).subscribe((data: Blob) => {
+      const downloadUrl = window.URL.createObjectURL(data);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `${this.listeResponse?.results.libelle} - Repartition des Coachs.xlsx`;
       link.click();
     });
   }
@@ -238,19 +249,12 @@ export class GroupsComponent implements OnInit{
     this.refresh(this.liste, index, 1)
   }
 
-  pages(start: number, end: number | undefined = 5): number[] {
-    return Array(end - start + 1).fill(0).map((_, idx) => start + idx);
-  }
-
   getPageRange(currentPage:any, totalPages:any): number[] {
-    const start = Math.max(currentPage - 3, 1);
-    const end = Math.min(currentPage + 3, totalPages);
-      
-    return this.pages(start, end);
+    return this.paginatorService.getPageRange(currentPage, totalPages)
   }
 
   reloadPage() {
-    window.location.reload();
+    return this.paginatorService.reloadPage();
   }
 
   clearData(){

@@ -30,7 +30,7 @@ class Jury extends AbstractEntity
     private Collection $groupes;
 
     #[ORM\Column]
-    private ?bool $isFinal = null;
+    private ?bool $isFinal = false;
 
     public function __construct()
     {

@@ -13,11 +13,12 @@ import { GroupeServiceImpl } from '../../services/impl/groupe.service.impl';
 import { ListeServiceImpl } from '../../services/impl/list.service.impl';
 import { response } from 'express';
 import { ApiService } from '../../services/api.service';
+import { PaginatorService } from '../../services/pagination.service';
 
 @Component({
   selector: 'app-notes',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, CommonModule, RouterModule, NavComponent, FootComponent],
+  imports: [FormsModule, ReactiveFormsModule, CommonModule, RouterModule],
   templateUrl: './notes.component.html',
   styleUrl: './notes.component.css'
 })
@@ -28,7 +29,7 @@ export class NotesComponent implements OnInit{
   groupResponse?: RestResponse<GroupeModel[]>;
   user?:LogUser;
   msg:string = ''
-  constructor(private router:Router, private apiService:ApiService, private fb: FormBuilder, private groupeService:GroupeServiceImpl, private listeService:ListeServiceImpl, private authService:AuthServiceImpl){}
+  constructor(private router:Router, private paginatorService:PaginatorService, private apiService:ApiService, private fb: FormBuilder, private groupeService:GroupeServiceImpl, private listeService:ListeServiceImpl, private authService:AuthServiceImpl){}
 
   ngOnInit(): void {
     this.user = this.authService.getUser();
@@ -112,12 +113,12 @@ export class NotesComponent implements OnInit{
     this.refresh(this.liste, page)
   }
 
-  pages(start: number, end: number | undefined = 5): number[] {
-    return Array(end - start + 1).fill(0).map((_, idx) => start + idx);
+  getPageRange(currentPage:any, totalPages:any): number[] {
+    return this.paginatorService.getPageRange(currentPage, totalPages)
   }
 
   reloadPage() {
-    window.location.reload();
+    return this.paginatorService.reloadPage();
   }
 
 }

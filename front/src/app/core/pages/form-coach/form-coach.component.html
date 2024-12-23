@@ -23,7 +23,7 @@
                 Enregistrer</a>
             <button class="btn btn-success col-md-4"
             *ngIf="!listeResponse?.results?.isComplet"
-            [routerLink]="['/app/jury']" routerLinkActive="active"
+            (click)="changeState(5);"
             >Gérer jury</button>
         </div>
     </div>

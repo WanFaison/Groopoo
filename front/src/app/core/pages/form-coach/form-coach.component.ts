@@ -12,11 +12,12 @@ import { RestResponse } from '../../models/rest.response';
 import { CoachModel } from '../../models/coach.model';
 import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 import { LogUser } from '../../models/user.model';
+import { PaginatorService } from '../../services/pagination.service';
 
 @Component({
   selector: 'app-form-coach',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './form-coach.component.html',
   styleUrl: './form-coach.component.css'
 })
@@ -31,7 +32,7 @@ export class FormCoachComponent implements OnInit{
   ecole: number = 0;
   keyword:string = '';
 
-  constructor(private router:Router, private authService:AuthServiceImpl, private listeService:ListeServiceImpl, private formBuilder: FormBuilder, private coachService:CoachServiceImpl){}
+  constructor(private paginatorService:PaginatorService, private router:Router, private authService:AuthServiceImpl, private listeService:ListeServiceImpl, private formBuilder: FormBuilder, private coachService:CoachServiceImpl){}
 
   ngOnInit(): void {
     if (typeof window !== 'undefined' && localStorage){
@@ -47,6 +48,11 @@ export class FormCoachComponent implements OnInit{
       this.coachForm = form? JSON.parse(form) : [];
     }
     this.refresh(this.liste)
+  }
+
+  changeState(num: any) {
+    localStorage.setItem('stateListeMenu', num);
+    this.reloadPage()
   }
 
   loadActiveCoaches(){
@@ -128,5 +134,9 @@ export class FormCoachComponent implements OnInit{
   }
   paginate(page:number){
     this.refresh(this.liste, page, this.keyword, this.ecole)
+  }
+
+  reloadPage(){
+    this.paginatorService.reloadPage();
   }
 }

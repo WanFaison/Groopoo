@@ -1,128 +1,121 @@
-<div class="container-fluid min-vh-100">
-    <app-nav></app-nav>
-    
-    <div class="mt-5 row justify-content-center align-items-center h-100">
-        <div *ngIf="user?.role == 'ROLE_ECOLE_ADMIN'" class="flex-center my-3">
-          <div class="input-group col-md-5">
-              <select [(ngModel)]="selectedEcole" (ngModelChange)="changeEcole($event)" 
-              class="form-select col-md-6" aria-label=".form-select-sm example">
-                <option selected value="0">gèrer ecole...</option>
-                <option *ngFor="let item of user?.ecoleT; let i = index" [value]="i">{{item}}</option>
-              </select>
-          </div>
-        </div>
+<div class="mt-5 row justify-content-center align-items-center h-100">
+  <div *ngIf="user?.role == 'ROLE_ECOLE_ADMIN'" class="flex-center my-3">
+    <div class="input-group col-md-5">
+        <select [(ngModel)]="selectedEcole" (ngModelChange)="changeEcole($event)" 
+        class="form-select col-md-6" aria-label=".form-select-sm example">
+          <option selected value="0">gèrer ecole...</option>
+          <option *ngFor="let item of user?.ecoleT; let i = index" [value]="i">{{item}}</option>
+        </select>
+    </div>
+  </div>
 
-        <div class="flex-center my-3">
-            <h4 class="underline-bold">Listes archivées</h4>
-        </div>
+  <div class="flex-center my-3">
+      <h4 class="underline-bold">Listes archivées</h4>
+  </div>
 
-        <div class="flex-center my-3">
-            <input type="text" [(ngModel)]="keyword" class="form-control input-black-border col-md-3" placeholder="Recherche...">
-            <div class="input-group col-md-3">
-              <select [(ngModel)]="annee" class="form-select col-md-6" aria-label=".form-select-sm example">
-                <option selected value="0">année...</option>
-                <option *ngFor="let item of anneeResponse?.results" [value]="item.id">{{ item.libelle }}</option>
-              </select>
+  <div class="flex-center my-3">
+      <input type="text" [(ngModel)]="keyword" class="form-control input-black-border col-md-3" placeholder="Recherche...">
+      <div class="input-group col-md-3">
+        <select [(ngModel)]="annee" class="form-select col-md-6" aria-label=".form-select-sm example">
+          <option selected value="0">année...</option>
+          <option *ngFor="let item of anneeResponse?.results" [value]="item.id">{{ item.libelle }}</option>
+        </select>
 
-              <select *ngIf="user?.role != 'ROLE_ECOLE_ADMIN'" [(ngModel)]="ecole" class="form-select col-md-6" aria-label=".form-select-sm example">
-                <option selected value="0">organisation..</option>
-                <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
-              </select>
-            </div>
-            <a id="orange-btn" class="btn btn-success col-md-1 me-5" (click)="filter(0, keyword, annee, ecole)" role="button" style="color: white;">
-                Rechercher
-            </a>
-            <a class="btn btn-secondary col-md-1" (click)="refresh()" role="button" style="color: white;">
-                Réinitialiser
-            </a>
-        </div>
+        <select *ngIf="user?.role != 'ROLE_ECOLE_ADMIN'" [(ngModel)]="ecole" class="form-select col-md-6" aria-label=".form-select-sm example">
+          <option selected value="0">organisation..</option>
+          <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
+        </select>
+      </div>
+      <a id="orange-btn" class="btn btn-success col-md-1 me-5" (click)="filter(0, keyword, annee, ecole)" role="button" style="color: white;">
+          Rechercher
+      </a>
+      <a class="btn btn-secondary col-md-1" (click)="refresh()" role="button" style="color: white;">
+          Réinitialiser
+      </a>
+  </div>
+  
+  <div class="flex-center">
+      <table class="table col-md-9">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Nom de la liste</th>
+              <th scope="col">Date</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of response?.results; track $index){
+             <tr>
+                <th scope="row">
+                  {{item.libelle}}
+                  <i *ngIf="user?.role != 'ROLE_VISITEUR' && item.isComplet"
+                   class="bi bi-lock-fill me-1" style="color: black;"></i>
+                  <i *ngIf="user?.role != 'ROLE_VISITEUR' && item.isImport" 
+                   class="fas fa-angles-down"></i>
+                </th>
+                <td>{{item.date}}</td>
+                <td>
+                  <a (click)="viewListe(item.id)" class="btn btn-info me-2" 
+                  role="button" style="color: white;">
+                    Consulter</a>
+                  <a *ngIf="user?.role == 'ROLE_ADMIN'"
+                  (click)="liste = item.id;" class="btn btn-danger"
+                  data-bs-toggle="modal" data-bs-target="#ynModal" 
+                  role="button" style="color: white;">
+                      Déarchiver</a>
+                </td>
+             </tr> 
+            }
+          </tbody>
+        </table>
+  </div>
+  <div class="pagination-div" style="margin-bottom: 10rem;">
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li *ngIf="response && response.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': response.currentPage === 0}">
+          <a class="page-link" (click)="paginate(response.currentPage - 1)" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+            <span class="sr-only">Previous</span>
+          </a>
+        </li>
+
+        @for (item of getPageRange(response?.currentPage , response?.totalPages); track $index){
+          <li class="page-item" [ngClass]="{'active':item-1==response?.currentPage}">
+            <a (click)="paginate(item - 1)" class="page-link">{{item}}</a>
+          </li>
+        }
         
-        <div class="flex-center">
-            <table class="table col-md-9">
-                <thead class="thead-dark">
-                  <tr>
-                    <th scope="col">Nom de la liste</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (item of response?.results; track $index){
-                   <tr>
-                      <th scope="row">
-                        {{item.libelle}}
-                        <i *ngIf="user?.role != 'ROLE_VISITEUR' && item.isComplet"
-                         class="bi bi-lock-fill me-1" style="color: black;"></i>
-                        <i *ngIf="user?.role != 'ROLE_VISITEUR' && item.isImport" 
-                         class="fas fa-angles-down"></i>
-                      </th>
-                      <td>{{item.date}}</td>
-                      <td>
-                        <a (click)="viewListe(item.id)" class="btn btn-info me-2" 
-                        role="button" style="color: white;">
-                          Consulter</a>
-                        <a *ngIf="user?.role == 'ROLE_ADMIN'"
-                        (click)="liste = item.id;" class="btn btn-danger"
-                        data-bs-toggle="modal" data-bs-target="#ynModal" 
-                        role="button" style="color: white;">
-                            Déarchiver</a>
-                      </td>
-                   </tr> 
-                  }
-                </tbody>
-              </table>
-        </div>
-        <div class="pagination-div" style="margin-bottom: 10rem;">
-          <nav aria-label="Page navigation example">
-            <ul class="pagination">
-              <li *ngIf="response && response.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': response.currentPage === 0}">
-                <a class="page-link" (click)="paginate(response.currentPage - 1)" aria-label="Previous">
-                  <span aria-hidden="true">&laquo;</span>
-                  <span class="sr-only">Previous</span>
-                </a>
-              </li>
-
-              @for (item of getPageRange(response?.currentPage , response?.totalPages); track $index){
-                <li class="page-item" [ngClass]="{'active':item-1==response?.currentPage}">
-                  <a (click)="paginate(item - 1)" class="page-link">{{item}}</a>
-                </li>
-              }
-              
-              <li *ngIf="response && response.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': response.currentPage +1 === response.totalPages}">
-                <a class="page-link" (click)="paginate(response.currentPage + 1)" aria-label="Next">
-                  <span aria-hidden="true">&raquo;</span>
-                  <span class="sr-only">Next</span>
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>    
-    </div>
-
-
-    <!-- Modal yn-->
-    <div class="modal fade" id="ynModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-      <div class="modal-content row">
-          <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Récupération</h5>
-              <button type="button" class="btn-close"
-              (click)="liste = 0" 
-              data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-              <h4 class="form-label custom-label">Voulez vous récupérer cette liste?</h4>
-              <p>NB: la liste reviendra avec toute entite correspondantes </p>
-          </div>
-          <div class="modal-footer d-flex">
-              <button (click)="deArchiverListe(liste)" type="button" class="btn btn-success">Oui</button>
-              <button type="button" class="btn btn-secondary" 
-              (click)="liste = 0" data-bs-dismiss="modal">Non</button>
-          </div>
-      </div>
-      </div>
-    </div>
-
-    <app-foot></app-foot>
+        <li *ngIf="response && response.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': response.currentPage +1 === response.totalPages}">
+          <a class="page-link" (click)="paginate(response.currentPage + 1)" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+            <span class="sr-only">Next</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>    
 </div>
 
+
+<!-- Modal yn-->
+<div class="modal fade" id="ynModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+  <div class="modal-content row">
+      <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Récupération</h5>
+          <button type="button" class="btn-close"
+          (click)="liste = 0" 
+          data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <h4 class="form-label custom-label">Voulez vous récupérer cette liste?</h4>
+          <p>NB: la liste reviendra avec toute entite correspondantes </p>
+      </div>
+      <div class="modal-footer d-flex">
+          <button (click)="deArchiverListe(liste)" type="button" class="btn btn-success">Oui</button>
+          <button type="button" class="btn btn-secondary" 
+          (click)="liste = 0" data-bs-dismiss="modal">Non</button>
+      </div>
+  </div>
+</div>
+</div>

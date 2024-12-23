@@ -18,6 +18,7 @@ use App\Repository\GroupeRepository;
 use App\Repository\NiveauRepository;
 use App\Repository\SalleRepository;
 use App\Repository\UserRepository;
+use App\Service\ExportService;
 use Doctrine\ORM\EntityManagerInterface;
 use FPDF;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -33,33 +34,15 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class ListeController extends AbstractController
 {
-    private $ecoleRepository;
-    private $anneeRepository;
-    private $etudiantRepository;
-    private $niveauRepository;
-    private $filiereRepository;
-    private $classeRepository;
-    private $groupeRepository;
     private $listeRepository;
-    private $userRepository;
-    private $coachRepository;
-    private $salleRepository;
     private $entityManager;
+    private $exportService;
 
-    public function __construct(EntityManagerInterface $entityManager, SalleRepository $salleRepository, CoachRepository $coachRepository, UserRepository $userRepository, EcoleRepository $ecoleRepository, AnneeRepository $anneeRepository, EtudiantRepository $etudiantRepository, NiveauRepository $niveauRepository, FiliereRepository $filiereRepository, ClasseRepository $classeRepository, GroupeRepository $groupeRepository, ListeRepository $listeRepository)
+    public function __construct(EntityManagerInterface $entityManager, ExportService $exportService, SalleRepository $salleRepository, CoachRepository $coachRepository, UserRepository $userRepository, EcoleRepository $ecoleRepository, AnneeRepository $anneeRepository, EtudiantRepository $etudiantRepository, NiveauRepository $niveauRepository, FiliereRepository $filiereRepository, ClasseRepository $classeRepository, GroupeRepository $groupeRepository, ListeRepository $listeRepository)
     {
-        $this->ecoleRepository = $ecoleRepository;
-        $this->anneeRepository = $anneeRepository;
-        $this->etudiantRepository = $etudiantRepository;
-        $this->niveauRepository = $niveauRepository;
-        $this->filiereRepository = $filiereRepository;
-        $this->classeRepository = $classeRepository;
-        $this->groupeRepository = $groupeRepository;
         $this->listeRepository = $listeRepository;
-        $this->userRepository = $userRepository;
-        $this->coachRepository = $coachRepository;
-        $this->salleRepository = $salleRepository;
         $this->entityManager = $entityManager;
+        $this->exportService = $exportService;
     }
 
     #[Route('/api/liste-delete', name: 'api_liste_delete', methods: ['GET'])]
@@ -246,7 +229,18 @@ class ListeController extends AbstractController
         $motif = $request->query->getString('motif', '');
         $listeId = $request->query->getInt('liste', 0);
         $liste = $this->listeRepository->find($listeId);
-        $motif == 'classes' ? $excelFile = $this->makeSheetPerClasse($liste) : $excelFile = $this->makeSheet($liste, $motif);
+        $motif == 'classes' ? $excelFile = $this->exportService->makeSheetPerClasse($liste) : $excelFile = $this->exportService->makeSheet($liste, $motif);
+
+        return new BinaryFileResponse($excelFile);
+    }
+
+    #[Route('/api/coach-export', name: 'api_coach_export', methods: ['GET'])]
+    public function exportExcelPerSalle(Request $request): BinaryFileResponse
+    {
+        $motif = $request->query->getString('motif', '');
+        $listeId = $request->query->getInt('liste', 0);
+        $liste = $this->listeRepository->find($listeId);
+        $motif == 'salle' ? $excelFile = $this->exportService->makeSheetPerSalle($liste) : $excelFile = $this->exportService->makeSheetPerJury($liste);
 
         return new BinaryFileResponse($excelFile);
     }
@@ -256,7 +250,7 @@ class ListeController extends AbstractController
     {
         $listeId = $request->query->getInt('liste', 0);
         $liste = $this->listeRepository->find($listeId);
-        $pdfContent = $this->makePdf($listeId);
+        $pdfContent = $this->exportService->makePdf($listeId);
 
         $response = new Response($pdfContent);
         $response->headers->set('Content-Type', 'application/pdf');
@@ -266,144 +260,4 @@ class ListeController extends AbstractController
         return $response;
     }
 
-    public function makeSheet($liste, $motif)
-    {
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $groupes = $this->groupeRepository->findAllByListe($liste);
-                
-        $row = 1;
-        foreach ($groupes as $group) {
-            $sheet->setCellValue('A'.$row, $group->getLibelle());
-            if($motif == 'results'){
-                $sheet->setCellValue('B'.$row, $group->getNote());
-            }
-            $row++;
-            $sheet->setCellValue('A'.$row, 'Nom');
-            $sheet->setCellValue('B'.$row, 'Prenom');
-            $sheet->setCellValue('C'.$row, 'Classe');
-
-            if($motif == 'results'){
-                $sheet->setCellValue('D'.$row, 'Sexe');
-                $sheet->setCellValue('E'.$row, 'Niveau');
-                $sheet->setCellValue('F'.$row, 'Filiere');
-                $sheet->setCellValue('G'.$row, 'Matricule');
-                $sheet->setCellValue('H'.$row, 'Note');
-            }else{
-                $sheet->setCellValue('D'.$row, 'Emargement 1');
-                $sheet->setCellValue('E'.$row, 'Emargement 2');
-            }
-            
-            foreach ($group->getEtudiant() as $etd) {
-                $row++;
-                $sheet->setCellValue('A'.$row, $etd->getNom());
-                $sheet->setCellValue('B'.$row, $etd->getPrenom());
-                $sheet->setCellValue('C'.$row, $etd->getClasse()->getLibelle());
-                if($motif == 'results'){
-                    $sheet->setCellValue('D'.$row, $etd->getSexe());
-                    $sheet->setCellValue('E'.$row, $etd->getClasse()->getNiveau()->getLibelle());
-                    $sheet->setCellValue('F'.$row, $etd->getClasse()->getFiliere()->getLibelle());
-                    $sheet->setCellValue('G'.$row, $etd->getMatricule());
-                    $sheet->setCellValue('H'.$row, $etd->getNoteFinal());
-                }
-            }
-            $row+=2;
-        }
-
-        $writer = new Xlsx($spreadsheet);
-        $temp_file = tempnam(sys_get_temp_dir(), $liste->getLibelle().'.xlsx');
-        $writer->save($temp_file);
-
-        return $temp_file;
-    }
-
-    public function makeSheetPerClasse($liste)
-    {
-        $etudiants = [];
-        foreach($liste->getGroupes() as $g){
-            $etudiants = array_merge($etudiants, $g->getEtudiant()->toArray());
-        }
-        $existingClasses = [];
-        foreach($etudiants as $e){
-            in_array($e->getClasse(), $existingClasses, false) ? null : $existingClasses[] = $e->getClasse();
-        }
-
-        $spreadsheet = new Spreadsheet();
-        $sheetIndex = 0;
-        foreach($existingClasses as $classe){
-            $filteredEtds = array_filter($etudiants, function (Etudiant $etudiant) use ($classe) {
-                return $etudiant->getClasse() === $classe;});
-
-            $sheetIndex>0 ? $spreadsheet->createSheet():null;
-            $spreadsheet->setActiveSheetIndex($sheetIndex);
-            $sheet = $spreadsheet->getActiveSheet();
-            $sheet->setTitle($classe->getLibelle());
-
-            $row = 3;
-            $sheet->setCellValue('A1', $classe->getLibelle());
-            $sheet->setCellValue('A2', 'Nom');
-            $sheet->setCellValue('B2', 'Prenom');
-            $sheet->setCellValue('C2', 'Classe');
-            $sheet->setCellValue('D2', 'Sexe');
-            $sheet->setCellValue('E2', 'Niveau');
-            $sheet->setCellValue('F2', 'Filiere');
-            $sheet->setCellValue('G2', 'Matricule');
-            $sheet->setCellValue('H2', 'Note');
-
-            foreach($filteredEtds as $etd){
-                $sheet->setCellValue('A'.$row, $etd->getNom());
-                $sheet->setCellValue('B'.$row, $etd->getPrenom());
-                $sheet->setCellValue('C'.$row, $etd->getClasse()->getLibelle());
-                $sheet->setCellValue('D'.$row, $etd->getSexe());
-                $sheet->setCellValue('E'.$row, $etd->getClasse()->getNiveau()->getLibelle());
-                $sheet->setCellValue('F'.$row, $etd->getClasse()->getFiliere()->getLibelle());
-                $sheet->setCellValue('G'.$row, $etd->getMatricule());
-                $sheet->setCellValue('H'.$row, $etd->getNoteFinal());
-                $row++;
-            }
-            $sheetIndex++;
-        }
-        
-        $writer = new Xlsx($spreadsheet);
-        $temp_file = tempnam(sys_get_temp_dir(), $liste->getLibelle().'.xlsx');
-        $writer->save($temp_file);
-
-        return $temp_file;
-    }
-
-    public function makePdf($liste): string
-    {
-        $listeT = $this->listeRepository->find($liste);
-        $groupes = $listeT->getGroupes();
-        
-        $pdf = new FPDF('L');
-        $pdf->AddPage();
-        $pdf->SetFont('Arial', 'B', 14);
-        $pdf->Cell(0, 10, $listeT->getLibelle(), 0, 1, 'C');
-
-        foreach ($groupes as $g) {
-            $pdf->Ln(10);
-            $pdf->SetFont('Arial', 'B', 12);
-            $pdf->Cell(0, 10, $g->getLibelle(), 0, 1);
-
-            $pdf->SetFont('Arial', '', 10);
-            $pdf->Cell(40, 10, 'Nom', 1);
-            $pdf->Cell(50, 10, 'Prenom', 1); 
-            $pdf->Cell(50, 10, 'Classe', 1);
-            $pdf->Cell(30, 10, 'Emargement 1', 1);
-            $pdf->Cell(30, 10, 'Emargement 2', 1);
-            $pdf->Ln(); 
-
-            foreach ($g->getEtudiant() as $etudiant) {
-                $pdf->Cell(40, 10, $etudiant->getNom(), 1); 
-                $pdf->Cell(50, 10, $etudiant->getPrenom(), 1);
-                $pdf->Cell(50, 10, $etudiant->getClasse()->getLibelle(), 1);  
-                $pdf->Cell(30, 10, '', 1);  
-                $pdf->Cell(30, 10, '', 1);    
-                $pdf->Ln();
-            }
-        }
-
-        return $pdf->Output('S');
-    }
 }

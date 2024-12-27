@@ -23,6 +23,10 @@ export class ListeServiceImpl implements ListeService{
         // this.testString = new Date('2022-02-12').toISOString().slice(0,10);
     }
 
+    transferListe(liste: number, ecole: number): Observable<RequestResponse> {
+        return this.http.get<RequestResponse>(`${environment.APIURL}/liste-transfer?liste=${liste}&ecole=${ecole}`);
+    }
+
     deleteListe(liste: number): Observable<RequestResponse> {
         return this.http.get<RequestResponse>(`${environment.APIURL}/liste-delete?liste=${liste}`);
     }

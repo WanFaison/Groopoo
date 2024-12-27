@@ -20,6 +20,8 @@ import { LogUser } from '../../models/user.model';
 import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 import { count } from 'node:console';
 import { ListeServiceImpl } from '../../services/impl/list.service.impl';
+import { PaginatorService } from '../../services/pagination.service';
+import { EtudiantServiceImpl } from '../../services/impl/etudiant.service.impl';
 
 
 @Component({
@@ -42,7 +44,7 @@ export class MembresComponent implements OnInit{
   error: boolean = false;
   returnResponse?: ReturnResponse;
   user?:LogUser
-  constructor(private router:Router, private listeService:ListeServiceImpl, private authService:AuthServiceImpl, private ecoleService:EcoleServiceImpl, private apiService: ApiService, private anneeService:AnneeServiceImpl) { }
+  constructor(private router:Router, private etudiantService:EtudiantServiceImpl, private paginatorService:PaginatorService, private listeService:ListeServiceImpl, private authService:AuthServiceImpl, private ecoleService:EcoleServiceImpl, private apiService: ApiService, private anneeService:AnneeServiceImpl) { }
 
   ngOnInit(): void {
     //this.clearData()
@@ -69,7 +71,7 @@ export class MembresComponent implements OnInit{
   }
 
   reloadPage() {
-    window.location.reload();
+    return this.paginatorService.reloadPage();
   }
 
   saveEcole(value: any) {
@@ -77,15 +79,12 @@ export class MembresComponent implements OnInit{
   }
   saveTaille(value: any) {
     localStorage.setItem('tailleGrp', value);
-    this.loadProps()
   }
   saveNom(value: any) {
     localStorage.setItem('nomGrp', value);
-    this.loadProps()
   }
   saveAnnee(value: any) {
     localStorage.setItem('anneeListe', value);
-    this.loadProps()
   }
 
   loadProps(){
@@ -134,6 +133,21 @@ export class MembresComponent implements OnInit{
         console.log(this.etudiants);
       };
       reader.readAsArrayBuffer(file);
+    }
+  }
+
+  exportEtd() {
+    if (typeof window !== 'undefined' && localStorage){
+      const existingData = localStorage.getItem('etudiants');
+      if(existingData){
+        this.etudiantService.exportEtdListe(JSON.parse(existingData)).subscribe((data: Blob) => {
+          const downloadUrl = window.URL.createObjectURL(data);
+          const link = document.createElement('a');
+          link.href = downloadUrl;
+          link.download = `Etudiants Liste.xlsx`;
+          link.click();
+        });
+      }
     }
   }
 

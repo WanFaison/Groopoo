@@ -93,12 +93,12 @@ export class JuryComponent implements OnInit{
     return match ? match[0] : ''; 
   }
 
-  printJuryXls(motif:string = ''){
-    this.juryService.getJurySheet(this.liste, motif).subscribe((data: Blob) => {
+  printJuryXls(){
+    this.juryService.getJurySheet(this.liste).subscribe((data: Blob) => {
       const downloadUrl = window.URL.createObjectURL(data);
       const link = document.createElement('a');
       link.href = downloadUrl;
-      link.download = `${this.listeResponse?.results.libelle} - Repartition des Jury.xlsx`;
+      link.download = `${this.listeResponse?.results.libelle} - Jurys.xlsx`;
       link.click();
     });
   }

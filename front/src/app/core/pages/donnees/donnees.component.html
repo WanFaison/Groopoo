@@ -553,10 +553,10 @@
                 <button (click)="libelle = ''; error = false;" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <label *ngIf="state == 0" class="form-label custom-label" for="libelle">Libelle de l'année</label>
+                <label *ngIf="state == 0" class="form-label custom-label" for="libelle">Libellé de l'année</label>
                 <label *ngIf="state == 1" class="form-label custom-label" for="libelle">Nom de l'organisation</label>
-                <label *ngIf="state == 2" class="form-label custom-label" for="libelle">Libelle de la salle</label>
-                <label *ngIf="state == 3" class="form-label custom-label" for="libelle">Libelle de l'étage</label>
+                <label *ngIf="state == 2" class="form-label custom-label" for="libelle">Libellé de la salle</label>
+                <label *ngIf="state == 3" class="form-label custom-label" for="libelle">Libellé de l'étage</label>
                 <input required id="libelle" #libelleInput="ngModel" [(ngModel)]="libelle" 
                 name="libelle" class="form-control form-control-lg custom-input" placeholder="Entrez le nom..." />
                 <div *ngIf="libelleInput.invalid && libelleInput.touched" class="text-danger">
@@ -583,12 +583,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <h4 *ngIf="state == 0" class="form-label custom-label">Voulez vous supprimer cette année?</h4>
-                <h4 *ngIf="state == 1" class="form-label custom-label">Voulez vous supprimer cette organisation?</h4>
-                <h4 *ngIf="state == 2" class="form-label custom-label">Voulez vous supprimer cette salle?</h4>
-                <h4 *ngIf="state == 3" class="form-label custom-label">Voulez vous supprimer cette étage?</h4>
-                <h4 *ngIf="state == 4" class="form-label custom-label">Voulez vous archiver ce coach?</h4>
-                <p *ngIf="state < 2">La suppression de cette entité entraînera la suppression définitive ses listes, groupes, notes et absences qui y sont associés. </p>
+                <h4 *ngIf="state == 0" class="form-label custom-label">Voulez-vous supprimer cette année?</h4>
+                <h4 *ngIf="state == 1" class="form-label custom-label">Voulez-vous supprimer cette organisation?</h4>
+                <h4 *ngIf="state == 2" class="form-label custom-label">Voulez-vous supprimer cette salle?</h4>
+                <h4 *ngIf="state == 3" class="form-label custom-label">Voulez-vous supprimer cet étage?</h4>
+                <h4 *ngIf="state == 4" class="form-label custom-label">Voulez-vous supprimer ce coach?</h4>
+                <p *ngIf="state < 2">La suppression de l'unité organisationnelle entraînera la suppression définitive de toutes ses listes, groupes, notes et absences associées.</p>
               </div>
             <div class="modal-footer d-flex">
                 <button (click)="modifEnt(state, entity, libelle)" type="button" class="btn btn-success">Oui</button>

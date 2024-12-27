@@ -7,5 +7,6 @@ export type ListeModel = {
     date: string,
     count: number,
     isComplet: boolean,
+    isArchived: boolean,
     isImport?: boolean
 }

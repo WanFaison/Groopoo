@@ -29,7 +29,7 @@
     </div>
 
     <div *ngIf="error" class="flex-center align-items-center">
-    <p class="fw-bold text-danger">Erreur - Veuillez remplir tous les champs requis : Année, Critères, École et Nom de liste. </p>
+        <p class="fw-bold text-danger">Erreur - Veuillez remplir tous les champs requis : Année, Critères, École et Nom de liste. </p>
     </div>
 
     <div class="flex-center my-3">
@@ -37,7 +37,7 @@
         <input [(ngModel)]="fileName" (ngModelChange)="saveNom($event)" type="text" class="me-5 form-control input-black-border col-md-3" placeholder="">
         <a (click)="createGroups()" id="orange-btn" class="btn btn-orange col-md-1" 
         role="button" [class.disabled]="ecole === 0 || tailleGrp < 2 || !critCheck">
-            Enregistrer</a>
+            Valider</a>
     </div>
     <div class="flex-center">
         <div *ngFor="let item of criteres" class="bg-black d-flex me-2 align-items-center border-black thick-border">
@@ -48,7 +48,8 @@
 
     <div class="flex-center mt-2 w-50 mx-auto" style="margin-bottom: 2rem;">
         <a [routerLink]="['/app/form-critere']" class="btn btn-secondary text-white me-3" 
-        role="button" [class.disabled]="ecole === 0 || tailleGrp < 2 || annee == 0">Modifier les critères</a>
+        role="button" [class.disabled]="ecole === 0 || tailleGrp < 2 || annee == 0">
+        Modifier les critères</a>
         <a (click)="createGroups()" class="btn btn-info text-white me-3" 
         role="button" [class.disabled]="ecole === 0 || annee == 0 || tailleGrp < 2 || criteres.length > 0 || etudiants.length < 1">
         Aléatoire</a>
@@ -59,8 +60,11 @@
         role="button">Télécharger template</a>
     </div>
     <div class="flex-center mt-2 w-25 mx-auto" style="margin-bottom: 2rem;">
-        <a (click)="clearEtd()" class="btn btn-secondary text-white me-3" 
+        <a (click)="clearEtd()" class="btn btn-secondary text-white me-2" 
         role="button">Vider le tableau</a>
+        <a (click)="exportEtd()" class="btn btn-info text-white" 
+        [class.disabled]="etudiants.length < 1"
+        role="button">Exporter le tableau</a>
     </div>
 
     <div class="flex-center">

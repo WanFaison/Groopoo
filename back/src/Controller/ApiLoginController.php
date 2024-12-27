@@ -37,7 +37,7 @@ class ApiLoginController extends AbstractController
 
         try {
             $token = $JWTManager->create($user);
-            dump($token);
+            //dump($token);
         } catch (\Exception $e) {
             return new JsonResponse(['error' => 'Token creation failed: ' . $e->getMessage()], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }

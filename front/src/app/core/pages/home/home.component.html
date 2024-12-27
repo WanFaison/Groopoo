@@ -22,7 +22,7 @@
         </select>
 
         <select *ngIf="user?.role != 'ROLE_ECOLE_ADMIN'" [(ngModel)]="ecole" class="form-select col-md-6" aria-label=".form-select-sm example">
-          <option selected value="0">école...</option>
+          <option selected value="0">organisation...</option>
           <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
         </select>
       </div>
@@ -62,6 +62,11 @@
                   (click)="useListe(item.id)" class="btn btn-secondary me-2" 
                   role="button" style="color: white;">
                     Réutiliser</a>
+                  <a *ngIf="user?.role == 'ROLE_ADMIN'"
+                  (click)="liste = item.id;" class="btn btn-secondary me-2"
+                  data-bs-toggle="modal" data-bs-target="#ynTransModal" 
+                  role="button" style="color: white;">
+                    Transferer</a>
                   <a *ngIf="user?.role != 'ROLE_VISITEUR' && !item.isComplet"
                   (click)="liste = item.id;" class="btn btn-secondary me-2"
                   data-bs-toggle="modal" data-bs-target="#ynvModal" 
@@ -183,4 +188,30 @@
       </div>
   </div>
 </div>
+</div>
+
+<!-- Modal ynTrans-->
+<div class="modal fade" id="ynTransModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content row">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Transfert</h5>
+            <button type="button" class="btn-close"
+            (click)="liste = 0" 
+            data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <h4 class="form-label custom-label">Où voulez-vous transferer cette liste?</h4>
+            <select [(ngModel)]="ecole" class="form-select col-md-6" aria-label=".form-select-sm example">
+              <option selected value="0">organisation...</option>
+              <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
+            </select>
+        </div>
+        <div class="modal-footer d-flex">
+            <button (click)="transfererListe(liste, ecole)" type="button" class="btn btn-success">Confirmer</button>
+            <button type="button" class="btn btn-secondary" 
+            (click)="liste = 0" data-bs-dismiss="modal">Quitter</button>
+        </div>
+    </div>
+  </div>
 </div>

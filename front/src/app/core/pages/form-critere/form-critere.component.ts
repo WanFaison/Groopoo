@@ -254,6 +254,8 @@ export class FormCritereComponent implements OnInit{
 
   onSubmit() {
     console.log(this.form.value);
+    localStorage.setItem('homeMenu', '2');
+    this.router.navigate(['/app/home']);
   }
 
 }

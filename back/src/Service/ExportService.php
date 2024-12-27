@@ -245,5 +245,66 @@ class ExportService{
 
         return $temp_file;
     }
+
+    public function makeFinalJurySheet(Liste $liste)
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $jury = $this->juryRepository->findFinalistJuryByList($liste);
+                
+        $row = 1;
+        $sheet->mergeCells("A{$row}:A".($row+1));
+        $sheet->setCellValue('A'.$row, $jury->getLibelle());
+        $row+=2;
+        foreach($jury->getCoaches() as $coach){
+            $sheet->setCellValue('A'.$row, $coach->getNom().''.$coach->getPrenom());
+            $row++;
+        }
+            
+        $sheet->mergeCells("B1:E1");
+        $groupNames = '';
+        foreach ($this->groupeRepository->findAllFinalByListe($liste) as $group) {
+            $groupNames .= $this->extractNumberFromGroupName($group->getLibelle()) . ' - ';
+        }
+        $groupNames = rtrim($groupNames, ' - ');
+        $sheet->setCellValue('B1', $groupNames);
+
+        $writer = new Xlsx($spreadsheet);
+        $temp_file = tempnam(sys_get_temp_dir(), $liste->getLibelle().'- Jury Finalistes.xlsx');
+        $writer->save($temp_file);
+
+        return $temp_file;
+    }
     
+    public function makeSheetEtudiantListe(array $etudiants)
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'Nom')
+            ->setCellValue('B1', 'Prenom')
+            ->setCellValue('C1', 'Classe')
+            ->setCellValue('D1', 'Sexe')
+            ->setCellValue('E1', 'Niveau')
+            ->setCellValue('F1', 'Filiere')
+            ->setCellValue('G1', 'Matricule');
+
+        $row = 2;
+        foreach($etudiants as $etd){
+            $sheet->setCellValue('A'.$row, $etd['Nom'])
+                    ->setCellValue('B'.$row, $etd['Prenom'])
+                    ->setCellValue('C'.$row, $etd['Classe'])
+                    ->setCellValue('D'.$row, $etd['Sexe'])
+                    ->setCellValue('E'.$row, $etd['Niveau'])
+                    ->setCellValue('F'.$row, $etd['Filiere'])
+                    ->setCellValue('G'.$row, $etd['Matricule']);
+
+            $row++;
+        }
+        
+        $writer = new Xlsx($spreadsheet);
+        $temp_file = tempnam(sys_get_temp_dir(), 'etdListe.xlsx');
+        $writer->save($temp_file);
+
+        return $temp_file;
+    }
 }

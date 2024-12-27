@@ -9,8 +9,10 @@ use App\Repository\ClasseRepository;
 use App\Repository\EtudiantRepository;
 use App\Repository\GroupeRepository;
 use App\Repository\ListeRepository;
+use App\Service\ExportService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,14 +25,16 @@ class EtudiantController extends AbstractController
     private $listeRepository;
     private $classeRepository;
     private $entityManager;
+    private $exportService;
 
-    public function __construct(EntityManagerInterface $entityManager, ClasseRepository $classeRepository, EtudiantRepository $etudiantRepository, GroupeRepository $groupeRepository, ListeRepository $listeRepository)
+    public function __construct(EntityManagerInterface $entityManager, ExportService $exportService, ClasseRepository $classeRepository, EtudiantRepository $etudiantRepository, GroupeRepository $groupeRepository, ListeRepository $listeRepository)
     {
         $this->etudiantRepository = $etudiantRepository;
         $this->groupeRepository = $groupeRepository;
         $this->listeRepository = $listeRepository;
         $this->classeRepository = $classeRepository;
         $this->entityManager = $entityManager;
+        $this->exportService = $exportService;
     }
 
     #[Route('/api/liste-etudiant', name: 'api_etudiant_liste', methods: ['GET'])]
@@ -138,5 +142,16 @@ class EtudiantController extends AbstractController
         $this->entityManager->flush();
 
         return RestResponse::requestResponse('etudiant ajoutee avec success', 0, JsonResponse::HTTP_OK);
+    }
+
+    #[Route('/api/etudiant-export', name: 'api_etudiant_export', methods: ['POST'])]
+    public function exportEtudiantListe(Request $request): BinaryFileResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $etudiants = $data['etudiants'] ?? [];
+
+        $excelFile = $this->exportService->makeSheetEtudiantListe($etudiants);
+
+        return new BinaryFileResponse($excelFile);
     }
 }

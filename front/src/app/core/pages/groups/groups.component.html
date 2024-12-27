@@ -2,12 +2,13 @@
   <div class="flex-center mb-3 flex-column">
       <div class="d-flex justify-content-between">
         <h4 *ngIf="groupResponse" class="underline-bold">{{groupResponse.results[0].listeT}}</h4>
-        <a *ngIf="user?.role != 'ROLE_VISITEUR' && groupResponse && !listeResponse?.results?.isComplet"
+        <a *ngIf="user?.role != 'ROLE_VISITEUR' && groupResponse && !listeResponse?.results?.isComplet && !listeResponse?.results?.isArchived"
         data-bs-toggle="modal" data-bs-target="#modifModal"
         class="nav-link mx-1 text-black"
         (click)="libelle = groupResponse.results[0].listeT;" ><i class="fas fa-lg fa-edit"></i></a>
       </div>
-      <div class="d-flex justify-content-between mt-2">
+      <div class="d-flex justify-content-between mt-2"
+        *ngIf="!listeResponse?.results?.isArchived">
         <div class="col-md-8">
           <button (click)="printXls('results')" class="btn btn-info col-md-4 mb-2 me-2">Exporter les Groupes</button>
           <button (click)="printSalleXls('salle')" class="btn btn-info col-md-4 mb-2 me-2">Repartition des Salles</button>
@@ -16,8 +17,8 @@
         <div class="ml-4" *ngIf="user?.role != 'ROLE_VISITEUR'">
           <button (click)="useListe()" class="btn btn-secondary mb-2 me-2">Réutiliser la liste</button>
           <button class="btn btn-success mb-2 me-2"
-          *ngIf="!listeResponse?.results?.isComplet"
-          data-bs-toggle="modal" data-bs-target="#ynModal"
+            *ngIf="!listeResponse?.results?.isComplet"
+            data-bs-toggle="modal" data-bs-target="#ynModal"
           >Reformer les groupes</button>
         </div>
       </div>
@@ -51,7 +52,7 @@
                   <th scope="col">{{'Coach: ' + grp.coach}}</th>
                   <th>
                     <button class="btn btn-success me-2"
-                    *ngIf="user?.role != 'ROLE_VISITEUR'"
+                    *ngIf="user?.role != 'ROLE_VISITEUR' && !listeResponse?.results?.isArchived && !listeResponse?.results?.isComplet"
                     (click)="findClasses(grp.id)"
                     data-bs-toggle="modal" data-bs-target="#addEtdModal">Ajouter Etudiant</button>
                   </th>
@@ -63,7 +64,7 @@
                   <th scope="col">Classe</th>
                   <th *ngIf="user?.role != 'ROLE_VISITEUR'" scope="col">Note Etudiant</th>
                   <th *ngIf="user?.role != 'ROLE_VISITEUR'" scope="col">Note Finale</th>
-                  <th *ngIf="!listeResponse?.results?.isComplet">Action</th>
+                  <th *ngIf="!listeResponse?.results?.isComplet && !listeResponse?.results?.isArchived">Action</th>
               </tr>
           </thead>
           <tbody>
@@ -74,7 +75,7 @@
                   <td>{{etd.classe}}</td> 
                   <td *ngIf="user?.role != 'ROLE_VISITEUR'">{{etd.noteEtd}}</td> 
                   <td *ngIf="user?.role != 'ROLE_VISITEUR'">{{etd.noteFinal}}</td> 
-                  <td *ngIf="!listeResponse?.results?.isComplet && user?.role != 'ROLE_VISITEUR'">
+                  <td *ngIf="!listeResponse?.results?.isComplet && !listeResponse?.results?.isArchived && user?.role != 'ROLE_VISITEUR'">
                     <button class="btn btn-secondary me-2"
                     (click)="findEtd(etd.id)"
                     data-bs-toggle="modal" data-bs-target="#transfererModal">Transferer</button>

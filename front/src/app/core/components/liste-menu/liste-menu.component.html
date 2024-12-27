@@ -18,7 +18,7 @@
             </li>
             <li class="nav-item" *ngIf="user?.role != 'ROLE_VISITEUR'">
               <a [class.active]="state==3 || state==5" class="nav-link" role="button"
-              (click)="changeState(3)">Coach & Jury</a>
+              (click)="changeState(3)">Coachs & Jurys</a>
             </li>
             <li class="nav-item" *ngIf="user?.role != 'ROLE_VISITEUR'">
                 <a [class.active]="state==4" class="nav-link" role="button"

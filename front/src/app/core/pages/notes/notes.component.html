@@ -9,7 +9,8 @@
           <p class="fw-bold text-danger">{{ msg }} </p>
       </div>
 
-      <div class="flex-center my-3">
+      <div class="flex-center my-3"
+      *ngIf="!listeResponse?.results?.isArchived && !listeResponse?.results?.isComplet">
           <a id="orange-btn" class="btn btn-success col-md-3 me-5" 
           [class.disabled] = "listeResponse?.results?.isComplet"
           (click)="onSubmit()" role="button" style="color: white;">

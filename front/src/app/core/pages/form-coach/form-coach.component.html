@@ -18,13 +18,13 @@
 
         <div class="flex-center my-3">
             <a id="orange-btn" class="btn btn-success col-md-6 me-5" 
-            [class.disabled] = "listeResponse?.results?.isComplet"
+            [class.disabled] = "listeResponse?.results?.isComplet || listeResponse?.results?.isArchived"
             (click)="assignCoaches()" role="button" style="color: white;">
-                Enregistrer</a>
+                Valider</a>
             <button class="btn btn-success col-md-4"
-            *ngIf="!listeResponse?.results?.isComplet"
+            *ngIf="!listeResponse?.results?.isArchived"
             (click)="changeState(5);"
-            >Gérer jury</button>
+            >Former les jurys</button>
         </div>
     </div>
 

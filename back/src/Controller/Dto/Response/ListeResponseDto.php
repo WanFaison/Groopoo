@@ -17,6 +17,7 @@ class ListeResponseDto
     private string $date;
     private int $count;
     private bool $isComplete;
+    private bool $isArchived;
     private bool $isImported;
 
     public function getId(): ?int
@@ -112,6 +113,18 @@ class ListeResponseDto
         return $this;
     }
 
+    public function isArchived(): ?bool
+    {
+        return $this->isArchived;
+    }
+
+    public function setArchived(bool $isArchived): static
+    {
+        $this->isArchived = $isArchived;
+
+        return $this;
+    }
+
     public function isImported(): ?bool
     {
         return $this->isImported;
@@ -136,6 +149,7 @@ class ListeResponseDto
         $dto->setDate($liste->getDate()->format('d-m-Y'));
         $dto->setCount($liste->getGroupes()->count());
         $dto->setComplete($liste->isComplete());
+        $dto->setArchived($liste->isArchived());
         $dto->setImported($liste->isImported());
 
         return $dto;

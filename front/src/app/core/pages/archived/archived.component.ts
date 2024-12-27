@@ -58,7 +58,7 @@ export class ArchivedComponent implements OnInit{
     if(typeof window !== 'undefined' && localStorage){
       localStorage.setItem('newListe', liste);
     }
-    this.router.navigate(['/app/view-jours']);
+    this.router.navigate(['/app/liste-menu']);
   }
 
   deArchiverListe(liste:any, motif:string='archive'){

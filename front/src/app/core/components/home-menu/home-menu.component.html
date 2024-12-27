@@ -10,11 +10,11 @@
             </li>
             <li class="nav-item">
               <a [class.active]="state==0" class="nav-link" role="button"
-              (click)="changeState(0)">Actives</a>
+              (click)="changeState(0)">Listes Existantes</a>
             </li>
             <li class="nav-item" *ngIf="user?.role != 'ROLE_VISITEUR'">
               <a [class.active]="state==1" class="nav-link" role="button"
-              (click)="changeState(1)">Archives</a>
+              (click)="changeState(1)">Listes Archivées</a>
             </li>
           </ul>
         </div>

@@ -202,7 +202,8 @@ export class GroupsComponent implements OnInit{
     if(this.etdResponse){
       localStorage.setItem('etudiants', JSON.stringify(this.etdResponse.results));
       this.clearData();
-      this.router.navigate(['/app/liste-membre']);
+      localStorage.setItem('homeMenu', '2');
+      this.router.navigate(['/app/home']);
     }
     
   }

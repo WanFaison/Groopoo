@@ -12,9 +12,11 @@ use App\Repository\GroupeRepository;
 use App\Repository\JuryRepository;
 use App\Repository\ListeRepository;
 use App\Repository\SalleRepository;
+use App\Service\ExportService;
 use App\Service\NoteService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,8 +31,9 @@ class JuryController extends AbstractController
     private $salleRepository;
     private $groupeRepository;
     private $noteService;
+    private $exportService;
 
-    public function __construct(EntityManagerInterface $entityManager, NoteService $noteService, GroupeRepository $groupeRepository, SalleRepository $salleRepository, JuryRepository $juryRepository, CoachRepository $coachRepository, ListeRepository $listeRepository)
+    public function __construct(EntityManagerInterface $entityManager, ExportService $exportService, NoteService $noteService, GroupeRepository $groupeRepository, SalleRepository $salleRepository, JuryRepository $juryRepository, CoachRepository $coachRepository, ListeRepository $listeRepository)
     {
         $this->entityManager = $entityManager;
         $this->juryRepository = $juryRepository;
@@ -39,6 +42,7 @@ class JuryController extends AbstractController
         $this->salleRepository = $salleRepository;
         $this->groupeRepository = $groupeRepository;
         $this->noteService = $noteService;
+        $this->exportService = $exportService;
     }
 
     #[Route('/api/all-jury', name: 'app_all_jury', methods: ['GET'])]
@@ -204,5 +208,14 @@ class JuryController extends AbstractController
         return RestResponse::paginateResponse($results, 0, $totalItems, 1, JsonResponse::HTTP_OK);
     }
 
+    #[Route('/api/final-export', name: 'api_final_export', methods: ['GET'])]
+    public function exportExcelFinal(Request $request): BinaryFileResponse
+    {
+        $listeId = $request->query->getInt('liste', 0);
+        $liste = $this->listeRepository->find($listeId);
+        $excelFile = $this->exportService->makeFinalJurySheet($liste);
+
+        return new BinaryFileResponse($excelFile);
+    }
     
 }

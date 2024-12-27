@@ -3,6 +3,9 @@
         <div class="d-flex justify-content-between">
             <h4 *ngIf="listeResponse" class="underline-bold">Jury Finalistes: {{ listeResponse?.results?.libelle }}</h4>
         </div>
+        <div *ngIf="!listeResponse?.results?.isArchived">
+            <button (click)="printJuryXls()" class="btn btn-info col-md-8 mb-2">Exporter le jury</button>
+        </div>
     </div>
     
     <div *ngIf="juryResponse.totalItems > 0" class="d-flex flex-column justify-content-center align-items-center">
@@ -10,7 +13,7 @@
             <thead class="thead-dark">
                 <tr>
                     <th scope="col">{{jury.libelle}}</th>
-                    <th scope="col">
+                    <th scope="col" *ngIf="!listeResponse?.results?.isArchived">
                         <button class="btn btn-success me-2"
                         (click)="findCoachesLeft(jury)"
                         data-bs-toggle="modal" data-bs-target="#addModal">Ajouter coach</button>

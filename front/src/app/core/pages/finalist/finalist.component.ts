@@ -41,6 +41,16 @@ export class FinalistComponent implements OnInit{
     }
   }
 
+  printJuryXls() {
+    this.juryService.getFinalJurySheet(this.liste).subscribe((data: Blob) => {
+      const downloadUrl = window.URL.createObjectURL(data);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `${this.listeResponse?.results.libelle} - Jury Finalistes.xlsx`;
+      link.click();
+    });
+  }
+
   findCoachesLeft(jury: JuryModel) {
     this.newJury = jury.id;
     this.juryName = jury.libelle;

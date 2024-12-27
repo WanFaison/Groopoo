@@ -3,8 +3,8 @@
       <div class="d-flex justify-content-between">
           <h4 *ngIf="listeResponse" class="underline-bold">Liste des jurys: {{ listeResponse.results.libelle }}</h4>
       </div>
-      <div>
-        <button (click)="printJuryXls()" class="btn btn-info col-md-8 mb-2">Repartition des Jury</button>
+      <div *ngIf="!listeResponse?.results?.isArchived">
+        <button (click)="printJuryXls()" class="btn btn-info col-md-8 mb-2">Exporter les Jurys</button>
       </div>
   </div>
 
@@ -29,7 +29,7 @@
                       (click)="showJuryGroups(jury.groupes, jury.libelle)"
                       data-bs-toggle="modal" data-bs-target="#grpModal">Voir groupes</button>
                   </th>
-                  <th scope="col">
+                  <th scope="col" *ngIf="!listeResponse?.results?.isArchived && !listeResponse?.results?.isComplet">
                       <button class="btn btn-success me-2"
                       (click)="findCoachesLeft(jury)"
                       data-bs-toggle="modal" data-bs-target="#addModal">Ajouter coach</button>
@@ -46,11 +46,11 @@
                   </div>
               </tr>
               <tr>
-                  <th scope="col">Coach</th>
+                  <th scope="col">Juré(e)</th>
                   <th scope="col">Tel</th>
                   <th scope="col">Email</th>
                   <th scope="col">Etat</th>
-                  <th scope="col">Action</th>
+                  <th scope="col" *ngIf="!listeResponse?.results?.isComplet && !listeResponse?.results?.isArchived">Action</th>
               </tr>
           </thead>
           <tbody>
@@ -59,7 +59,7 @@
                   <td>{{coach.tel}}</td>
                   <td>{{coach.email}}</td>
                   <td>{{coach.etat}}</td>
-                  <td *ngIf="!listeResponse?.results?.isComplet">
+                  <td *ngIf="!listeResponse?.results?.isComplet && !listeResponse?.results?.isArchived">
                     <button class="btn btn-secondary me-2"
                     (click)="findCoach(coach.id)"
                     data-bs-toggle="modal" data-bs-target="#transferModal">Transferer</button>

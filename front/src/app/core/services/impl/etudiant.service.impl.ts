@@ -14,9 +14,13 @@ export class EtudiantServiceImpl implements EtudiantService{
     private apiUrl=`${environment.APIURL}/liste-etudiant`;
     constructor(private http:HttpClient){}
 
+    exportEtdListe(data: any): Observable<any> {
+        return this.http.post(`${environment.APIURL}/etudiant-export`, {etudiants: data}, { responseType: 'blob' });
+    }
+
     addEtudiantToListe(data: any, groupe: number): Observable<any> {
         const headers = new HttpHeaders(environment.JSONHeaders);
-                return this.http.post(`${environment.APIURL}/etudiant-to-liste`, {etdForm: data, groupe: groupe}, {headers});
+        return this.http.post(`${environment.APIURL}/etudiant-to-liste`, {etdForm: data, groupe: groupe}, {headers});
     }
 
     deleteEtudiant(etudiant: number): Observable<RequestResponse> {

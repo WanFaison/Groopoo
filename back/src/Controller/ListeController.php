@@ -35,16 +35,37 @@ use Symfony\Component\Routing\Attribute\Route;
 class ListeController extends AbstractController
 {
     private $listeRepository;
+    private $ecoleRepository;
     private $entityManager;
     private $exportService;
 
-    public function __construct(EntityManagerInterface $entityManager, ExportService $exportService, SalleRepository $salleRepository, CoachRepository $coachRepository, UserRepository $userRepository, EcoleRepository $ecoleRepository, AnneeRepository $anneeRepository, EtudiantRepository $etudiantRepository, NiveauRepository $niveauRepository, FiliereRepository $filiereRepository, ClasseRepository $classeRepository, GroupeRepository $groupeRepository, ListeRepository $listeRepository)
+    public function __construct(EntityManagerInterface $entityManager, EcoleRepository $ecoleRepository, ExportService $exportService, SalleRepository $salleRepository, CoachRepository $coachRepository, UserRepository $userRepository, AnneeRepository $anneeRepository, EtudiantRepository $etudiantRepository, NiveauRepository $niveauRepository, FiliereRepository $filiereRepository, ClasseRepository $classeRepository, GroupeRepository $groupeRepository, ListeRepository $listeRepository)
     {
         $this->listeRepository = $listeRepository;
         $this->entityManager = $entityManager;
         $this->exportService = $exportService;
+        $this->ecoleRepository = $ecoleRepository;
     }
 
+    #[Route('/api/liste-transfer', name: 'api_liste_transfer', methods: ['GET'])]
+    public function transferListe(Request $request): JsonResponse
+    {
+        $ecoleId = $request->query->getInt('ecole', 0);
+        $listeId = $request->query->getInt('liste', 0);
+        $liste = $this->listeRepository->find($listeId);
+        $ecole = $this->listeRepository->find($ecoleId);
+
+        if ($liste && $ecole){
+            $ecole->addListe($liste);
+            $this->ecoleRepository->addOrUpdate($ecole);
+            $this->listeRepository->addOrUpdate($liste);
+
+            return DtoRestResponse::requestResponse('liste transferer', 0, JsonResponse::HTTP_OK);
+        } 
+        
+        return DtoRestResponse::requestResponse('liste non-transferer', 0, JsonResponse::HTTP_OK);
+    }
+    
     #[Route('/api/liste-delete', name: 'api_liste_delete', methods: ['GET'])]
     public function deleteListe(Request $request): JsonResponse
     {
@@ -63,6 +84,9 @@ class ListeController extends AbstractController
         }
         foreach($liste->getJours() as $jr){
             $this->entityManager->remove($jr);
+        }
+        foreach($liste->getJuries() as $jury){
+            $this->entityManager->remove($jury);
         }
         $this->entityManager->flush();
 
@@ -127,6 +151,7 @@ class ListeController extends AbstractController
                     'date' => $dto->getDate(),
                     'count' => $dto->getCount(),
                     'isComplet' => $dto->isComplete(),
+                    'isArchived' => $dto->isArchived(),
                     'isImport' => $dto->isImported()
                 ];
         }

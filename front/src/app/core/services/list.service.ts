@@ -11,4 +11,5 @@ export interface ListeService{
     getTemplate(state:number):Observable<any>;
     importList(data:any):Observable<any>;
     deleteListe(liste:number):Observable<RequestResponse>;
+    transferListe(liste:number, ecole:number):Observable<RequestResponse>;
 }

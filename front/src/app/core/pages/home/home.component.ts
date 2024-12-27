@@ -76,9 +76,19 @@ export class HomeComponent implements OnInit{
     if((this.etdResponse) && (typeof window !== 'undefined' && localStorage)){
       localStorage.setItem('etudiants', JSON.stringify(this.etdResponse.results));
       this.clearData();
-      this.router.navigate(['/app/liste-membre']);
+      localStorage.setItem('homeMenu', '2');
+      this.reloadPage();
     }
     
+  }
+
+  transfererListe(liste: number, ecole: number) {
+    this.listeService.transferListe(liste, ecole).subscribe(
+      response=>{
+        console.log(response.message)
+        this.reloadPage(); 
+      },        
+      error => {console.error('Error sending data', error);})
   }
 
   archiverListe(liste:any, motif:string='archive'){
@@ -87,9 +97,7 @@ export class HomeComponent implements OnInit{
             console.log(response.message)
             this.reloadPage(); 
           },        
-      error => {
-            console.error('Error sending data', error);
-          })
+      error => {console.error('Error sending data', error);})
   }
 
   deleteListe(liste: number) {
@@ -98,9 +106,7 @@ export class HomeComponent implements OnInit{
             console.log(response.message)
             this.reloadPage(); 
           },        
-      error => {
-            console.error('Error sending data', error);
-          });
+      error => {console.error('Error sending data', error);});
   }
 
   refresh(page:number=0,keyword:string=this.keyword, annee:number=0, ecole:number = this.ecole){
@@ -110,8 +116,7 @@ export class HomeComponent implements OnInit{
         this.listeService.findAll(page,keyword, annee, this.ecole).subscribe(data=>this.response=data);
       }else{
         this.listeService.findAll(page,keyword, annee, ecole).subscribe(data=>this.response=data);
-      }
-      
+      }   
     }
     this.ecole = 0
     this.annee =0;
@@ -138,7 +143,6 @@ export class HomeComponent implements OnInit{
       localStorage.removeItem('nomGrp');
       localStorage.removeItem('anneeListe');
     }
-    
   }
 
 }

@@ -325,6 +325,12 @@ class CoachController extends AbstractController
 
     private function makeJury(Liste $liste, array $coaches)
     {
+        foreach($liste->getJuries() as $jury){
+            $this->entityManager->remove($jury);
+        }
+        $this->entityManager->flush();
+        $this->listeRepository->addOrUpdate($liste);
+
         $cces = $liste->getEcole()->getCoaches()->toArray();
         $coachsEcole = [];
         foreach($cces as $c){ in_array($c, $coaches, false) ? null : $coachsEcole[]=$c; }
@@ -349,7 +355,7 @@ class CoachController extends AbstractController
             
             foreach($filteredGrps as $grp){
                 $jury->addGroupe($grp);
-                $jury->setLibelle('Jury ' . $grp->getSalle()->getLibelle());
+                $jury->setLibelle('Jury '. $p+1 .' - ' . $grp->getSalle()->getLibelle());
                 $this->entityManager->persist($grp);
             }
             $this->entityManager->persist($jury);

@@ -13,6 +13,10 @@ import { environment } from "../../../../environments/environment.development";
 export class JuryServiceImpl implements JuryService{
     constructor(private http:HttpClient){}
 
+    getFinalJurySheet(liste: number): Observable<any> {
+        return this.http.get(`${environment.APIURL}/final-export?liste=${liste}`, { responseType: 'blob' });
+    }
+
     getJurySheet(liste: number, motif: string =''): Observable<any> {
         return this.http.get(`${environment.APIURL}/coach-export?liste=${liste}&motif=${motif}`, { responseType: 'blob' });
     }

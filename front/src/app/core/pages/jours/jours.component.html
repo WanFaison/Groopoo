@@ -3,11 +3,12 @@
         <div *ngIf="listeResponse" class="d-flex justify-content-between">
           <h4 class="underline-bold">{{listeResponse.results.libelle}}</h4>
           <a data-bs-toggle="modal" data-bs-target="#modifModal"
-          *ngIf="!listeResponse?.results?.isComplet"
+          *ngIf="!listeResponse?.results?.isArchived && !listeResponse?.results?.isComplet"
           class="nav-link mx-1 text-black"
           (click)="libelle = listeResponse.results.libelle;" ><i class="fas fa-lg fa-edit"></i></a>
         </div>
-        <div class="d-flex justify-content-between mt-2">
+        <div class="d-flex justify-content-between mt-2"
+         *ngIf="!listeResponse?.results?.isArchived">
           <div>
             <button *ngIf="!listeResponse?.results?.isComplet"
             data-bs-toggle="modal" data-bs-target="#addModal"
@@ -24,7 +25,7 @@
               <tr>
                 <th scope="col">Journée</th>
                 <th scope="col">Date</th>
-                <th scope="col">Actions</th>
+                <th scope="col" *ngIf="!listeResponse?.results?.isArchived && !listeResponse?.results?.isComplet">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -32,7 +33,7 @@
                <tr>
                   <th scope="row">{{item.libelle}}</th>
                   <td>{{item.date}}</td>
-                  <td>
+                  <td *ngIf="!listeResponse?.results?.isArchived && !listeResponse?.results?.isComplet">
                     <a (click)="consAbs(item.id)" class="btn btn-secondary me-2" 
                     role="button" style="color: white;">
                         Marquer les absences</a>
@@ -119,7 +120,7 @@
         </div>
         <div class="modal-body">
             <h4 class="form-label custom-label">Êtes-vous sûr de vouloir supprimer cette journée ?</h4>
-            <p>NB: La suppression de cette entité entraînera également la suppression de toutes les absences associées. </p>
+            <p>NB: La suppression de la journée entraînera également la suppression de toutes les absences associées. </p>
         </div>
         <div class="modal-footer d-flex">
             <button (click)="archJr()" type="button" class="btn btn-success">Oui</button>

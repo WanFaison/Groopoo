@@ -15,6 +15,7 @@ import { RestResponse } from '../../models/rest.response';
 import { ApiService } from '../../services/api.service';
 import { AnneeServiceImpl } from '../../services/impl/annee.service.impl';
 import { EcoleServiceImpl } from '../../services/impl/ecole.service.impl';
+import { PaginatorService } from '../../services/pagination.service';
 
 
 @Component({
@@ -33,7 +34,7 @@ export class SelectlistComponent implements OnInit{
   ecole: number = 0;
   error:boolean = false;
   user?:LogUser
-  constructor(private router:Router, private authService:AuthServiceImpl, private listeService:ListeServiceImpl, private ecoleService:EcoleServiceImpl, private apiService: ApiService, private anneeService:AnneeServiceImpl){}
+  constructor(private router:Router, private paginatorService:PaginatorService, private authService:AuthServiceImpl, private listeService:ListeServiceImpl, private ecoleService:EcoleServiceImpl, private apiService: ApiService, private anneeService:AnneeServiceImpl){}
 
   ngOnInit(): void {
     this.user = this.authService.getUser()
@@ -150,6 +151,6 @@ export class SelectlistComponent implements OnInit{
   }
 
   reloadPage() {
-    window.location.reload();
+    return this.paginatorService.reloadPage();
   }
 }

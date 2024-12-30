@@ -224,7 +224,7 @@ class ExportService{
             $sheet->setCellValue('A'.$row, $jury->getLibelle());
             $row2=$row;
             foreach($jury->getCoaches() as $coach){
-                $sheet->setCellValue('B'.$row2, $coach->getNom().''.$coach->getPrenom());
+                $sheet->setCellValue('B'.$row2, $coach->getNom().' '.$coach->getPrenom());
                 $row2++;
             }
             $row+=2;
@@ -257,7 +257,7 @@ class ExportService{
         $sheet->setCellValue('A'.$row, $jury->getLibelle());
         $row+=2;
         foreach($jury->getCoaches() as $coach){
-            $sheet->setCellValue('A'.$row, $coach->getNom().''.$coach->getPrenom());
+            $sheet->setCellValue('A'.$row, $coach->getNom().' '.$coach->getPrenom());
             $row++;
         }
             

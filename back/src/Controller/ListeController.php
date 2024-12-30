@@ -232,7 +232,6 @@ class ListeController extends AbstractController
         $sheet->setCellValue('A1', 'Group n')
                 ->setCellValue('B1', '*entrez la note du groupe ici')
                 ->getStyle('B1')->getFont()->setItalic(true);
-
         $sheet->setCellValue('A2', 'Matricule')
                 ->setCellValue('B2', 'Nom')
                 ->setCellValue('C2', 'Prenom')
@@ -240,6 +239,24 @@ class ListeController extends AbstractController
                 ->setCellValue('E2', 'Classe')
                 ->setCellValue('F2', 'Niveau')
                 ->setCellValue('G2', 'Filiere');
+
+        $sheet->setCellValue('A4', 'Group 1')
+                ->setCellValue('B4', '17');
+        $sheet->setCellValue('A5', 'ISM2223/DK-00001')
+                ->setCellValue('B5', 'John')
+                ->setCellValue('C5', 'Doe')
+                ->setCellValue('D5', 'Masculin')
+                ->setCellValue('E5', 'L3-GLRS ')
+                ->setCellValue('F5', 'LICENCE 3')
+                ->setCellValue('G5', 'GLRS')
+                
+                ->setCellValue('A6', 'ISM2223/DK-00002')
+                ->setCellValue('B6', 'Mary')
+                ->setCellValue('C6', 'Grace')
+                ->setCellValue('D6', 'Féminin')
+                ->setCellValue('E6', 'L2-TTL ')
+                ->setCellValue('F6', 'LICENCE 2')
+                ->setCellValue('G6', 'TTL');
 
         $writer = new Xlsx($spreadsheet);
         $temp_file = tempnam(sys_get_temp_dir(), 'Band-It import template.xlsx');

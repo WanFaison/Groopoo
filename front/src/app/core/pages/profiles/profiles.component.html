@@ -94,8 +94,8 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-          <h4 class="form-label custom-label">Voulez vous archiver cette utiliser?</h4>
-          <p>NB: en archivant cette entité, elle ne pourra accéder a la plateforme </p>
+          <h4 class="form-label custom-label">Voulez-vous archiver cette utiliser?</h4>
+          <p>NB: Tout utilisateur que vous archivez ne pourra plus accéder à la plateforme et sera automatiquement transféré dans la liste des utilisateurs archivés.</p>
       </div>
       <div class="modal-footer d-flex">
           <button (click)="archiveUser(userId)" type="button" class="btn btn-success">Oui</button>
@@ -114,8 +114,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-          <h4 class="form-label custom-label">Voulez vous supprimer cette utiliser?</h4>
-          <p>Note: Tout utilisateur que vous archivez ne pourra plus accéder à la plateforme et sera automatiquement transféré dans la liste des utilisateurs archivés.</p>
+          <h4 class="form-label custom-label">Voulez-vous supprimer cette utiliser?</h4>
       </div>
       <div class="modal-footer d-flex">
           <button (click)="archiveUser(userId, 1)" type="button" class="btn btn-success">Oui</button>

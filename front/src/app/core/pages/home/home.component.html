@@ -66,7 +66,7 @@
                   (click)="liste = item.id;" class="btn btn-secondary me-2"
                   data-bs-toggle="modal" data-bs-target="#ynTransModal" 
                   role="button" style="color: white;">
-                    Transferer</a>
+                    Transférer</a>
                   <a *ngIf="user?.role != 'ROLE_VISITEUR' && !item.isComplet"
                   (click)="liste = item.id;" class="btn btn-secondary me-2"
                   data-bs-toggle="modal" data-bs-target="#ynvModal" 
@@ -201,7 +201,7 @@
             data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <h4 class="form-label custom-label">Où voulez-vous transferer cette liste?</h4>
+            <h4 class="form-label custom-label">Où voulez-vous transférer cette liste?</h4>
             <select [(ngModel)]="ecole" class="form-select col-md-6" aria-label=".form-select-sm example">
               <option selected value="0">organisation...</option>
               <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>

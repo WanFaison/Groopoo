@@ -45,6 +45,7 @@ export class DonneesComponent implements OnInit{
   ajout:boolean = false;
   error:boolean = false;
   entity:number = 0;
+  entString:string = '';
   user?:LogUser
   constructor(private router:Router, private paginatorService:PaginatorService, private formBuilder: FormBuilder, private http:HttpClient, private authService:AuthServiceImpl, private coachService:CoachServiceImpl, private etageService:EtageServiceImpl, private salleService:SalleServiceImpl, private ecoleService:EcoleServiceImpl, private anneeService:AnneeServiceImpl)
   {
@@ -267,6 +268,28 @@ export class DonneesComponent implements OnInit{
   changeState(val:any){
     this.state = val;
     localStorage.setItem('stateMenu', this.state);
+    switch (this.state) {
+      case 0:
+        this.entString = 'année'
+        break;
+      case 1:
+        this.entString = 'organisation'
+        break;
+      case 2:
+        this.entString = 'salle'
+        break;
+      case 3:
+        this.entString = 'étage'
+        break;
+      case 3:
+        this.entString = 'coach'
+        break;
+    
+      default:
+        this.entString = 'année'
+        break;
+    }
+
     this.filter()
   }
   changeEnt(val:any, l:any=''){

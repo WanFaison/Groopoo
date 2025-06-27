@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RestResponse } from '../../models/rest.response';
 import { JuryModel } from '../../models/jury.model';
-import { Router } from 'express';
 import { CoachModel } from '../../models/coach.model';
 import { LogUser } from '../../models/user.model';
 import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
@@ -16,11 +15,10 @@ import { FormsModule } from '@angular/forms';
 import { PaginatorService } from '../../services/pagination.service';
 
 @Component({
-  selector: 'app-finalist',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './finalist.component.html',
-  styleUrl: './finalist.component.css'
+    selector: 'app-finalist',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './finalist.component.html',
+    styleUrl: './finalist.component.css'
 })
 export class FinalistComponent implements OnInit{
   juryResponse?:RestResponse<JuryModel[]>;

@@ -13,17 +13,15 @@ import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 import { ListeServiceImpl } from '../../services/impl/list.service.impl';
 import { GroupeServiceImpl } from '../../services/impl/groupe.service.impl';
 import { AbsenceImplService } from '../../services/impl/absence.service.impl';
-import { response } from 'express';
 import { JourModel } from '../../models/jour.model';
 import { JourServiceImpl } from '../../services/impl/jour.service.impl';
 import { PaginatorService } from '../../services/pagination.service';
 
 @Component({
-  selector: 'app-attendance',
-  standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, CommonModule, RouterModule],
-  templateUrl: './attendance.component.html',
-  styleUrl: './attendance.component.css'
+    selector: 'app-attendance',
+    imports: [FormsModule, ReactiveFormsModule, CommonModule, RouterModule],
+    templateUrl: './attendance.component.html',
+    styleUrl: './attendance.component.css'
 })
 export class AttendanceComponent implements OnInit{
   liste: number = 0;

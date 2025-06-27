@@ -13,11 +13,10 @@ import { LogUser } from '../../models/user.model';
 import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 
 @Component({
-  selector: 'app-form-user',
-  standalone: true,
-  imports: [RouterLink, RouterLinkActive, FootComponent, NavComponent, CommonModule, FormsModule, ReactiveFormsModule],
-  templateUrl: './form-user.component.html',
-  styleUrl: './form-user.component.css'
+    selector: 'app-form-user',
+    imports: [FootComponent, NavComponent, CommonModule, FormsModule, ReactiveFormsModule],
+    templateUrl: './form-user.component.html',
+    styleUrl: './form-user.component.css'
 })
 export class FormUserComponent implements OnInit{
   profileForm:FormGroup;

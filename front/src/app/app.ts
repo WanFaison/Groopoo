@@ -5,13 +5,12 @@ import { LoaderComponent } from './core/components/loader/loader.component';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet, LoginComponent, LoaderComponent],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  imports: [RouterOutlet, LoaderComponent],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
 })
-export class AppComponent implements OnInit{
-  title = 'band-it';
+export class App implements OnInit{
+  protected title = 'groopoo';
 
   ngOnInit(): void {
   }

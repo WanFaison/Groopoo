@@ -14,11 +14,10 @@ import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 import { PaginatorService } from '../../services/pagination.service';
 
 @Component({
-  selector: 'app-profiles',
-  standalone: true,
-  imports: [FormsModule, CommonModule, RouterLink, RouterLinkActive],
-  templateUrl: './profiles.component.html',
-  styleUrl: './profiles.component.css'
+    selector: 'app-profiles',
+    imports: [FormsModule, CommonModule, RouterLink, RouterLinkActive],
+    templateUrl: './profiles.component.html',
+    styleUrl: './profiles.component.css'
 })
 export class ProfilesComponent implements OnInit{
   userResponse?: RestResponse<UserModel[]>;

@@ -18,11 +18,10 @@ import { LogUser } from '../../models/user.model';
 import { PaginatorService } from '../../services/pagination.service';
 
 @Component({
-  selector: 'app-archived',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './archived.component.html',
-  styleUrl: './archived.component.css'
+    selector: 'app-archived',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './archived.component.html',
+    styleUrl: './archived.component.css'
 })
 export class ArchivedComponent implements OnInit{
   response?: RestResponse<ListeModel[]>;

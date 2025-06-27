@@ -1,7 +1,7 @@
 <div *ngIf="juryResponse" class="mt-5 row justify-content-center align-items-center h-100">
     <div class="flex-center my-3 flex-column">
         <div class="d-flex justify-content-between">
-            <h4 *ngIf="listeResponse" class="underline-bold">Jury Finalistes: {{ listeResponse?.results?.libelle }}</h4>
+            <h4 *ngIf="listeResponse" class="underline-bold">Jury Finalistes: {{ listeResponse.results.libelle }}</h4>
         </div>
         <div *ngIf="!listeResponse?.results?.isArchived">
             <button (click)="printJuryXls()" class="btn btn-info col-md-8 mb-2">Exporter le jury</button>

@@ -11,11 +11,10 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
-  selector: 'app-arch-prof',
-  standalone: true,
-  imports: [FormsModule, CommonModule, RouterLink, RouterLinkActive],
-  templateUrl: './arch-prof.component.html',
-  styleUrl: './arch-prof.component.css'
+    selector: 'app-arch-prof',
+    imports: [FormsModule, CommonModule, RouterLink, RouterLinkActive],
+    templateUrl: './arch-prof.component.html',
+    styleUrl: './arch-prof.component.css'
 })
 export class ArchProfComponent implements OnInit{
   userResponse?: RestResponse<UserModel[]>;

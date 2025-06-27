@@ -22,6 +22,14 @@ export class SalleServiceImpl implements SalleService{
         return this.http.get<any>(`${environment.APIURL}/salle-modif?salle=${salle}&keyword=${encodeURIComponent(keyword)}`);
     }
 
+    findByEcole(ecole: number=0):Observable<RestResponse<SalleModel[]>>{
+        return this.http.get<RestResponse<SalleModel[]>>(`${environment.APIURL}/get-salle?ecole=${ecole}`)
+    }
+
+    findByList(liste: number=0):Observable<RestResponse<SalleModel[]>>{
+        return this.http.get<RestResponse<SalleModel[]>>(`${environment.APIURL}/get-salle-active?liste=${liste}`)
+    }
+
     findAllPg(page: number=0, keyword: string='', ecole: number=0): Observable<RestResponse<SalleModel[]>> {
         return this.http.get<RestResponse<SalleModel[]>>(`${environment.APIURL}/liste-salle?page=${page}&keyword=${keyword}&ecole=${ecole}`);
     }

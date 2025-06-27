@@ -8,16 +8,14 @@ import { HttpClient } from '@angular/common/http';
 import { ApiService } from '../../services/api.service';
 import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 import { LogUser } from '../../models/user.model';
-import { response } from 'express';
 import { ReturnResponse } from '../../models/return.model';
 import { RequestResponse } from '../../models/rest.response';
 
 @Component({
-  selector: 'app-form-user-update',
-  standalone: true,
-  imports: [RouterLink, RouterLinkActive, FootComponent, NavComponent, CommonModule, FormsModule, ReactiveFormsModule],
-  templateUrl: './form-user-update.component.html',
-  styleUrl: './form-user-update.component.css'
+    selector: 'app-form-user-update',
+    imports: [FootComponent, NavComponent, CommonModule, FormsModule, ReactiveFormsModule],
+    templateUrl: './form-user-update.component.html',
+    styleUrl: './form-user-update.component.css'
 })
 export class FormUserUpdateComponent implements OnInit{
   updateForm:FormGroup;

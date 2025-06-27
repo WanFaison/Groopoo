@@ -9,11 +9,10 @@ import { Router } from '@angular/router';
 import { ArchProfComponent } from "../../pages/arch-prof/arch-prof.component";
 
 @Component({
-  selector: 'app-user-menu',
-  standalone: true,
-  imports: [CommonModule, NavComponent, FootComponent, ProfilesComponent, ArchProfComponent],
-  templateUrl: './user-menu.component.html',
-  styleUrl: './user-menu.component.css'
+    selector: 'app-user-menu',
+    imports: [CommonModule, NavComponent, FootComponent, ProfilesComponent, ArchProfComponent],
+    templateUrl: './user-menu.component.html',
+    styleUrl: './user-menu.component.css'
 })
 export class UserMenuComponent implements OnInit{
   state:any = 0;

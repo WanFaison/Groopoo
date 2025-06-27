@@ -15,11 +15,10 @@ import { LogUser } from '../../models/user.model';
 import { PaginatorService } from '../../services/pagination.service';
 
 @Component({
-  selector: 'app-form-coach',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
-  templateUrl: './form-coach.component.html',
-  styleUrl: './form-coach.component.css'
+    selector: 'app-form-coach',
+    imports: [CommonModule, FormsModule, ReactiveFormsModule],
+    templateUrl: './form-coach.component.html',
+    styleUrl: './form-coach.component.css'
 })
 export class FormCoachComponent implements OnInit{
   coachForm: {id: number; add: boolean; nom: string}[] = [];
@@ -31,22 +30,31 @@ export class FormCoachComponent implements OnInit{
   msg:string = '';
   ecole: number = 0;
   keyword:string = '';
+  salleForm: {id: number; add: boolean; libelle: string}[] = [];
 
   constructor(private paginatorService:PaginatorService, private router:Router, private authService:AuthServiceImpl, private listeService:ListeServiceImpl, private formBuilder: FormBuilder, private coachService:CoachServiceImpl){}
 
   ngOnInit(): void {
     if (typeof window !== 'undefined' && localStorage){
       this.liste = parseInt(localStorage.getItem('newListe') || '1', 10);
-      this.listeService.findById(this.liste).subscribe(data=>this.listeResponse=data);
+      this.listeService.findById(this.liste).subscribe(data=>{
+        this.listeResponse=data;
 
-      if(this.coachForm.length<1){
-        this.coachService.findByListe(this.liste).subscribe(data=>this.coachActiveResponse=data);
-        this.loadActiveCoaches()
-        localStorage.setItem('coachForm', JSON.stringify(this.coachForm));
-      }
-      const form = localStorage.getItem('coachForm')
-      this.coachForm = form? JSON.parse(form) : [];
+        if(this.listeResponse){
+          this.ecole = this.listeResponse.results.ecoleId
+        }
+        if(this.coachForm.length<1){
+          this.coachService.findByListe(this.liste).subscribe(data=>{
+            this.coachActiveResponse=data;
+            this.loadActiveCoaches()
+            localStorage.setItem('coachForm', JSON.stringify(this.coachForm));
+          });
+        }
+        
+      });
     }
+    const form = localStorage.getItem('coachForm');
+    this.coachForm = form? JSON.parse(form) : [];
     this.refresh(this.liste)
   }
 
@@ -57,19 +65,18 @@ export class FormCoachComponent implements OnInit{
 
   loadActiveCoaches(){
     this.coachActiveResponse?.results.forEach(item => {
-      this.coachForm.push({
+      if(!this.checkAdded(item.id)){
+        this.coachForm.push({
         id: item.id,
         add: true,
         nom: item.nom
-      })
+      })}
     });
   }
 
   checkAdded(coachId: number){
     const existingEntry = this.coachForm.find(entry => entry.id === coachId);
-    if (existingEntry) {
-      return existingEntry.add;
-    }
+    if (existingEntry) {return existingEntry.add}
     return false;
   }
 
@@ -97,10 +104,12 @@ export class FormCoachComponent implements OnInit{
   assignCoaches() {
     if (typeof window !== 'undefined' && localStorage){
       const coachs = localStorage.getItem('coachForm')
+      const salles = localStorage.getItem('salleForm')
       if(coachs && JSON.parse(coachs).length>0 && this.checkValidForm()){
         const data = {
           liste: this.liste,
-          coachs: coachs? JSON.parse(coachs):[]
+          coachs: coachs? this.coachForm.filter(coach => coach.add === true):[], 
+          salles: salles? this.salleForm.filter(salle => salle.add === true):[]
         }
   
         this.coachService.assignCoaches(data).subscribe(
@@ -115,6 +124,7 @@ export class FormCoachComponent implements OnInit{
           },
           error => {
             localStorage.removeItem('coachForm');
+            localStorage.removeItem('salleForm');
             console.error('Error sending data', error);
           }
         )
@@ -125,7 +135,7 @@ export class FormCoachComponent implements OnInit{
     
   }
 
-  refresh(liste:number=this.liste, page:number=0, keyword:string='', ecole:number=0){
+  refresh(liste:number=this.liste, page:number=0, keyword:string='', ecole:number=this.ecole){
     this.coachService.findAllPg(page, keyword, ecole, liste)
                       .subscribe(data=>{this.coachResponse=data});
   }

@@ -14,6 +14,7 @@ class ListeResponseDto
     private array $critere;
     private int $annee;
     private string $ecole;
+    private int $ecoleId;
     private string $date;
     private int $count;
     private bool $isComplete;
@@ -74,6 +75,16 @@ class ListeResponseDto
     {
         $this->ecole = $ecole;
 
+        return $this;
+    }
+
+     public function getEcoleId(): ?int
+    {
+        return $this->ecoleId;
+    }
+    public function setEcoleId(int $ecoleId): static
+    {
+        $this->ecoleId = $ecoleId;
         return $this;
     }
 
@@ -146,6 +157,7 @@ class ListeResponseDto
         $dto->setCritere($liste->getCritere());
         $dto->setAnnee($liste->getAnnee()->getId());
         $dto->setEcole($liste->getEcole()->getLibelle());
+        $dto->setEcoleId($liste->getEcole()->getId());
         $dto->setDate($liste->getDate()->format('d-m-Y'));
         $dto->setCount($liste->getGroupes()->count());
         $dto->setComplete($liste->isComplete());

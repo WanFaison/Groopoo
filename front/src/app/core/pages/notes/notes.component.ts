@@ -11,16 +11,14 @@ import { LogUser } from '../../models/user.model';
 import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 import { GroupeServiceImpl } from '../../services/impl/groupe.service.impl';
 import { ListeServiceImpl } from '../../services/impl/list.service.impl';
-import { response } from 'express';
 import { ApiService } from '../../services/api.service';
 import { PaginatorService } from '../../services/pagination.service';
 
 @Component({
-  selector: 'app-notes',
-  standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, CommonModule, RouterModule],
-  templateUrl: './notes.component.html',
-  styleUrl: './notes.component.css'
+    selector: 'app-notes',
+    imports: [FormsModule, ReactiveFormsModule, CommonModule, RouterModule],
+    templateUrl: './notes.component.html',
+    styleUrl: './notes.component.css'
 })
 export class NotesComponent implements OnInit{
   notesForm: {id:number; note:number}[] = [];

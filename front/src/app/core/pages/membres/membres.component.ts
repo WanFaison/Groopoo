@@ -25,11 +25,10 @@ import { EtudiantServiceImpl } from '../../services/impl/etudiant.service.impl';
 
 
 @Component({
-  selector: 'app-membres',
-  standalone: true,
-  imports: [FormsModule, CommonModule, RouterLink],
-  templateUrl: './membres.component.html',
-  styleUrl: './membres.component.css'
+    selector: 'app-membres',
+    imports: [FormsModule, CommonModule, RouterLink],
+    templateUrl: './membres.component.html',
+    styleUrl: './membres.component.css'
 })
 export class MembresComponent implements OnInit{
   ecoleResponse?: RestResponse<EcoleModel[]>;

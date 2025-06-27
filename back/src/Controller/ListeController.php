@@ -123,6 +123,7 @@ class ListeController extends AbstractController
                 'critere' => $r->getCritere(),
                 'annee' => $r->getAnnee(),
                 'ecole' => $r->getEcole(),
+                'ecoleId' => $r->getEcoleId(),
                 'date' => $r->getDate(),
                 'isComplet' => $r->isComplete(),
                 'isImport' => $r->isImported()
@@ -140,7 +141,7 @@ class ListeController extends AbstractController
     {
         $listeId = $request->query->getInt('liste', 0);
         $liste = $this->listeRepository->find($listeId);
-        if($liste != null){ 
+        if($liste != null){
             $dto = (new ListeResponseDto())->toDto($liste); 
             $dto = [
                     'id' => $dto->getId(),
@@ -148,6 +149,7 @@ class ListeController extends AbstractController
                     'critere' => $dto->getCritere(),
                     'annee' => $dto->getAnnee(),
                     'ecole' => $dto->getEcole(),
+                    'ecoleId' => $dto->getEcoleId(),
                     'date' => $dto->getDate(),
                     'count' => $dto->getCount(),
                     'isComplet' => $dto->isComplete(),

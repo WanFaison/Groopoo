@@ -13,15 +13,13 @@ import { JourServiceImpl } from '../../services/impl/jour.service.impl';
 import { ListeModel } from '../../models/liste.model';
 import { ListeServiceImpl } from '../../services/impl/list.service.impl';
 import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
-import { response } from 'express';
 import { PaginatorService } from '../../services/pagination.service';
 
 @Component({
-  selector: 'app-jours',
-  standalone: true,
-  imports: [FormsModule, CommonModule, RouterModule, NgbDatepickerModule],
-  templateUrl: './jours.component.html',
-  styleUrl: './jours.component.css'
+    selector: 'app-jours',
+    imports: [FormsModule, CommonModule, RouterModule, NgbDatepickerModule],
+    templateUrl: './jours.component.html',
+    styleUrl: './jours.component.css'
 })
 export class JoursComponent implements OnInit{
   jourResponse?:RestResponse<JourModel[]>;

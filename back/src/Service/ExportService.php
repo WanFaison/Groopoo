@@ -180,6 +180,7 @@ class ExportService{
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $salles = $this->salleRepository->findAllByEcoleUnarchived($liste->getEcole());
+        $wrtcnt = false;
                 
         $row = 1;
         foreach ($salles as $salle) {
@@ -187,6 +188,7 @@ class ExportService{
             if(count($groupes) >0){
                 $sheet->setCellValue('A'.$row, $salle->getLibelle());
                 $row++;
+                $wrtcnt = true;
                 
                 $coachGrp = $groupes[0]->getCoach() ? 
                             $groupes[0]->getCoach()->getNom().''.$groupes[0]->getCoach()->getPrenom() : '';
@@ -204,6 +206,7 @@ class ExportService{
                 $row+=2;
             }
         }
+        if(!$wrtcnt){$sheet->setCellValue('A1', "Aucune salle n'a encore été attribuée. Cette attribution se fait en même temps que celle des coachs.");}
 
         $writer = new Xlsx($spreadsheet);
         $temp_file = tempnam(sys_get_temp_dir(), $liste->getLibelle().'- Repartition des Coachs.xlsx');

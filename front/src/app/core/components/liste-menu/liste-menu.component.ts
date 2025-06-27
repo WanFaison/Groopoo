@@ -11,13 +11,13 @@ import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 import { FinalistComponent } from "../../pages/finalist/finalist.component";
 import { JuryComponent } from "../../pages/jury/jury.component";
 import { AttendanceComponent } from "../../pages/attendance/attendance.component";
+import { FormSalleComponent } from "../../pages/form-salle/form-salle.component";
 
 @Component({
-  selector: 'app-liste-menu',
-  standalone: true,
-  imports: [CommonModule, NavComponent, FootComponent, GroupsComponent, JoursComponent, NotesComponent, FormCoachComponent, FinalistComponent, JuryComponent, AttendanceComponent],
-  templateUrl: './liste-menu.component.html',
-  styleUrl: './liste-menu.component.css'
+    selector: 'app-liste-menu',
+    imports: [CommonModule, NavComponent, FootComponent, GroupsComponent, JoursComponent, NotesComponent, FormCoachComponent, FinalistComponent, JuryComponent, AttendanceComponent, FormSalleComponent],
+    templateUrl: './liste-menu.component.html',
+    styleUrl: './liste-menu.component.css'
 })
 export class ListeMenuComponent implements OnInit{
   state:any = 0;

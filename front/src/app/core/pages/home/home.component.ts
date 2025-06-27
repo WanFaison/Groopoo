@@ -19,11 +19,10 @@ import { LogUser } from '../../models/user.model';
 import { PaginatorService } from '../../services/pagination.service';
 
 @Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+    selector: 'app-home',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './home.component.html',
+    styleUrl: './home.component.css'
 })
 export class HomeComponent implements OnInit{
   response?: RestResponse<ListeModel[]>;

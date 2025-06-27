@@ -7,6 +7,7 @@ use App\Controller\Dto\RestResponse;
 use App\Entity\Salle;
 use App\Repository\EcoleRepository;
 use App\Repository\EtageRepository;
+use App\Repository\ListeRepository;
 use App\Repository\SalleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,17 +22,19 @@ class SalleController extends AbstractController
     private $ecoleRepository;
     private $etageRepository;
     private $salleRepository;
+    private $listeRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, SalleRepository $salleRepository, EcoleRepository $ecoleRepository, EtageRepository $etageRepository)
+    public function __construct(EntityManagerInterface $entityManager, SalleRepository $salleRepository, EcoleRepository $ecoleRepository, EtageRepository $etageRepository, ListeRepository $listeRepository)
     {
         $this->entityManager = $entityManager;
         $this->ecoleRepository = $ecoleRepository;
         $this->salleRepository = $salleRepository;
         $this->etageRepository = $etageRepository;
+        $this->listeRepository = $listeRepository;
     }
 
     #[Route('/api/liste-salle', name: 'app_salle_liste', methods: ['GET'])]
-    public function listerSalles(Request $request): JsonResponse
+    public function listerSallesPg(Request $request): JsonResponse
     {
         $page = $request->query->getInt('page', 0);
         $limit = $request->query->getInt('limit', 10);
@@ -58,6 +61,61 @@ class SalleController extends AbstractController
         $totalPages = ceil($totalItems / $limit);
 
         return RestResponse::paginateResponse($results, $page, $totalItems, $totalPages, JsonResponse::HTTP_OK);
+    }
+
+    #[Route('/api/get-salle', name: 'app_salle_liste_ecole', methods: ['GET'])]
+    public function listerSallesEcole(Request $request): JsonResponse
+    {
+        $ecoleId = $request->query->getInt('ecole', 0);
+        $ecole = $ecoleId>0 ? $this->ecoleRepository->find($ecoleId) : null;
+        $salles = $this->salleRepository->findAllByEcoleUnarchived($ecole);
+        $dtos = [];
+        foreach ($salles as $salle) {
+            $dtos[] = (new SalleResponseDto())->toDto($salle);
+        }
+        $results = [];
+        foreach ($dtos as $r) {
+            $results[] = [
+                'id' => $r->getId(),
+                'libelle' => $r->getLibelle(),
+                'ecole' => $r->getEcole(),
+                'etage' => $r->getEtage()
+            ];
+        }
+
+        $totalItems = count($salles);
+
+        return RestResponse::linearResponse($results, $totalItems, JsonResponse::HTTP_OK);
+    }
+
+    #[Route('/api/get-salle-active', name: 'app_salle_liste_active', methods: ['GET'])]
+    public function listerSallesEcoleActive(Request $request): JsonResponse
+    {
+        $listeId = $request->query->getInt('liste', 0);
+        $liste = $this->listeRepository->find($listeId);
+
+        $salles = [];
+        foreach($liste->getGroupes() as $grp){
+            in_array($grp->getSalle(), $salles, false)? null:$cc=$grp->getSalle();
+            $cc ? $salles[] = $cc : null;
+        }
+        $dtos = [];
+        foreach ($salles as $salle) {
+            $dtos[] = (new SalleResponseDto())->toDto($salle);
+        }
+        $results = [];
+        foreach ($dtos as $r) {
+            $results[] = [
+                'id' => $r->getId(),
+                'libelle' => $r->getLibelle(),
+                'ecole' => $r->getEcole(),
+                'etage' => $r->getEtage()
+            ];
+        }
+
+        $totalItems = count($salles);
+
+        return RestResponse::linearResponse($results, $totalItems, JsonResponse::HTTP_OK);
     }
 
     #[Route('/api/salle-modif', name: 'api_salle_modif', methods: ['GET'])]

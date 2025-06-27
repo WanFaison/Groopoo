@@ -13,7 +13,6 @@ import { ListeServiceImpl } from '../../services/impl/list.service.impl';
 import { EtudiantCreate, EtudiantCreateXlsx, EtudiantModel } from '../../models/etudiant.model';
 import { EtudiantServiceImpl } from '../../services/impl/etudiant.service.impl';
 import { HttpResponse } from '@angular/common/http';
-import { response } from 'express';
 import { LogUser } from '../../models/user.model';
 import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 import { ClasseModel } from '../../models/classe.model';
@@ -21,11 +20,10 @@ import { ClasseServiceImpl } from '../../services/impl/classe.service.impl';
 import { PaginatorService } from '../../services/pagination.service';
 
 @Component({
-  selector: 'app-groups',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
-  templateUrl: './groups.component.html',
-  styleUrl: './groups.component.css'
+    selector: 'app-groups',
+    imports: [CommonModule, FormsModule, ReactiveFormsModule],
+    templateUrl: './groups.component.html',
+    styleUrl: './groups.component.css'
 })
 export class GroupsComponent implements OnInit{
   etdForm:FormGroup;

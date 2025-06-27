@@ -19,11 +19,10 @@ import { PaginatorService } from '../../services/pagination.service';
 
 
 @Component({
-  selector: 'app-selectlist',
-  standalone: true,
-  imports: [NavComponent, FootComponent, FormsModule, CommonModule, RouterLink],
-  templateUrl: './selectlist.component.html',
-  styleUrl: './selectlist.component.css'
+    selector: 'app-selectlist',
+    imports: [NavComponent, FootComponent, FormsModule, CommonModule],
+    templateUrl: './selectlist.component.html',
+    styleUrl: './selectlist.component.css'
 })
 export class SelectlistComponent implements OnInit{
   ecoleResponse?: RestResponse<EcoleModel[]>;

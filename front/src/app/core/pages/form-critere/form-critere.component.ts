@@ -18,11 +18,10 @@ import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 
 
 @Component({
-  selector: 'app-form-critere',
-  standalone: true,
-  imports: [RouterLink, RouterLinkActive, FootComponent, NavComponent, CommonModule, FormsModule, ReactiveFormsModule],
-  templateUrl: './form-critere.component.html',
-  styleUrl: './form-critere.component.css'
+    selector: 'app-form-critere',
+    imports: [FootComponent, NavComponent, CommonModule, FormsModule, ReactiveFormsModule],
+    templateUrl: './form-critere.component.html',
+    styleUrl: './form-critere.component.css'
 })
 export class FormCritereComponent implements OnInit{
   nivResponse?: RestResponse<NiveauModel[]>;

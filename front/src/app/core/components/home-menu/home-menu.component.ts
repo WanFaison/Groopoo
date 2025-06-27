@@ -9,11 +9,10 @@ import { ArchivedComponent } from "../../pages/archived/archived.component";
 import { MembresComponent } from "../../pages/membres/membres.component";
 
 @Component({
-  selector: 'app-home-menu',
-  standalone: true,
-  imports: [CommonModule, NavComponent, FootComponent, HomeComponent, ArchivedComponent, MembresComponent],
-  templateUrl: './home-menu.component.html',
-  styleUrl: './home-menu.component.css'
+    selector: 'app-home-menu',
+    imports: [CommonModule, NavComponent, FootComponent, HomeComponent, ArchivedComponent, MembresComponent],
+    templateUrl: './home-menu.component.html',
+    styleUrl: './home-menu.component.css'
 })
 export class HomeMenuComponent implements OnInit{
   state:any = 0;

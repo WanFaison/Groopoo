@@ -269,42 +269,37 @@ class CoachController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $coachs = $data['coachs'] ?? [];
+        $salles = $data['salles'] ?? [];
         $listeId = $data['liste'] ?? 0;
 
         $liste = $this->listeRepository->find($listeId);
         $groups = $this->groupeRepository->findAllByListe($liste);
-        $numGP = intdiv(count($groups), count($coachs));
-        $numGP = $numGP > 0 ? $numGP + 1 : 1;
-        $salles = $this->salleRepository->findAllByEcoleUnarchived($liste->getEcole());
 
-        $addNum = 0;
-        foreach($coachs as $c){ $c['add'] ? $addNum++ : null; }
-        if($addNum > count($salles)){
+        count($coachs) > 0 ? $numGP = intdiv(count($groups) + count($coachs) - 1, count($coachs)) : null;
+        if(count($coachs) > count($salles)){
             return RestResponse::requestResponse('More coaches than salles', 1, JsonResponse::HTTP_OK);
         }
 
-        $coaches = [];
         $sch = 0;
         $cnt = 0;
-        while($sch < count($coachs)){
-            $coach = $coachs[$sch]['add'] ? $this->coachRepository->find($coachs[$sch]['id']) : null;
+        foreach ($coachs as $c) {
+            $coach = $this->coachRepository->find($c['id']);
             $coach ? $this->checkCoachInListe($coach, $liste) : null;
             while((isset($groups[$cnt])) && ($cnt < $numGP*($sch + 1)) && ($coach)){
                 $cnt++;
                 $grp = $groups[$cnt - 1];
-                error_log("Assigned coach {$coach->getId()} to group {$grp->getId()}");
                 $coach->addGroupe($grp);
                 $salles[$sch]->addGroupe($grp);
                 $this->groupeRepository->addOrUpdate($grp);
             }
+
             $this->entityManager->persist($coach);
             $this->entityManager->persist($salles[$sch]);
             $this->entityManager->flush();
-            $coaches[] = $coach;
             $sch++;
         }
 
-        $this->makeJury($liste, $coaches);
+        $this->makeJury($liste, $coachs);
 
         return RestResponse::requestResponse('Data received and used', 0, JsonResponse::HTTP_OK);
     }

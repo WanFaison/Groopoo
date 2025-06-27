@@ -16,17 +16,15 @@ import { SalleModel } from '../../models/salle.model';
 import { SalleServiceImpl } from '../../services/impl/salle.service.impl';
 import { EtageModel } from '../../models/etage.model';
 import { EtageServiceImpl } from '../../services/impl/etage.service.impl';
-import { response } from 'express';
 import { CoachModel } from '../../models/coach.model';
 import { CoachServiceImpl } from '../../services/impl/coach.service.impl';
 import { PaginatorService } from '../../services/pagination.service';
 
 @Component({
-  selector: 'app-donnees',
-  standalone: true,
-  imports: [NavComponent, FootComponent, FormsModule, ReactiveFormsModule, CommonModule],
-  templateUrl: './donnees.component.html',
-  styleUrl: './donnees.component.css'
+    selector: 'app-donnees',
+    imports: [NavComponent, FootComponent, FormsModule, ReactiveFormsModule, CommonModule],
+    templateUrl: './donnees.component.html',
+    styleUrl: './donnees.component.css'
 })
 export class DonneesComponent implements OnInit{
   state:any;
@@ -281,7 +279,7 @@ export class DonneesComponent implements OnInit{
       case 3:
         this.entString = 'étage'
         break;
-      case 3:
+      case 4:
         this.entString = 'coach'
         break;
     
@@ -314,23 +312,24 @@ export class DonneesComponent implements OnInit{
     return false;
   }
 
-  refresh(page:number=0,keyword:string=""){
+  refresh(page:number=0,keyword:string="",ecole:number=0){
     this.anneeService.findAllPg(page,keyword).subscribe(data=>this.anneeResponse=data);
     this.ecoleService.findAllPg(page,keyword).subscribe(data=>this.ecoleResponse=data);
+    this.salleService.findAllPg(page,keyword, ecole).subscribe(data=>this.salleResponse=data);
+    this.etageService.findAllPg(page,keyword, ecole).subscribe(data=>this.etageResponse=data);
+    this.coachService.findAllPg(page,keyword, ecole).subscribe(data=>this.coachResponse=data);
   }
   paginate(page:number){
     this.filter(page, this.keyword, this.ecole)
   }
   filter(page:number=0, keyword:string="", ecole:number=0){
+    this.ecoleService.findAll().subscribe(data=>this.ecoleResponse=data);
     if(this.state == 2){
       this.salleService.findAllPg(page, keyword, ecole).subscribe(data=>this.salleResponse=data)
-      this.ecoleService.findAll().subscribe(data=>this.ecoleResponse=data);
     }else if(this.state == 3){
       this.etageService.findAllPg(page, keyword, ecole).subscribe(data=>this.etageResponse=data);
-      this.ecoleService.findAll().subscribe(data=>this.ecoleResponse=data);
     }else if(this.state == 4){
       this.coachService.findAllPg(page, keyword, ecole).subscribe(data=>this.coachResponse=data);
-      this.ecoleService.findAll().subscribe(data=>this.ecoleResponse=data);
     }else{
       this.refresh(page,keyword)
     }

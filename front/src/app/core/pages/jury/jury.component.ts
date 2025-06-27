@@ -14,15 +14,13 @@ import { ListeModel } from '../../models/liste.model';
 import { JuryServiceImpl } from '../../services/impl/jury.service.impl';
 import { GroupeReqModel } from '../../models/groupe.model';
 import { CoachModel } from '../../models/coach.model';
-import { response } from 'express';
 import { PaginatorService } from '../../services/pagination.service';
 
 @Component({
-  selector: 'app-jury',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
-  templateUrl: './jury.component.html',
-  styleUrl: './jury.component.css'
+    selector: 'app-jury',
+    imports: [CommonModule, FormsModule, ReactiveFormsModule],
+    templateUrl: './jury.component.html',
+    styleUrl: './jury.component.css'
 })
 export class JuryComponent implements OnInit{
   juryResponse?:RestResponse<JuryModel[]>;

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donnée-Anné</title>
+</head>
+<app-header></app-header>
+<app-header-base-de-donnee></app-header-base-de-donnee>
+
+<body>
+    <!-- debut Card -->
+
+    <div class="cards-container my-4">
+        <div class="card-item card text-center "
+            style="border: 1px solid #F3B700; box-shadow: 1px 1px 5px #F3B700; padding: 15px;">
+            <div class="card-body d-flex justify-content-around">
+                <i class="bi bi-people-fill card-icon" style="background-color: #E63462;"></i>
+                <i class="fa fa-users" aria-hidden="true"></i>
+                <div>
+                    <h3 class="card-title mt-2">150</h3>
+                    <h5 class="card-text text-muted small">Total Groupes</h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-item card text-center "
+            style="border: 1px solid #F3B700; box-shadow: 1px 1px 5px #F3B700; padding: 15px;">
+            <div class="card-body d-flex justify-content-around ">
+                <i class="bi bi-mortarboard-fill card-icon"></i>
+                <div>
+                    <h3 class="card-title mt-2">12000</h3>
+                    <h5 class="card-text text-muted small">Total Etudiants</h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-item card text-center"
+            style="border: 1px solid #F3B700; box-shadow: 1px 1px 5px #F3B700; padding: 15px;">
+            <div class="card-body d-flex justify-content-around">
+                <i class="bi bi-buildings-fill card-icon" style="background-color: #F3B700;"></i>
+                <div>
+                    <h3 class="card-title mt-2">50</h3>
+                    <h5 class="card-text text-muted small">Total Classe</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHOISIR FICHIER -->
+
+    <div class="d-flex justify-content-center">
+        <div class="file-container d-flex align-items-center mb-3">
+            <div class="file-box position-relative flex-grow-1 d-flex align-items-center">
+                <!-- Barre de recherche -->
+                <div class="d-flex justify-content-center mt-3 mb-3">
+                    <div class="input-group shadow-sm rounded-pill">
+                        <input type="text" class="form-control border-0 rounded-start-pill ps-3"
+                            placeholder="Rechercher..." style="font-size: 15px; background-color: #f8f9fa;">
+                        <button class="btn rounded-end-pill" type="button"
+                            style="background-color: #E63462; color: white; font-weight: 500;">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bouton extérieur -->
+            <button class="btn btn-light border ms-2 no-radius" style="background-color: #104547; color: white">
+                <i class="bi bi-arrow-repeat"></i>
+            </button>
+
+            <button class="btn btn-light border ms-2 no-radius" style="background-color: #F3B700; color: white"
+                data-bs-toggle="modal" data-bs-target="#ajouterLibelleModal">
+                <i class="bi bi-plus-square"></i>
+            </button>
+
+
+            <!-- La modale -->
+            <div class="modal fade" id="ajouterLibelleModal" tabindex="-1" aria-labelledby="ajouterLibelleLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color: #104547; color: white;">
+                            <h5 class="modal-title" id="ajouterLibelleLabel">Ajouter un Coach</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="nom" class="form-label">Nom</label>
+                                    <input type="nom" class="form-control" id="nom" placeholder="Entrer nom...">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="prenom" class="form-label">Prénom</label>
+                                    <input type="prenom" class="form-control" id="prenom"
+                                        placeholder="Entrer prenom...">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="Telephone" class="form-label">Telephone</label>
+                                    <input type="text" class="form-control" id="telephone"
+                                        placeholder="Entrer Telephone...">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="Email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" placeholder="email ...">
+                                </div>
+
+
+                                <div class="mb-3">
+                                    <select class="form-select" id="organisation">
+                                        <option>Sélectionner l'organisation</option>
+                                        <option>Ecole de Managements</option>
+                                        <option>Ecole d'Ingénieurs & DC</option>
+                                        <option>Ecole de Droit</option>
+                                    </select>
+                                </div>
+                                <div class="d-flex">
+                                    <p class="me-2">Etat:</p>
+                                    <div class="form-check">
+
+                                        <input class="form-check-input" type="checkbox" value="" id="checkChecked"
+                                            checked>
+                                        <label class="form-check-label me-2" for="checkChecked">
+                                            Debutant
+                                        </label>
+                                    </div>
+                                    <div class="form-check me-2">
+                                        <input class="form-check-input" type="checkbox" value="" id="checkChecked"
+                                            checked>
+                                        <label class="form-check-label" for="checkChecked">
+                                            Moyen
+                                        </label>
+                                    </div>
+                                    <div class="form-check me-2">
+                                        <input class="form-check-input" type="checkbox" value="" id="checkChecked"
+                                            checked>
+                                        <label class="form-check-label" for="checkChecked">
+                                            Senior
+                                        </label>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Confirmer</button>
+                            <button type="button" class="btn"
+                                style="background-color: #104547; color: white;">Quitter</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- table -->
+    <div class="d-flex justify-content-center">
+        <table class="table w-75 text-center">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Tel</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Etat</th>
+                    <th scope="col">Organisation</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Marta </th>
+                    <td>778903245</td>
+                    <td>marta@gmailcom</td>
+                    <td>Senior</td>
+                    <td>Ecole de Managements</td>
+                    <td>
+                        <i class="bi bi-pencil-square text-dark me-3"></i>
+                        <i class="bi bi-trash-fill text-danger "></i>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Moustapha</th>
+                    <td>776542211</td>
+                    <td>moustapha@gmail.com</td>
+                    <td>Debutant</td>
+                    <td>Ecole d'Ingénieurs & DC</td>
+                    <td>
+                        <i class="bi bi-pencil-square text-dark me-3"></i>
+                        <i class="bi bi-trash-fill text-danger"></i>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Gana</th>
+                    <td>779908754</td>
+                    <td>gana@gmail.com</td>
+                    <td>Senior</td>
+                    <td>Ecole de Droit</td>
+                    <td>
+                        <i class="bi bi-pencil-square text-dark me-3"></i>
+                        <i class="bi bi-trash-fill text-danger"></i>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Mama Nar</th>
+                    <td>770092345</td>
+                    <td>mamanar@gmail.com</td>
+                    <td>Senior</td>
+                    <td>Ecole de Managements</td>
+                    <td>
+                        <i class="bi bi-pencil-square text-dark me-3"></i>
+                        <i class="bi bi-trash-fill text-danger "></i>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Souleymane</th>
+                    <td>772232211</td>
+                    <td>souleymane@gmail.com</td>
+                    <td>Senior</td>
+                    <td>Ecole d'Ingénieurs & DC</td>
+                    <td>
+                        <i class="bi bi-pencil-square text-dark me-3"></i>
+                        <i class="bi bi-trash-fill text-danger "></i>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Mactar</th>
+                    <td>777770011</td>
+                    <td>mactar@gmail.com</td>
+                    <td>Debutant</td>
+                    <td>Ecole de Droit</td>
+                    <td>
+                        <i class="bi bi-pencil-square text-dark me-3"></i>
+                        <i class="bi bi-trash-fill text-danger"></i>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+</body>
+
+</html>
+<app-footer></app-footer>

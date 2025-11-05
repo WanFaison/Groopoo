@@ -1,0 +1,24 @@
+  .form-check-input {
+    border-color: #F09D13 !important;
+  }
+  .form-check-input:checked {
+    background-color: #F09D13 !important;
+    border-color: #F09D13 !important;
+  }
+  .form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem #f09d1344 !important;
+    border-color: #F09D13 !important;
+  }
+
+  .label-flex {
+    display: flex;
+    /* margin-left: 30px; */
+    align-items: center;
+    gap: 10px; 
+  }
+.form-check-input{
+    margin-left: 80%;
+}
+
+
+  

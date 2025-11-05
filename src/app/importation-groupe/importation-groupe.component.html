@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Importation Groupe</title>
+</head>
+<app-header></app-header>
+<app-header-base-de-donnee></app-header-base-de-donnee>
+
+<body>
+    <!-- debut Card -->
+
+    <div class="cards-container my-4">
+        <div class="card-item card text-center "
+            style="border: 1px solid #F3B700; box-shadow: 1px 1px 5px #F3B700; padding: 15px;">
+            <div class="card-body d-flex justify-content-around">
+                <i class="bi bi-people-fill card-icon" style="background-color: #E63462;"></i>
+                <i class="fa fa-users" aria-hidden="true"></i>
+                <div>
+                    <h3 class="card-title mt-2">150</h3>
+                    <h5 class="card-text text-muted small">Total Groupes</h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-item card text-center "
+            style="border: 1px solid #F3B700; box-shadow: 1px 1px 5px #F3B700; padding: 15px;">
+            <div class="card-body d-flex justify-content-around ">
+                <i class="bi bi-mortarboard-fill card-icon"></i>
+                <div>
+                    <h3 class="card-title mt-2">12000</h3>
+                    <h5 class="card-text text-muted small">Total Etudiants</h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-item card text-center"
+            style="border: 1px solid #F3B700; box-shadow: 1px 1px 5px #F3B700; padding: 15px;">
+            <div class="card-body d-flex justify-content-around">
+                <i class="bi bi-buildings-fill card-icon" style="background-color: #F3B700;"></i>
+                <div>
+                    <h3 class="card-title mt-2">50</h3>
+                    <h5 class="card-text text-muted small">Total Classe</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHOISIR FICHIER -->
+
+    <div class="d-flex justify-content-center">
+        <div class="file-container d-flex align-items-center mb-3">
+            <div class="file-box position-relative flex-grow-1 d-flex align-items-center">
+
+                <input type="file" class="form-control no-radius" accept=".pdf,.doc,.docx,.jpg,.png"
+                    placeholder="Choisir un fichier depuis votre ordinateur">
+            </div>
+
+            <button class="btn btn-icon no-radius ms-2" type="button" style="background-color:#E63462;"
+                data-bs-toggle="modal" data-bs-target="#modalOrganisation">
+                <i class="bi bi-list text-white"></i>
+            </button>
+
+            <!-- Bouton pour affiner par année -->
+            <button class="btn btn-light border ms-2 no-radius" style="background-color: #104547; color: white"
+                data-bs-toggle="modal" data-bs-target="#modalAnnee">
+                <i class="bi bi-sliders"></i>
+            </button>
+
+
+            <!-- 🌸 MODALE : Affiner par organisation -->
+            <div class="modal fade" id="modalOrganisation" tabindex="-1" aria-labelledby="modalOrganisationLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color:#E63462; color:white;">
+                            <h5 class="modal-title" id="modalOrganisationLabel">Affiner les résultats par organisation
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Fermer"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="organisationSelect" class="form-label">Organisation</label>
+                                    <select class="form-select" id="organisationSelect">
+                                        <option selected disabled>Choisissez une organisation</option>
+                                        <option>Organisation A</option>
+                                        <option>Organisation B</option>
+                                        <option>Organisation C</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                            <button type="button" class="btn text-white"
+                                style="background-color:#E63462;">Appliquer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- 🟦 MODALE : Affiner par année -->
+            <div class="modal fade" id="modalAnnee" tabindex="-1" aria-labelledby="modalAnneeLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color:#104547; color:white;">
+                            <h5 class="modal-title" id="modalAnneeLabel">Affiner les résultats par année</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Fermer"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="anneeSelect" class="form-label">Année</label>
+                                    <select class="form-select" id="anneeSelect">
+                                        <option selected disabled>Choisissez une année</option>
+                                        <option>2022</option>
+                                        <option>2023</option>
+                                        <option>2024</option>
+                                        <option>2025</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                            <button type="button" class="btn text-white"
+                                style="background-color:#104547;">Appliquer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+
+    <!-- boutton -->
+
+    <div class="d-flex flex-wrap gap-3 mb-3 m-lg-3">
+        <!-- Bouton Importer les groupes -->
+        <label for="importGroupes" class="btn text-white mb-0" style="background-color:#F09D13;">
+            <i class="bi bi-cloud-arrow-down-fill me-2"></i>Importer les groupe
+        </label>
+        <!-- Bouton Importer les fichiers -->
+        <input type="file" id="importGroupes" accept=".csv,.xlsx" hidden>
+        <label for="modelefichier" class="btn text-white mb-0" style="background-color:#E73664;">
+            <i class="bi bi-cloud-arrow-up-fill me-2"></i>Modèle de fichier
+        </label>
+    </div>
+
+</body>
+
+</html>
+<app-footer></app-footer>

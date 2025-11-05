@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<app-header></app-header>
+<app-header1></app-header1>
+
+<body>
+
+
+  <h4 class="text-success text-center">Créer un Projet</h4>
+  <h5 class="text-center mb-2">ISM DIGITAL CAMPUS</h5>
+  <p class="text-center text-muted mb-4">Project Name | 2025 <br> 120 Membres - 0 Groupe</p>
+  <div class="d-flex justify-content-center text-center">
+    <p class="me-3"><span class="bg-light rounded-circle p-2">2</span> Paramètre</p><i class="bi bi-chevron-right"></i>
+    <p class="ms-4"><span class="bg-warning rounded-circle p-2">3</span> Advancé</p>
+  </div>
+
+
+  <div class="d-flex flex-column align-items-center mt-4 mb-3">
+
+    <!-- Bouton Filière + Ajouter -->
+    <div class="d-flex justify-content-center align-items-center w-25 flex-wrap">
+      <button class="btn btn-primary m-2 flex-grow-1" (click)="toggleFiliere()"
+        style="background: linear-gradient(90deg, #6C6C6C, #FF9F00, #6C6C6C);">Filière</button>
+      <button *ngIf="showFiliere" class="btn btn-outline-primary m-2">
+        <i class="bi bi-plus-circle"></i> Ajouter
+      </button>
+    </div>
+    <!-- Section Filière -->
+    <div class="d-flex justify-content-center" *ngIf="showFiliere">
+      <div id="filiere" class="section d-flex flex-wrap justify-content-center align-items-start p-4 rounded-3">
+        <div>
+          <select class="form-select w-100 mx-auto m-3">
+            <option>Choix fillière: CPD</option>
+            <option>Informatique</option>
+            <option>Communication Digitale</option>
+            <option>Marketing</option>
+            <option>Design</option>
+          </select>
+
+          <select class="form-select w-100 mx-auto m-3">
+            <option>Choix fillière: CPD</option>
+            <option>Ai</option>
+            <option>Reseau Telecom</option>
+            <option>Developpement web</option>
+            <option>Art</option>
+          </select>
+
+          <select class="form-select w-100 mx-auto">
+            <option>Choix fillière: CPD</option>
+            <option>Ai</option>
+            <option>Reseau Telecom</option>
+            <option>Developpement web</option>
+            <option>Art</option>
+          </select>
+
+        </div>
+
+        <div class="number">
+          <!-- <h6>Choisissez une Number</h6> -->
+          <select class="form-select w-75 mx-auto m-3">
+            <option>Number: 0</option>
+            <option>1</option>
+            <option> 2</option>
+            <option>3 </option>
+            <option>4</option>
+
+          </select>
+
+
+          <!-- <h6>Choisissez une Number</h6> -->
+          <select class="form-select w-75 mx-auto m-3">
+            <option>Number: 0</option>
+            <option>1</option>
+            <option> 2</option>
+            <option>3 </option>
+            <option>4</option>
+          </select>
+
+
+          <!-- <h6>Choisissez une Number</h6> -->
+          <select class="form-select w-75 mx-auto m-3">
+            <option>Number: 0</option>
+            <option>1</option>
+            <option> 2</option>
+            <option>3 </option>
+            <option>4</option>
+          </select>
+
+        </div>
+
+        <div class="mt-3">
+          <div class="m-2">
+            <i class="bi bi-plus-square icon-btn add"></i>
+          </div>
+          <div class="m-2">
+            <i class="bi bi-plus-square icon-btn add me-2"></i>
+            <i class="bi bi-dash-square icon-btn remove"></i>
+          </div>
+          <div class="m-2">
+            <i class="bi bi-plus-square icon-btn add"></i>
+          </div>
+
+        </div>
+
+        <div class="d-flex ">
+          <div>
+            <!-- <h6>Choisissez une Filière</h6> -->
+            <select class="form-select w-100 mx-auto m-3">
+              <option>Choix fillière: CPD</option>
+              <option>Informatique</option>
+              <option>Communication Digitale</option>
+              <option>Marketing</option>
+              <option>Design</option>
+            </select>
+            <select class="form-select w-100 mx-auto m-3">
+              <option>Choix fillière: CPD</option>
+              <option>Ai</option>
+              <option>Reseau Telecom</option>
+              <option>Developpement web</option>
+              <option>Art</option>
+            </select>
+            <select class="form-select w-100 mx-auto">
+              <option>Choix fillière: CPD</option>
+              <option>Ai</option>
+              <option>Reseau Telecom</option>
+              <option>Developpement web</option>
+              <option>Art</option>
+            </select>
+          </div>
+          <div class="number">
+            <select class="form-select w-75 mx-auto m-3">
+              <option>Number: 0</option>
+              <option>1</option>
+              <option> 2</option>
+              <option>3 </option>
+              <option>4</option>
+
+            </select>
+            <select class="form-select w-75 mx-auto m-3">
+              <option>Number: 0</option>
+              <option>1</option>
+              <option> 2</option>
+              <option>3 </option>
+              <option>4</option>
+            </select>
+            <select class="form-select w-75 mx-auto m-3">
+              <option>Number: 0</option>
+              <option>1</option>
+              <option> 2</option>
+              <option>3 </option>
+              <option>4</option>
+            </select>
+
+          </div>
+
+          <div class="mt-3">
+            <div class="m-2">
+
+              <i class="bi bi-plus-square icon-btn add me-2"></i>
+              <i class="bi bi-dash-square icon-btn remove"></i>
+            </div>
+            <div class="m-2">
+
+              <i class="bi bi-plus-square icon-btn add g-1 me-2"></i>
+              <i class="bi bi-dash-square icon-btn remove"></i>
+            </div>
+            <div class="m-2">
+
+              <i class="bi bi-plus-square icon-btn add me-2"></i>
+              <i class="bi bi-dash-square icon-btn remove"></i>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bouton Niveau -->
+    <div class="d-flex justify-content-center align-items-center w-25 flex-wrap mt-3">
+      <button class="btn btn-success m-2 flex-grow-1" (click)="toggleClasse()"
+        style="background: linear-gradient(90deg, #F09D13, #E73664, #F09D13);">Classe</button>
+      <button *ngIf="showClasse" class="btn btn-outline-success m-2">
+        <i class="bi bi-plus-circle"></i> Ajouter
+      </button>
+    </div>
+
+    <!-- Section Classe -->
+    <div *ngIf="showClasse"
+      class="section d-flex flex-wrap justify-content-center align-items-start p-4 rounded-3 w-100">
+      <div class="d-flex ">
+        <div>
+          <!-- <h6>Choisissez une Filière</h6> -->
+          <select class="form-select w-100 mx-auto m-3">
+            <option>Choix fillière: CPD</option>
+            <option>Informatique</option>
+            <option>Communication Digitale</option>
+            <option>Marketing</option>
+            <option>Design</option>
+          </select>
+          <select class="form-select w-100 mx-auto m-3">
+            <option>Choix fillière: CPD</option>
+            <option>Ai</option>
+            <option>Reseau Telecom</option>
+            <option>Developpement web</option>
+            <option>Art</option>
+          </select>
+          <select class="form-select w-100 mx-auto">
+            <option>Choix fillière: CPD</option>
+            <option>Ai</option>
+            <option>Reseau Telecom</option>
+            <option>Developpement web</option>
+            <option>Art</option>
+          </select>
+        </div>
+        <div class="number">
+          <select class="form-select w-75 mx-auto m-3">
+            <option>Number: 0</option>
+            <option>1</option>
+            <option> 2</option>
+            <option>3 </option>
+            <option>4</option>
+
+          </select>
+          <select class="form-select w-75 mx-auto m-3">
+            <option>Number: 0</option>
+            <option>1</option>
+            <option> 2</option>
+            <option>3 </option>
+            <option>4</option>
+          </select>
+          <select class="form-select w-75 mx-auto m-3">
+            <option>Number: 0</option>
+            <option>1</option>
+            <option> 2</option>
+            <option>3 </option>
+            <option>4</option>
+          </select>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Bouton Niveau -->
+    <div class="d-flex justify-content-center align-items-center w-25 flex-wrap mt-3">
+      <button class="btn btn-success m-2 flex-grow-1" (click)="toggleNiveau()"
+        style="background: linear-gradient(90deg, #E73664, #124E50, #E73664);">Niveau</button>
+      <button *ngIf="showNiveau" class="btn btn-outline-success m-2">
+        <i class="bi bi-plus-circle"></i> Ajouter
+      </button>
+    </div>
+
+    <!-- Section Niveau -->
+    <div *ngIf="showNiveau"
+      class="section d-flex flex-wrap justify-content-center align-items-start p-4 rounded-3 w-100">
+      <div class="d-flex ">
+        <div>
+
+          <select class="form-select w-100 mx-auto m-3">
+            <option>Niveau : Licence 1 </option>
+            <option>Informatique</option>
+            <option>Communication Digitale</option>
+            <option>Marketing</option>
+            <option>Design</option>
+          </select>
+          <select class="form-select w-100 mx-auto m-3">
+            <option>Niveau : Licence 3</option>
+            <option>Ai</option>
+            <option>Reseau Telecom</option>
+            <option>Developpement web</option>
+            <option>Art</option>
+          </select>
+          <select class="form-select w-100 mx-auto">
+            <option>Niveau : Master 1 </option>
+            <option>Ai</option>
+            <option>Reseau Telecom</option>
+            <option>Developpement web</option>
+            <option>Art</option>
+          </select>
+        </div>
+        <div class="number">
+          <select class="form-select w-75 mx-auto m-3">
+            <option>Number: 0</option>
+            <option>1</option>
+            <option> 2</option>
+            <option>3 </option>
+            <option>4</option>
+
+          </select>
+          <select class="form-select w-75 mx-auto m-3">
+            <option>Number: 0</option>
+            <option>1</option>
+            <option> 2</option>
+            <option>3 </option>
+            <option>4</option>
+          </select>
+          <select class="form-select w-75 mx-auto m-3">
+            <option>Number: 0</option>
+            <option>1</option>
+            <option> 2</option>
+            <option>3 </option>
+            <option>4</option>
+          </select>
+
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Bouton Sexe -->
+    <div class="d-flex justify-content-center align-items-center w-25 flex-wrap mt-3">
+      <button class="btn btn-success m-2 flex-grow-1" (click)="toggleSexe()"
+        style="background: linear-gradient(90deg, #104547, #27A8AD, #104547);">Sexe</button>
+      <button *ngIf="showSexe" class="btn btn-outline-success m-2">
+        <i class="bi bi-plus-circle"></i> Ajouter
+      </button>
+    </div>
+
+    <!-- Section Sexe -->
+    <div *ngIf="showSexe" class="section d-flex flex-wrap justify-content-center align-items-start p-4 rounded-3 w-100">
+      <div class="d-flex ">
+        <div>
+
+          <select class="form-select w-100 mx-auto m-3">
+            <option>Male </option>
+            <option>Femelle</option>
+
+          </select>
+          <select class="form-select w-100 mx-auto m-3">
+            <option>Femelle</option>
+            <option>Male</option>
+
+          </select>
+
+        </div>
+        <div class="number">
+          <select class="form-select w-100 mx-auto m-3">
+            <option>Number: 0</option>
+            <option>1</option>
+            <option> 2</option>
+
+          </select>
+          <select class="form-select w-100 mx-auto m-3">
+            <option>Number: 0</option>
+            <option>1</option>
+            <option> 2</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex justify-content-center mt-3">
+
+    <button class="btn w-50 w-sm-75 w-md-50 w-lg-25 mb-4 text-white border-0"
+      style="background: linear-gradient(90deg, #E63462, #FF9F00, #104547);">
+      Continuer
+    </button>
+
+  </div>
+
+</body>
+
+</html>
+<app-footer></app-footer>

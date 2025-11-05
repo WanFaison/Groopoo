@@ -1,0 +1,54 @@
+/* Conteneur principal */
+.login-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  /* Image */
+  .imag img {
+    width: 100%;
+    height: auto;
+   
+  } 
+  
+  /* Formulaire */
+  .login-form {
+     flex: 1;
+    padding: 2rem 1.5rem; 
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  /* Bouton */
+  .btn-login {
+    background-color: #104547;
+    color: #fff;
+    border: none;
+    border-radius: 0;
+    height: 45px;
+    font-weight: 600;
+  }
+  
+  /* Desktop */
+  @media (min-width: 768px) {
+    .login-container {
+      flex-direction: row;
+    }
+  
+    .imag {
+      width: 50%;
+    }
+  
+    .login-form {
+      width: 50%;
+      padding: 3rem;
+    }
+  
+    .login-title {
+      font-size: 1.2rem;
+    }
+  }
+  

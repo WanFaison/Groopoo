@@ -11,6 +11,12 @@
     height: auto;
    
   } 
+  .btn-login {
+    background: linear-gradient(to bottom, #E63462, #F3B700, #104547);
+    color: white;
+    border: none;
+  }
+  
   
   /* Formulaire */
   .login-form {
@@ -39,11 +45,11 @@
     }
   
     .imag {
-      width: 50%;
+      width: 60%;
     }
   
     .login-form {
-      width: 50%;
+      width: 40%;
       padding: 3rem;
     }
   

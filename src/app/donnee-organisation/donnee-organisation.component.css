@@ -115,6 +115,29 @@
     color: #333;
   }
 
+  /* hedader */
+  /* .header-1 {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    background: white;
+  }
+  
+  .header-2 {
+    position: fixed;
+    top: 70px; 
+    width: 100%;
+    z-index: 999;
+    background: white;
+  }
+  
+  Le contenu passe en dessous des deux headers
+  .main-content {
+    margin-top: 140px; 
+  } */
+  
+
   /* --- Version desktop --- */
   @media (min-width: 768px) {
     .cards-container {
@@ -126,9 +149,9 @@
       flex: 0 0 18rem;
     }
   }
-  /* ----- RESPONSIVE DESIGN ----- */
 
-/* 📱 Téléphones : une carte par ligne */
+
+/* Téléphones : une carte par ligne */
 @media (max-width: 768px) {
   .d-flex.justify-content-evenly {
     flex-direction: column !important;

@@ -78,6 +78,16 @@
             "browserTarget": "groopoo:build"
           }
         },
+        "architect": {
+          "build": {
+            "options": {
+              "allowedCommonJsDependencies": [
+                "sweetalert2"
+              ]
+            }
+          }
+        },
+        
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {

@@ -84,7 +84,6 @@ class SalleController extends AbstractController
         }
 
         $totalItems = count($salles);
-
         return RestResponse::linearResponse($results, $totalItems, JsonResponse::HTTP_OK);
     }
 
@@ -96,8 +95,8 @@ class SalleController extends AbstractController
 
         $salles = [];
         foreach($liste->getGroupes() as $grp){
-            in_array($grp->getSalle(), $salles, false)? null:$cc=$grp->getSalle();
-            $cc ? $salles[] = $cc : null;
+            $salle = $grp->getSalle();
+            if (!in_array($salle, $salles, true)) { $salles[] = $salle; }
         }
         $dtos = [];
         foreach ($salles as $salle) {

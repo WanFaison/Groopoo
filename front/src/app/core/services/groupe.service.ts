@@ -7,4 +7,5 @@ export interface GroupeService{
     findAllReq(liste:number):Observable<RestResponse<GroupeReqModel[]>>
     findByJour(jour:number, page:number, limit:number, groupe:number):Observable<RestResponse<GroupeJourModel[]>>
     getSalleSheet(liste:number, motif:string):Observable<any>
+    removeEmptyGroups(): Observable<any>
 }

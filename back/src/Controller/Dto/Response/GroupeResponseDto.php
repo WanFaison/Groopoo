@@ -14,6 +14,7 @@ class GroupeResponseDto
     private float $note;
     private string $salle;
     private string $coach;
+    private string $theme;
 
     public function getId(): ?int
     {
@@ -102,6 +103,17 @@ class GroupeResponseDto
         return $this;
     }
 
+    public function getTheme(): ?string
+    {
+        return $this->theme;
+    }
+    public function setTheme(string $theme): static
+    {
+        $this->theme = $theme;
+
+        return $this;
+    }
+
     public function toDto(Groupe $groupe, array $etds): GroupeResponseDto
     {
         $dto = new GroupeResponseDto();
@@ -112,7 +124,8 @@ class GroupeResponseDto
             ->setListeT($groupe->getListe()->getLibelle())
             ->setEtudiants($etds)
             ->setSalle($groupe->getSalle() ? $groupe->getSalle()->getLibelle() : '')
-            ->setCoach($groupe->getCoach() ? $groupe->getCoach()->getNom(). ' ' .$groupe->getCoach()->getPrenom() : '');
+            ->setCoach($groupe->getCoach() ? $groupe->getCoach()->getNom(). ' ' .$groupe->getCoach()->getPrenom() : '')
+            ->setTheme($groupe->getTheme() ? $groupe->getTheme()->getLibelle() : '');
         $n = $groupe->getNote();
         $dto->setNote($n !== null ? $n : 0);
 

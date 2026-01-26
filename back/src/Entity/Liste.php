@@ -50,6 +50,9 @@ class Liste extends AbstractEntity
     #[ORM\OneToMany(targetEntity: Jury::class, mappedBy: 'liste')]
     private Collection $juries;
 
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $notes = null;
+
     public function __construct()
     {
         $this->groupes = new ArrayCollection();
@@ -224,6 +227,18 @@ class Liste extends AbstractEntity
                 $jury->setListe(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getNotes(): ?array
+    {
+        return $this->notes;
+    }
+
+    public function setNotes(?array $notes): static
+    {
+        $this->notes = $notes;
 
         return $this;
     }

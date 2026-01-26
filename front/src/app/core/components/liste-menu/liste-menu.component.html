@@ -21,6 +21,10 @@
               (click)="changeState(3)">Coachs & Jurys</a>
             </li>
             <li class="nav-item" *ngIf="user?.role != 'ROLE_VISITEUR'">
+              <a [class.active]="state==8" class="nav-link" role="button"
+              (click)="changeState(8)">Thematiques</a>
+            </li>
+            <li class="nav-item" *ngIf="user?.role != 'ROLE_VISITEUR'">
                 <a [class.active]="state==4" class="nav-link" role="button"
                 (click)="changeState(4)">Finalistes</a>
             </li>
@@ -37,6 +41,7 @@
         <app-jury *ngIf="state==5"></app-jury>
         <app-attendance *ngIf="state==6"></app-attendance>
         <app-form-salle *ngIf="state==7"></app-form-salle>
+        <app-form-theme *ngIf="state==8"></app-form-theme>
     </div>
 
     <app-foot></app-foot>

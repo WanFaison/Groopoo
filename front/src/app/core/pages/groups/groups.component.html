@@ -50,6 +50,7 @@
                   <th scope="col">{{'Note: ' + grp.note}}</th>
                   <th scope="col">{{'Salle: ' + grp.salle}}</th>
                   <th scope="col">{{'Coach: ' + grp.coach}}</th>
+                  <th scope="col">{{'Thematique: ' + grp.theme}}</th>
                   <th>
                     <button class="btn btn-success me-2"
                     *ngIf="user?.role != 'ROLE_VISITEUR' && !listeResponse?.results?.isArchived && !listeResponse?.results?.isComplet"

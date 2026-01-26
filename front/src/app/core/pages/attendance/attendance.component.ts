@@ -33,7 +33,7 @@ export class AttendanceComponent implements OnInit{
   user?:LogUser;
   jour:any = 0
   msg:string = ''
-  attendanceForm: { id: number; emargement1: boolean; emargement2: boolean }[] = [];
+  attendanceForm: { id: number; emargement1: any; emargement2: any }[] = [];
   constructor(private router:Router, private paginatorService:PaginatorService, private jourService:JourServiceImpl, private absenceService:AbsenceImplService, private fb: FormBuilder, private groupeService:GroupeServiceImpl, private listeService:ListeServiceImpl, private authService:AuthServiceImpl)
   {}
 
@@ -67,8 +67,8 @@ export class AttendanceComponent implements OnInit{
     } else {
       this.attendanceForm.push({
         id: etdId,
-        emargement1: emargement === 1 ? checked : true,
-        emargement2: emargement === 2 ? checked : true
+        emargement1: emargement === 1 ? checked : 'null',
+        emargement2: emargement === 2 ? checked : 'null'
       });
     }
     

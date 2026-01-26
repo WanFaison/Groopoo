@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Groupe;
 use App\Entity\Liste;
 use App\Entity\Salle;
+use App\Entity\Theme;
 use App\Service\PaginatorService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -116,6 +117,33 @@ class GroupeRepository extends ServiceEntityRepository
                             ->setParameter('isArchived', false)
                             ->andWhere('r.isFinal = :isFinal')
                             ->setParameter('isFinal', true)
+                            ->orderBy('r.id', 'ASC')
+                            ->getQuery()
+                            ->getResult();
+
+        return $query;
+    }
+
+    public function findGroupesWithoutEtudiants(): array
+    {
+        return array_filter($this->findAll(), function ($groupe) {
+            return $groupe->getEtudiant()->isEmpty();
+        });
+    }
+
+    public function findAllByListeTheme(?Liste $liste=null, ?Theme $theme=null): array
+    {
+        $queryBuilder = $this->createQueryBuilder('r');
+        if ($liste) {
+            $queryBuilder->andWhere('r.liste = :liste')
+                         ->setParameter('liste', $liste);
+        }
+        if ($theme) {
+            $queryBuilder->andWhere('r.theme = :theme')
+                         ->setParameter('theme', $theme);
+        }
+        $query = $queryBuilder->andWhere('r.isArchived = :isArchived')
+                            ->setParameter('isArchived', false)
                             ->orderBy('r.id', 'ASC')
                             ->getQuery()
                             ->getResult();

@@ -1,14 +1,19 @@
-<div class="mt-5 row justify-content-center align-items-center h-100">
+<div *ngIf="juryResponse" class="mt-5 row justify-content-center align-items-center h-100">
   <div class="flex-center my-3 flex-column">
       <div class="d-flex justify-content-between">
           <h4 *ngIf="listeResponse" class="underline-bold">Liste des jurys: {{ listeResponse.results.libelle }}</h4>
       </div>
-      <div *ngIf="!listeResponse?.results?.isArchived">
-        <button (click)="printJuryXls()" class="btn btn-info col-md-8 mb-2">Exporter les Jurys</button>
+      <div class="d-flex">
+        <button *ngIf="!listeResponse?.results?.isArchived" (click)="printJuryXls()" 
+        class="btn btn-info col-md-8 me-2 mb-2">Exporter les Jurys</button>
+        <a id="orange-btn" class="btn btn-secondary col-md-6 mb-2" 
+            (click)="changeState(3)" role="button" style="color: white;">
+                Retourner</a>
       </div>
   </div>
 
-  <div class="flex-center my-3">
+  <div *ngIf="juryResponse.totalItems > 0">
+    <div class="flex-center my-3">
       <input type="text" [(ngModel)]="keyword" class="form-control input-black-border col-md-3 me-2" placeholder="Recherche...">
       <a class="btn btn-info col-md-1 me-4" (click)="filter()" role="button" style="color: white;">
           Rechercher
@@ -17,9 +22,9 @@
       role="button" style="color: white;">
           Réinitialiser
       </a>
-  </div>
+    </div>
   
-  <div class="d-flex flex-column justify-content-center align-items-center">
+    <div class="d-flex flex-column justify-content-center align-items-center">
       <table *ngFor="let jury of juryResponse?.results; let i = index" class="table col-md-10 mb-5">
           <thead class="thead-dark">
               <tr>
@@ -69,6 +74,13 @@
               </tr>
           </tbody>
         </table>
+    </div>
+  </div>
+
+  <div *ngIf="juryResponse.totalItems < 1" class="d-flex flex-column justify-content-center align-items-center">
+      <div class="alert alert-warning" role="alert">
+        Aucun jury n’a été formé car les coachs n’ont pas encore été assignés.
+      </div>
   </div>
 
   <div *ngIf="juryResponse && juryResponse.results.length > 1" class="pagination-div" style="margin-bottom: 8rem;">

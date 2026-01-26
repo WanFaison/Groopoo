@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RestResponse } from '../../models/rest.response';
-import { JuryModel } from '../../models/jury.model';
+import { JuryFinalModel, JuryModel } from '../../models/jury.model';
 import { CoachModel } from '../../models/coach.model';
 import { LogUser } from '../../models/user.model';
 import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
@@ -21,7 +21,7 @@ import { PaginatorService } from '../../services/pagination.service';
     styleUrl: './finalist.component.css'
 })
 export class FinalistComponent implements OnInit{
-  juryResponse?:RestResponse<JuryModel[]>;
+  juryResponse?:RestResponse<JuryFinalModel[]>;
   coachRequest?:RestResponse<CoachModel[]>;
   listeResponse?: RestResponse<ListeModel>;
   liste:number = 0;

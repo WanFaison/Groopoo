@@ -1,0 +1,79 @@
+<div class="mt-5 row justify-content-center align-items-center h-100">
+    <div class="flex-center my-3 flex-column">
+        <div class="d-flex flex-column align-items-center">
+          <h4 *ngIf="listeResponse" class="underline-bold">Liste des themes: {{ listeResponse.results.libelle }}</h4>
+          <p class="w-50 fst-italic text-center flex-center">Le nombre de themes sélectionnées doit être inferieur ou égal à celui des groupes.</p>
+        </div>
+        <div class="flex-center">
+            <div *ngFor="let item of themeForm" class="bg-black d-flex me-2 align-items-center border-black thick-border rounded">
+                <div *ngIf="item.add" class="d-flex">
+                    <p class="text-white mb-0 me-4">{{ item.libelle }}</p>
+                    <a class="btn btn-success text-white" role="button">O</a>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="msg.length >1" class="flex-center align-items-center">
+            <p class="fw-bold text-danger">{{ msg }} </p>
+        </div>
+
+        <div class="flex-center my-3">
+            <a id="orange-btn" class="btn btn-success" 
+            [class.disabled] = "listeResponse?.results?.isComplet || listeResponse?.results?.isArchived"
+            (click)="assignThemes()" role="button" style="color: white;">
+                Valider</a>
+        </div>
+    </div>
+
+    <div class="flex-center my-3">
+        <input type="text" [(ngModel)]="keyword" class="form-control input-black-border col-md-3 me-2" placeholder="Recherche...">
+        <a class="btn btn-info col-md-1 me-4" (click)="filter()" role="button" style="color: white;">
+            Rechercher
+        </a>
+        <a class="btn btn-secondary col-md-1 me-2" (click)="refresh(); keyword = '' " 
+        role="button" style="color: white;">
+            Réinitialiser
+        </a>
+    </div>
+
+    <div class="d-flex flex-column justify-content-center align-items-center">
+        <table class="table col-md-9 mb-5">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Libelle</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of themeResponse?.results; let i = index">
+                    <th scope="row">{{item.libelle}}</th>
+                    <td class="text-center justify-content-center align-items-center">
+                        <input class="form-check-input" 
+                        [checked]="checkAdded(item.id)"
+                        (change)="onFormChange(item.id, item.libelle, $event)"
+                        type="checkbox" role="switch" id="flexSwitchCheckChecked">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination-div" style="margin-bottom: 8rem;">
+      <nav aria-label="Page navigation example">
+        <ul class="pagination">
+          <li *ngIf="themeResponse && themeResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': themeResponse.currentPage === 0}">
+            <a class="page-link" (click)="paginate(themeResponse.currentPage - 1)" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+              <span class="sr-only">Previous</span>
+            </a>
+          </li>
+          
+          <li *ngIf="themeResponse && themeResponse.currentPage !== undefined" class="page-item" [ngClass]="{'disabled': themeResponse.currentPage +1 === themeResponse.totalPages}">
+            <a class="page-link" (click)="paginate(themeResponse.currentPage + 1)" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+              <span class="sr-only">Next</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+</div>

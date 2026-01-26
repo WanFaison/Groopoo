@@ -41,6 +41,9 @@ class Groupe extends AbstractEntity
     #[ORM\Column]
     private ?bool $isFinal = false;
 
+    #[ORM\ManyToOne(inversedBy: 'groupes')]
+    private ?Theme $theme = null;
+
     public function __construct()
     {
         $this->etudiant = new ArrayCollection();
@@ -156,6 +159,18 @@ class Groupe extends AbstractEntity
     public function setFinal(bool $isFinal): static
     {
         $this->isFinal = $isFinal;
+
+        return $this;
+    }
+
+    public function getTheme(): ?Theme
+    {
+        return $this->theme;
+    }
+
+    public function setTheme(?Theme $theme): static
+    {
+        $this->theme = $theme;
 
         return $this;
     }

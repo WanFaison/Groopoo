@@ -239,12 +239,12 @@ class CoachController extends AbstractController
 
         $coachs = [];
         foreach($liste->getGroupes() as $grp){
-            in_array($grp->getCoach(), $coachs, false)? null:$cc=$grp->getCoach();
-            $cc ? $coachs[] = $cc : null;
+            $cc=$grp->getCoach();
+            in_array($cc, $coachs, true)? null:$coachs[] = $cc;
         }
         $dtos = [];
         foreach ($coachs as $coach) {
-            $dtos[] = (new CoachResponseDto())->toDto($coach);
+            $coach ? $dtos[] = (new CoachResponseDto())->toDto($coach) : null;
         }
         $results = [];
         foreach ($dtos as $r) {
@@ -282,19 +282,20 @@ class CoachController extends AbstractController
 
         $sch = 0;
         $cnt = 0;
-        foreach ($coachs as $c) {
-            $coach = $this->coachRepository->find($c['id']);
-            $coach ? $this->checkCoachInListe($coach, $liste) : null;
-            while((isset($groups[$cnt])) && ($cnt < $numGP*($sch + 1)) && ($coach)){
+        $coachs = $this->convertJsonDataToCoachArray($coachs);
+        foreach ($coachs as $coach) {
+            $this->checkCoachInListe($coach, $liste);
+            while((isset($groups[$cnt])) && ($cnt < $numGP*($sch + 1))){
                 $cnt++;
                 $grp = $groups[$cnt - 1];
                 $coach->addGroupe($grp);
-                $salles[$sch]->addGroupe($grp);
+                $salle = $this->salleRepository->find($salles[$sch]['id']);
+                $salle ? $salle->addGroupe($grp) : null;
                 $this->groupeRepository->addOrUpdate($grp);
             }
 
             $this->entityManager->persist($coach);
-            $this->entityManager->persist($salles[$sch]);
+            $this->entityManager->persist($salle);
             $this->entityManager->flush();
             $sch++;
         }
@@ -316,6 +317,15 @@ class CoachController extends AbstractController
         }
         $this->entityManager->persist($coach);
         $this->entityManager->flush();
+    }
+
+    private function convertJsonDataToCoachArray(array $coachs):array {
+        $coachArray = [];
+        foreach($coachs as $c){
+            $cc = $this->coachRepository->find($c['id']);
+            $cc ? $coachArray[]=$cc : null;
+        }
+        return $coachArray;
     }
 
     private function makeJury(Liste $liste, array $coaches)

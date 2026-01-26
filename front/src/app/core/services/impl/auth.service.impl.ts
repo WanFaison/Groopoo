@@ -14,7 +14,7 @@ import { isPlatformBrowser } from "@angular/common";
 export class AuthServiceImpl implements AuthService{
     private apiUrl=`${environment.APIURL}/login`;
     private token:string = '';
-    private logUser?:LogUser;
+    private logUser:LogUser = {id:999, username:'unknown', role:'ROLE_VISITEUR', ecole:2, ecoleT:''};
     constructor(private http:HttpClient, @Inject(PLATFORM_ID) private platformId: Object) { 
     }
 
@@ -34,7 +34,7 @@ export class AuthServiceImpl implements AuthService{
         this.token = tk;
     }
 
-    getUser(){
+    getUser(): LogUser{
         const user = localStorage.getItem('logUser');
         if (user) {
             return JSON.parse(user) as LogUser;
@@ -51,11 +51,14 @@ export class AuthServiceImpl implements AuthService{
         if (typeof window !== 'undefined' && localStorage){
             localStorage.clear()
         }
-        this.logUser = undefined
+        //this.logUser = undefined
     }
     
     isLoggedIn(): boolean {
-        return !!localStorage.getItem('jwtToken');
+        if (isPlatformBrowser(this.platformId)){
+            return !!localStorage.getItem('jwtToken');
+        }
+        return false;
         //return this.isAuth;
     }
 }

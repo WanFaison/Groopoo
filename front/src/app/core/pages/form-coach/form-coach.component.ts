@@ -30,6 +30,8 @@ export class FormCoachComponent implements OnInit{
   msg:string = '';
   ecole: number = 0;
   keyword:string = '';
+  cnt: number = 0;
+  cnt2: number = 0;
   salleForm: {id: number; add: boolean; libelle: string}[] = [];
 
   constructor(private paginatorService:PaginatorService, private router:Router, private authService:AuthServiceImpl, private listeService:ListeServiceImpl, private formBuilder: FormBuilder, private coachService:CoachServiceImpl){}
@@ -55,6 +57,9 @@ export class FormCoachComponent implements OnInit{
     }
     const form = localStorage.getItem('coachForm');
     this.coachForm = form? JSON.parse(form) : [];
+
+    const sform = localStorage.getItem('salleForm')
+    this.salleForm = sform? JSON.parse(sform) : []; 
     this.refresh(this.liste)
   }
 
@@ -98,7 +103,10 @@ export class FormCoachComponent implements OnInit{
   }
 
   checkValidForm(){
-    return this.coachForm.some(data => data.add === true);
+    this.salleForm.forEach(item=>{ if(item.add){this.cnt +=1} })
+    this.coachForm.forEach(item=>{ if(item.add){this.cnt2 +=1} })
+    return this.coachForm.some(data => data.add === true) 
+            && (this.cnt2 <= this.cnt) && this.cnt>0;
   }
 
   assignCoaches() {
@@ -119,7 +127,7 @@ export class FormCoachComponent implements OnInit{
               this.msg = "Erreur! Vous essayez d'affecter plus de coachs que de salles disponibles"
             }else{
               localStorage.removeItem('coachForm');
-              this.router.navigate(['/app/jury'])
+              this.changeState(5);
             }
           },
           error => {

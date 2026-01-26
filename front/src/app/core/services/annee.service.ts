@@ -5,5 +5,6 @@ import { RestResponse } from "../models/rest.response";
 export interface AnneeService{
     findAll():Observable<RestResponse<AnneeModel[]>>;
     findAllPg(page:number, keyword:string): Observable<RestResponse<AnneeModel[]>>
-    modifAnnee(annee:number):Observable<any>;
+    modifAnnee(annee:number, keyword:string):Observable<any>;
+    addAnnee(data:any): Observable<any>;
 }

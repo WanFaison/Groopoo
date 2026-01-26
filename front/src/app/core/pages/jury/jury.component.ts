@@ -101,6 +101,11 @@ export class JuryComponent implements OnInit{
     });
   }
 
+  changeState(num: any) {
+    localStorage.setItem('stateListeMenu', num);
+    this.reloadPage()
+  }
+
   refresh(page:number=0, liste:number=this.liste, limit:number=10, keyword:string=''){
     this.juryService.findAllPg(page, liste, limit, keyword).subscribe(data => {
       this.juryResponse = data;

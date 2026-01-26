@@ -72,10 +72,7 @@ class ClasseRepository extends ServiceEntityRepository
     public function checkExistByLibelle(string $libelle): bool
     {
         $classe = $this->findByLibelle($libelle);
-        if($classe){
-            return true;
-        }
-
+        if($classe){ return true; }
         return false;
     }
 

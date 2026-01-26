@@ -1,6 +1,6 @@
 <div class="mt-5 row justify-content-center align-items-center h-100">
     <div class="flex-center my-3 flex-column">
-        <div class="d-flex justify-content-between">
+        <div class="d-flex flex-column align-items-center">
             <h4 *ngIf="listeResponse" class="underline-bold">Liste des salles: {{ listeResponse.results.libelle }}</h4>
             <p class="w-50 fst-italic text-center flex-center">Choisissez {{coachForm.length}} salles.</p>
         </div>
@@ -19,7 +19,6 @@
 
         <div class="flex-center my-3">
             <a id="orange-btn" class="btn btn-secondary col-md-6 me-2" 
-            [class.disabled] = "!checkValidForm()"
             (click)="changeState(3)" role="button" style="color: white;">
                 Retourner</a>
         </div>

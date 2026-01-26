@@ -66,7 +66,7 @@ export class SelectlistComponent implements OnInit{
       const downloadUrl = window.URL.createObjectURL(data);
       const link = document.createElement('a');
       link.href = downloadUrl;
-      link.download = 'Band-It import template.xlsx';
+      link.download = 'Groopoo import template.xlsx';
       link.click();
     });
   }

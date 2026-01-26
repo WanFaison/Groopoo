@@ -12,10 +12,11 @@ import { FinalistComponent } from "../../pages/finalist/finalist.component";
 import { JuryComponent } from "../../pages/jury/jury.component";
 import { AttendanceComponent } from "../../pages/attendance/attendance.component";
 import { FormSalleComponent } from "../../pages/form-salle/form-salle.component";
+import { FormTheme } from "../../pages/form-theme/form-theme";
 
 @Component({
     selector: 'app-liste-menu',
-    imports: [CommonModule, NavComponent, FootComponent, GroupsComponent, JoursComponent, NotesComponent, FormCoachComponent, FinalistComponent, JuryComponent, AttendanceComponent, FormSalleComponent],
+    imports: [CommonModule, NavComponent, FootComponent, GroupsComponent, JoursComponent, NotesComponent, FormCoachComponent, FinalistComponent, JuryComponent, AttendanceComponent, FormSalleComponent, FormTheme],
     templateUrl: './liste-menu.component.html',
     styleUrl: './liste-menu.component.css'
 })

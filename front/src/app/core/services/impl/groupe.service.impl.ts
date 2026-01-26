@@ -30,4 +30,8 @@ export class GroupeServiceImpl implements GroupeService{
         return this.http.get<RestResponse<GroupeModel[]>>(`${this.apiUrl}?liste=${liste}&page=${page}&limit=${limit}`)
     }
 
+    removeEmptyGroups(): Observable<any>{
+        return this.http.get<any>(`${environment.APIURL}/remove-empty-groups`);
+    }
+
 }

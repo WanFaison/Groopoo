@@ -67,12 +67,15 @@ export class GroupsComponent implements OnInit{
 
   ngOnInit(): void {
     this.user = this.authService.getUser();
-    if (typeof window !== 'undefined' && localStorage){
-      this.liste = parseInt(localStorage.getItem('newListe') || '1', 10);
-      this.listeService.findById(this.liste).subscribe(data=>this.listeResponse=data);
-      this.groupeService.findAllReq(this.liste).subscribe(data=>this.grpReq=data)
-    }
-    this.refresh(this.liste);
+    this.groupeService.removeEmptyGroups().subscribe({
+        next: () => {
+          this.liste = parseInt(localStorage.getItem('newListe') || '1', 10);
+          this.listeService.findById(this.liste).subscribe(data => {this.listeResponse = data;});
+          this.groupeService.findAllReq(this.liste).subscribe(data => {this.grpReq = data;});
+          this.refresh(this.liste);
+        },
+        error: (err) => {console.error('Error removing empty groups:', err);}
+      });
 
     this.etdForm.valueChanges.subscribe(value => {
       console.log(this.etdForm.value)

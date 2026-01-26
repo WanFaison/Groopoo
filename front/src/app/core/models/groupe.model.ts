@@ -8,7 +8,8 @@ export type GroupeModel = {
     etudiants: EtudiantModel[],
     note: number,
     coach?: string,
-    salle?: string
+    salle?: string,
+    theme?: string
 }
 
 export type GroupeJourModel = {

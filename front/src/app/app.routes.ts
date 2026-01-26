@@ -6,7 +6,7 @@ import { SelectlistComponent } from './core/pages/selectlist/selectlist.componen
 import { AuthGuard } from './guards/auth.guard';
 import { FormCritereComponent } from './core/pages/form-critere/form-critere.component';
 import { GroupsComponent } from './core/pages/groups/groups.component';
-import { DonneesComponent } from './core/pages/donnees/donnees.component';
+import { DonneesComponent } from './core/components/donnees/donnees.component';
 import { ProfilesComponent } from './core/pages/profiles/profiles.component';
 import { FormUserComponent } from './core/pages/form-user/form-user.component';
 import { FormUserUpdateComponent } from './core/pages/form-user-update/form-user-update.component';
@@ -44,21 +44,6 @@ export const routes: Routes = [
     {
         path:"app/attendance",
         component:AttendanceComponent,
-        canActivate: [AuthGuard]
-    },
-    {
-        path:"app/form-notes",
-        component:NotesComponent,
-        canActivate: [AuthGuard]
-    },
-    {
-        path:"app/form-coach",
-        component:FormCoachComponent,
-        canActivate: [AuthGuard]
-    },
-    {
-        path:"app/jury",
-        component:JuryComponent,
         canActivate: [AuthGuard]
     },
     {

@@ -198,11 +198,24 @@ class GroupeController extends AbstractController
                 'etudiants' => $d->getEtudiants(),
                 'note' => $d->getNote(),
                 'coach' => $d->getCoach(),
-                'salle' => $d->getSalle()
+                'salle' => $d->getSalle(),
+                'theme' => $d->getTheme()
             ];
         }
 
         return $results;
+    }
+
+    #[Route('/api/remove-empty-groups', name: 'app_remove_empty_groups', methods: ['GET'])]
+    public function removeEmptyGroups(): JsonResponse
+    {
+        $groups = $this->groupeRepository->findGroupesWithoutEtudiants();
+        foreach ($groups as $g) {
+            $this->entityManager->remove($g); 
+        }
+        $this->entityManager->flush();
+
+        return RestResponse::requestResponse('Empty groups have been removed', 0, JsonResponse::HTTP_OK);
     }
 
 
@@ -218,9 +231,10 @@ class GroupeController extends AbstractController
         if (!is_array($notes)) {
             return new JsonResponse(['error' => 'Invalid notes data format'], JsonResponse::HTTP_BAD_REQUEST);
         }
-        $liste = $this->manageNotes($notes);
+        $liste = $this->noteService->manageNotes($notes);
+        $this->noteService->saveNotesInDB($liste);
         $groupes = $this->noteService->setToFinal($liste->getGroupes()->toArray(), false);
-        $groupes = $this->noteService->setToFinal($this->noteService->getTop10($groupes), true);
+        //$groupes = $this->noteService->setToFinal($this->noteService->getTop10($groupes), true);
 
         try {
             return RestResponse::requestResponse('Data received and notes accounted for', 0, JsonResponse::HTTP_OK);
@@ -228,46 +242,6 @@ class GroupeController extends AbstractController
             return new JsonResponse(['error' => $e->getMessage()], 500);
         }
     }
-
-    private function manageNotes(array $notes): Liste
-    {
-        $grp = $this->groupeRepository->find($notes[0]['id']);
-        $pts = $this->marksPerPeriod($grp->getListe());
-        foreach($notes as $note){
-            $groupe = $this->groupeRepository->find($note['id']);
-            $groupe->setNote($this->checkNote((float) $note['note']));
-            foreach($groupe->getEtudiant() as $etd){
-                $noteEtd = (float) $note['note'];
-                foreach($etd->getAbsences() as $abs){
-                    $noteEtd = $noteEtd - $pts;
-                }
-                $etd->setNoteEtd($this->checkNote($noteEtd));
-                $final = round((((float) $note['note']) + ($this->checkNote($noteEtd))) / 2.0, 2);
-                $etd->setNoteFinal($this->checkNote($final));
-                $this->entityManager->persist($etd);
-            }
-            $this->entityManager->flush();
-            $this->groupeRepository->addOrUpdate($groupe);
-        }
-
-        return $grp->getListe();
-    }
-    private function marksPerPeriod(Liste $liste): float
-    {
-        $periods = ($liste->getJours()->count())*2;
-        if($periods>0){
-            return  20.0/$periods;
-        }
-        return 20.0;
-    }
-    private function checkNote(float $note):float
-    {
-        if($note < 0){
-            return 0.0;
-        }
-        return $note;
-    }
-
 
 
     #[Route('/api/recreate-groupe', name: 'api_recreate_groupe', methods: ['GET'])]
@@ -467,7 +441,7 @@ class GroupeController extends AbstractController
         }
     }
 
-    public function clearEtds(Groupe $groupe): void
+    private function clearEtds(Groupe $groupe): void
     {
         $etudiants = $groupe->getEtudiant();
 

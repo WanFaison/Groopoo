@@ -27,19 +27,19 @@
             "styles": [
               "src/styles.css"
             ],
-            "server": "src/main.server.ts",
-            "outputMode": "server",
-            "ssr": {
-              "entry": "src/server.ts"
-            }
+            "server": "src/main.server.ts",//to be commented before building for deploy't
+            "outputMode": "server", //to be commented before building for deploy't
+            "ssr": { //to be commented before building for deploy't
+              "entry": "src/server.ts" //to be commented before building for deploy't
+            } //to be commented before building for deploy't
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "1.2MB",
+                  "maximumError": "2MB"
                 },
                 {
                   "type": "anyComponentStyle",

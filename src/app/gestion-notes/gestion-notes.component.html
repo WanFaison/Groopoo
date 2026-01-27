@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion Notes</title>
+</head>
+
+<body>
+  <app-header></app-header>
+  <app-header-grand-projet></app-header-grand-projet>
+  <h5 class="text-center">GRAND PROJET 2025 </h5>
+
+  <div class="d-flex justify-content-center flex-wrap gap-3 mt-4 mb-4">
+    <!-- Bouton Enregistrer -->
+    <button type="button" class="btn btn-sm text-white" style="background-color:#104547;" data-bs-toggle="modal"
+      data-bs-target="#confirmModal">
+      <i class="bi bi-bookmark-check-fill"></i> Enregistrer les notes
+    </button>
+
+
+    <!-- Bouton Exporter notes -->
+    <button type="button" class="btn btn-sm text-white" style="background-color:#F09D13;">
+      <i class="bi bi-box-arrow-in-down"></i> Exporter les notes
+    </button>
+
+    <!-- Bouton Exporter par classe -->
+    <button type="button" class="btn btn-sm text-white" style="background-color:#16C098;">
+      <i class="bi bi-box-arrow-in-down"></i> Exporter par classe
+    </button>
+
+    <!-- Bouton Verrouiller projet -->
+    <button type="button" class="btn btn-sm text-white" style="background-color:#E63462;">
+      <i class="bi bi-file-earmark-lock-fill"></i> Verrouiller le projet
+    </button>
+  </div>
+
+  <div class="d-flex justify-content-center">
+    <div class="table-responsive w-75">
+      <table class="table text-center align-middle mb-4">
+        <thead class="table-light">
+          <tr>
+            <th scope="col">Numero</th>
+            <th scope="col">Libellé</th>
+            <th scope="col">Notes</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <th scope="row">1</th>
+            <th scope="row">groupe 1</th>
+            <td><input type="text"></td>
+
+          </tr>
+
+          <tr>
+            <th scope="row">2</th>
+            <th scope="row">groupe 2</th>
+            <td><input type="text"></td>
+
+          </tr>
+
+          <tr>
+            <th scope="row">3</th>
+            <th scope="row">groupe 3</th>
+            <td><input type="text"></td>
+
+          </tr>
+
+          <tr>
+            <th scope="row">4</th>
+            <th scope="row">groupe 4</th>
+            <td><input type="text"></td>
+
+          </tr>
+          <tr>
+            <th scope="row">5</th>
+            <th scope="row">groupe 5</th>
+            <td><input type="text"></td>
+
+          </tr>
+
+          <tr>
+            <th scope="row">6</th>
+            <th scope="row">groupe 6</th>
+            <td><input type="text"></td>
+
+          </tr>
+          <tr>
+            <th scope="row">7</th>
+            <th scope="row">groupe 7</th>
+            <td><input type="text"></td>
+
+          </tr>
+
+          <tr>
+            <th scope="row">8</th>
+            <th scope="row">groupe 8</th>
+            <td><input type="text"></td>
+
+          </tr>
+          <tr>
+            <th scope="row">9</th>
+            <th scope="row">groupe 9</th>
+            <td><input type="text"></td>
+
+
+
+          </tr>
+
+
+        </tbody>
+
+      </table>
+      <nav aria-label="Page navigation examp">
+        <ul class="pagination justify-content-center">
+          <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+
+  <!-- Modal de confirmation -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <!-- En-tête -->
+        <div class="modal-header">
+          <h5 class="modal-title text-danger fw-bold"><i class="bi bi-exclamation-circle-fill me-3"></i>Important</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <!-- Contenu -->
+        <div class="modal-body">
+          Après enregistrement, la note attribuée au groupe sera automatiquement
+          comptabilisée et affectée à tous les membres. <br><br>
+          Par la suite, cette note sera ajustée individuellement en tenant compte
+          du nombre d'absences de chaque membre, afin de calculer une note finale
+          spécifique à chacun d'eux.
+        </div>
+
+        <!-- Pied (Boutons) -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Non
+          </button>
+
+          <button type="button" class="btn text-white" style="background-color:#104547;">
+            Oui
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
+<app-footer></app-footer>

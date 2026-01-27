@@ -1,0 +1,173 @@
+.cards-container {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto; /* permet le slide horizontal sur mobile */
+    scroll-snap-type: x mandatory;
+    padding: 1rem;
+  }
+  
+  /* Chaque carte */
+  .card-item {
+    flex: 0 0 80%; /* largeur sur mobile */
+    scroll-snap-align: start;
+    min-width: 16rem;
+    border: none;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+  }
+  
+  .card-item:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Icônes */
+  .card-icon {
+    font-size: 2rem;
+    color: white;
+    background-color: #104547;
+    border-radius: 55%;
+    padding:10px;
+    
+  }
+
+  .search-container {
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 50px;
+  }
+  
+  .search-box {
+    width: 100%;
+  }
+  
+  /* Boutons dans la barre */
+  .btn-icon {
+    background-color: #104547;
+    color: white;
+    border: none;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .btn-icon:hover {
+    background-color: #0c3537;
+    color: #fff;
+  }
+  
+  /* Champ de recherche */
+  .search-box input {
+    border: 1px solid #ccc;
+    height: 40px;
+    border-radius: 0;
+    flex-grow: 1;
+    box-shadow: none;
+  }
+  
+  .search-box input:focus {
+    border-color: #104547;
+    outline: none;
+    box-shadow: none;
+  }
+
+  .event-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 15px;
+    width: 300px;
+    font-family: "Poppins", sans-serif;
+  }
+  
+  .event-title {
+    background-color: #DFA874;
+    color: #D58D49;
+    padding: 5px 10px;
+    border-radius: 8px;
+    margin: 0;
+   
+  }
+
+  .event-body {
+    margin-top: 10px;
+  }
+  .event-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+  }
+  
+  .group-avatars img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin-right: -8px;
+    border: 2px solid #fff;
+    cursor: pointer;
+  }
+
+  .event-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #333;
+  }
+
+  /* --- Version desktop --- */
+  @media (min-width: 768px) {
+    .cards-container {
+      overflow-x: visible;
+      justify-content: center;
+    }
+  
+    .card-item {
+      flex: 0 0 18rem;
+    }
+  }
+  /* ----- RESPONSIVE DESIGN ----- */
+
+/* 📱 Téléphones : une carte par ligne */
+@media (max-width: 768px) {
+  .d-flex.justify-content-evenly {
+    flex-direction: column !important;
+    align-items: center;
+  }
+
+  .event-card {
+    width: 90% !important;
+    margin-bottom: 15px;
+  }
+
+  .event-body h4 {
+    font-size: 1rem;
+  }
+
+  .event-description {
+    font-size: 0.85rem;
+  }
+
+  .group-avatars img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .edit-icon {
+    padding: 4px;
+  }
+}
+
+/* 💻 Tablettes : deux cartes par ligne */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .d-flex.justify-content-evenly {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .event-card {
+    width: 45% !important;
+    margin: 10px;
+  }
+}
+  

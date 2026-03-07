@@ -1,5 +1,7 @@
 export type UserModel = {
     id: number,
+    username: string,
+    noms:string,
     email: string,
     ecole:number,
     ecoleT: string,

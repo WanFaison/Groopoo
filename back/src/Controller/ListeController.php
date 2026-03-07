@@ -36,12 +36,14 @@ class ListeController extends AbstractController
 {
     private $listeRepository;
     private $ecoleRepository;
+    private $userRepository;
     private $entityManager;
     private $exportService;
 
-    public function __construct(EntityManagerInterface $entityManager, EcoleRepository $ecoleRepository, ExportService $exportService, SalleRepository $salleRepository, CoachRepository $coachRepository, UserRepository $userRepository, AnneeRepository $anneeRepository, EtudiantRepository $etudiantRepository, NiveauRepository $niveauRepository, FiliereRepository $filiereRepository, ClasseRepository $classeRepository, GroupeRepository $groupeRepository, ListeRepository $listeRepository)
+    public function __construct(EntityManagerInterface $entityManager, UserRepository $userRepository, EcoleRepository $ecoleRepository, ExportService $exportService, ListeRepository $listeRepository)
     {
         $this->listeRepository = $listeRepository;
+        $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
         $this->exportService = $exportService;
         $this->ecoleRepository = $ecoleRepository;
@@ -105,11 +107,14 @@ class ListeController extends AbstractController
         $keyword = $request->query->getString('keyword', '');
         $annee = $request->query->getInt('annee', 0);
         $ecole = $request->query->getInt('ecole', 0);
+        $complete = $request->query->getInt('complete', 0);
+        $coach = $request->query->getInt('coach', 0);
         $archived = $request->query->getInt('archived', 0);
 
-        if($annee == 0){$annee = null;} 
-        if($ecole == 0){$ecole = null;} 
-        $listes = $listeRepository->findAllPaginated($page, $limit, $keyword, $annee, $ecole, $archived);
+        $coach == 0? $user = null : $user = $this->userRepository->find($coach);
+        $annee == 0? $annee = null : null;
+        $ecole == 0? $ecole = null : null; 
+        $listes = $listeRepository->findAllPaginated($page, $limit, $keyword, $annee, $ecole, $complete, $user, $archived);
         
         $dtos = [];
         foreach ($listes as $liste) {
@@ -273,7 +278,9 @@ class ListeController extends AbstractController
         $motif = $request->query->getString('motif', '');
         $listeId = $request->query->getInt('liste', 0);
         $liste = $this->listeRepository->find($listeId);
-        $motif == 'classes' ? $excelFile = $this->exportService->makeSheetPerClasse($liste) : $excelFile = $this->exportService->makeSheet($liste, $motif);
+        if($motif == 'classes'){$excelFile = $this->exportService->makeSheetPerClasse($liste);}
+        else if($motif == 'alloc'){$excelFile = $this->exportService->makeSheetGrpsPerClasse($liste);}
+        else{$excelFile = $this->exportService->makeSheet($liste, $motif);}
 
         return new BinaryFileResponse($excelFile);
     }

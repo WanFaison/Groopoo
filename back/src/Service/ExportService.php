@@ -8,6 +8,8 @@ use App\Repository\GroupeRepository;
 use App\Repository\JuryRepository;
 use App\Repository\ListeRepository;
 use App\Repository\SalleRepository;
+use App\Repository\EtudiantRepository;
+use App\Service\ClasseService;
 use FPDF;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -17,12 +19,16 @@ class ExportService{
     private $groupeRepository;
     private $listeRepository;
     private $juryRepository;
-    public function __construct(JuryRepository $juryRepository, SalleRepository $salleRepository, ListeRepository $listeRepository, GroupeRepository $groupeRepository)
+    private $etudiantRepository;
+    private $groupService;
+    public function __construct(JuryRepository $juryRepository, GroupeService $groupService, EtudiantRepository $etudiantRepository, SalleRepository $salleRepository, ListeRepository $listeRepository, GroupeRepository $groupeRepository)
     {
         $this->salleRepository = $salleRepository;
         $this->groupeRepository = $groupeRepository;
         $this->listeRepository = $listeRepository;
         $this->juryRepository = $juryRepository;
+        $this->etudiantRepository = $etudiantRepository;
+        $this->groupService = $groupService;
     }
 
     public function extractNumberFromGroupName(string $groupName): ?int
@@ -175,6 +181,54 @@ class ExportService{
         return $temp_file;
     }
 
+    public function makeSheetGrpsPerClasse(Liste $liste)
+    {
+        $etudiants = [];
+        foreach($liste->getGroupes() as $g){
+            $etudiants = array_merge($etudiants, $g->getEtudiant()->toArray());
+        }
+        $existingClasses = [];
+        foreach($etudiants as $e){
+            in_array($e->getClasse(), $existingClasses, false) ? null : $existingClasses[] = $e->getClasse();
+        }
+
+        $spreadsheet = new Spreadsheet();
+        $sheetIndex = 0;
+        foreach($existingClasses as $classe){
+            $filteredEtds = array_filter($etudiants, function (Etudiant $etudiant) use ($classe) {
+                return $etudiant->getClasse() === $classe;});
+
+            $sheetIndex>0 ? $spreadsheet->createSheet():null;
+            $spreadsheet->setActiveSheetIndex($sheetIndex);
+            $sheet = $spreadsheet->getActiveSheet();
+            $sheet->setTitle($classe->getLibelle());
+
+            $row = 3;
+            $sheet->setCellValue('A1', $classe->getLibelle());
+            $sheet->setCellValue('A2', 'Matricule');
+            $sheet->setCellValue('B2', 'Nom');
+            $sheet->setCellValue('C2', 'Prenom');
+            $sheet->setCellValue('D2', 'Groupe');
+            $sheet->setCellValue('E2', 'Salle');
+
+            foreach($filteredEtds as $etd){
+                $sheet->setCellValue('A'.$row, $etd->getMatricule());
+                $sheet->setCellValue('B'.$row, $etd->getNom());
+                $sheet->setCellValue('C'.$row, $etd->getPrenom());
+                $sheet->setCellValue('D'.$row, $etd->getGroupe()->getLibelle());
+                $sheet->setCellValue('E'.$row, $etd->getGroupe()->getSalle()->getLibelle());
+                $row++;
+            }
+            $sheetIndex++;
+        }
+        
+        $writer = new Xlsx($spreadsheet);
+        $temp_file = tempnam(sys_get_temp_dir(), $liste->getLibelle().'Repartition par Classe.xlsx');
+        $writer->save($temp_file);
+
+        return $temp_file;
+    }
+
     public function makeSheetPerSalle(Liste $liste)
     {
         $spreadsheet = new Spreadsheet();
@@ -306,6 +360,37 @@ class ExportService{
         
         $writer = new Xlsx($spreadsheet);
         $temp_file = tempnam(sys_get_temp_dir(), 'etdListe.xlsx');
+        $writer->save($temp_file);
+
+        return $temp_file;
+    }
+
+    public function makeFinalistesSheet(Liste $liste, string $mode, int $n)
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'Groupe')
+            ->setCellValue('B1', 'Note')
+            ->setCellValue('C1', 'Coach')
+            ->setCellValue('D1', 'Theme');
+        $row = 2;
+
+        if($mode == '100'){
+            $groupes = $this->groupService->getTop100GroupesByNote($this->groupeRepository->findAllByListe($liste));
+        }else{
+            $groupes = $this->groupService->getArrayTopNPerCoach($liste, $n);
+        }
+
+        foreach($groupes as $grp){
+            $sheet->setCellValue('A'.$row, $grp->getLibelle())
+                    ->setCellValue('B'.$row, $grp->getNote())
+                    ->setCellValue('C'.$row, $grp->getCoach()->getNom(). ' ' .$grp->getCoach()->getPrenom())
+                    ->setCellValue('D'.$row, $grp->getTheme()->getLibelle());
+            $row++;
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $temp_file = tempnam(sys_get_temp_dir(), 'Finalistes.xlsx');
         $writer->save($temp_file);
 
         return $temp_file;

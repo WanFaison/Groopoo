@@ -10,7 +10,6 @@ class FinalJuryResponseDto
     private int $id;
     private string $libelle;
     private array $coachs;
-    private array $themes;
 
     public function getId(): ?int
     {
@@ -45,26 +44,13 @@ class FinalJuryResponseDto
         return $this;
     }
 
-    public function getThemes(): ?array
-    {
-        return $this->themes;
-    }
-
-    public function setThemes(array $themes): static
-    {
-        $this->themes = $themes;
-
-        return $this;
-    }
-
-    public function toDto(Jury $jury, array $coachs, array $themes): FinalJuryResponseDto
+    public function toDto(Jury $jury, array $coachs): FinalJuryResponseDto
     {
         $dto = new FinalJuryResponseDto();
 
         $dto->setId($jury->getId())
             ->setLibelle($jury->getLibelle())
-            ->setCoachs($coachs)
-            ->setThemes($themes);
+            ->setCoachs($coachs);
 
         return $dto;
     }

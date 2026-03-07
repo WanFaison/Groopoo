@@ -13,6 +13,7 @@ import { JuryComponent } from "../../pages/jury/jury.component";
 import { AttendanceComponent } from "../../pages/attendance/attendance.component";
 import { FormSalleComponent } from "../../pages/form-salle/form-salle.component";
 import { FormTheme } from "../../pages/form-theme/form-theme";
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-liste-menu',
@@ -23,7 +24,7 @@ import { FormTheme } from "../../pages/form-theme/form-theme";
 export class ListeMenuComponent implements OnInit{
   state:any = 0;
   user?:LogUser;
-  constructor(private authService:AuthServiceImpl){}
+  constructor(private router:Router, private authService:AuthServiceImpl){}
 
   ngOnInit(): void {
     this.user = this.authService.getUser();

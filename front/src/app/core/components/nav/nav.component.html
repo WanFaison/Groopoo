@@ -9,7 +9,7 @@
         <li class="nav-item">
           <a class="nav-link text-dark" [routerLink]="['/app/home']" routerLinkActive="active">Listes <span class="sr-only">(current)</span></a>
         </li>
-        <li class="nav-item" *ngIf="user?.role != 'ROLE_VISITEUR'">
+        <li class="nav-item" *ngIf="user?.role != 'ROLE_VISITEUR' && user?.role != 'ROLE_COACH'">
           <a class="nav-link text-dark" [routerLink]="['/app/liste-select']" routerLinkActive="active">Importer Groupes</a>
         </li>
         <li class="nav-item" *ngIf="user?.role == 'ROLE_ADMIN'">

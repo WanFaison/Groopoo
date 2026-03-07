@@ -15,8 +15,10 @@ use App\Repository\JuryRepository;
 use App\Repository\ListeRepository;
 use App\Repository\SalleRepository;
 use App\Repository\ThemeRepository;
+use App\Repository\UserRepository;
 use App\Service\ExportService;
 use App\Service\NoteService;
+use App\Service\JuryService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -29,25 +31,27 @@ class JuryController extends AbstractController
 {
     private $entityManager;
     private $juryRepository;
-    private $coachRepository;
+    private $userRepository;
     private $listeRepository;
     private $salleRepository;
     private $groupeRepository;
     private $themeRepository;
     private $noteService;
     private $exportService;
+    private $juryService;
 
-    public function __construct(EntityManagerInterface $entityManager, ExportService $exportService, NoteService $noteService, ThemeRepository $themeRepository, GroupeRepository $groupeRepository, SalleRepository $salleRepository, JuryRepository $juryRepository, CoachRepository $coachRepository, ListeRepository $listeRepository)
+    public function __construct(EntityManagerInterface $entityManager, JuryService $juryService, ExportService $exportService, NoteService $noteService, ThemeRepository $themeRepository, GroupeRepository $groupeRepository, SalleRepository $salleRepository, JuryRepository $juryRepository, UserRepository $userRepository, ListeRepository $listeRepository)
     {
         $this->entityManager = $entityManager;
         $this->juryRepository = $juryRepository;
-        $this->coachRepository = $coachRepository;
+        $this->userRepository = $userRepository;
         $this->listeRepository = $listeRepository;
         $this->salleRepository = $salleRepository;
         $this->groupeRepository = $groupeRepository;
         $this->themeRepository = $themeRepository;
         $this->noteService = $noteService;
         $this->exportService = $exportService;
+        $this->juryService = $juryService;
     }
 
     #[Route('/api/all-jury', name: 'app_all_jury', methods: ['GET'])]
@@ -55,7 +59,7 @@ class JuryController extends AbstractController
     {
         $coachId = $request->query->getInt('coach', 0);
         $listeId = $request->query->getInt('liste', 0);
-        $coach = $coachId!=0 ? $this->coachRepository->find($coachId) : null;
+        $coach = $coachId!=0 ? $this->userRepository->find($coachId) : null;
         $liste = $this->listeRepository->find($listeId);
         $jurys = []; 
         foreach($liste->getJuries() as $jury){
@@ -84,13 +88,13 @@ class JuryController extends AbstractController
     {
         $coachId = $request->query->getInt('coach', 0);
         $juryId = $request->query->getInt('jury', 0);
-        $coach = $this->coachRepository->find($coachId);
+        $coach = $this->userRepository->find($coachId);
         $jury = $this->juryRepository->find($juryId);
 
         if($coach && $jury){
             $jury->addCoach($coach);
             $this->juryRepository->addOrUpdate($jury);
-            $this->coachRepository->addOrUpdate($coach);
+            $this->userRepository->addOrUpdate($coach);
             return RestResponse::requestResponse('coach transferer avec succes', 0, JsonResponse::HTTP_OK);
         }else{
             return RestResponse::requestResponse('coach ou jury non-trouve', 1, JsonResponse::HTTP_OK);
@@ -108,7 +112,7 @@ class JuryController extends AbstractController
 
         $liste = $this->listeRepository->find($listeId);
         $jurys = $this->juryRepository->findAllNotFinalByListePaginated($page, $limit, $keyword, $liste);
-        $results = $this->juryCoachesDto($jurys);
+        $results = $this->juryService->juryCoachesDto($jurys);
 
         $totalItems = count($results);
         $totalPages = $totalItems>0 ? ceil($totalItems / $limit):0;
@@ -116,64 +120,18 @@ class JuryController extends AbstractController
         return RestResponse::paginateResponse($results, $page, $totalItems, $totalPages, JsonResponse::HTTP_OK);
     }
 
-    private function juryCoachesDto($jurys, ?array $groupesFinalistes = []):array
-    {
-        $dtos = [];
-        foreach($jurys as $jury){
-            $ccs = [];
-            foreach($jury->getCoaches() as $coach){ $ccs[] = (new CoachResponseDto())->toDto($coach); }
-            $coachs = [];
-            foreach($ccs as $coach){
-                $coachs[] = [
-                    'id' => $coach->getId(),
-                    'nom' => $coach->getNom(),
-                    'prenom' => $coach->getPrenom(),
-                    'tel' => $coach->getTel(),
-                    'email' => $coach->getEmail(),
-                    'etat' => $coach->getEtat(),
-                    'ecole' => $coach->getEcole()
-                ];
-            }
-
-            $grps = [];
-            if(count($groupesFinalistes)>0){foreach($groupesFinalistes as $group){ $grps[] = (new GroupeResponseDto())->toDto($group, []); }}
-            else{foreach($jury->getGroupes() as $group){ $grps[] = (new GroupeResponseDto())->toDto($group, []); }}
-            $groups = [];
-            foreach($grps as $group){
-                $groups[] = [
-                    'id' => $group->getId(),
-                    'libelle' => $group->getLibelle()
-                ];
-            }
-
-            $dtos[] = (new JuryResponseDto())->toDto($jury, $coachs, $groups);
-        }
-
-        $results = [];
-        foreach($dtos as $d){
-            $results[] = [
-                'id' => $d->getId(),
-                'libelle' => $d->getLibelle(),
-                'coachs' => $d->getCoachs(),
-                'groupes' => $d->getGroupes()
-            ];
-        }
-
-        return $results;
-    }
-
     #[Route('/api/remove-coach', name: 'api_remove_coach', methods: ['GET'])]
     public function removeCoach(Request $request): JsonResponse
     {
         $coachId = $request->query->getInt('coach', 0);
         $juryId = $request->query->getInt('jury', 0);
-        $coach = $this->coachRepository->find($coachId);
+        $coach = $this->userRepository->find($coachId);
         $jury = $this->juryRepository->find($juryId);
 
         if($coach && $jury){
             $jury->removeCoach($coach);
             $this->juryRepository->addOrUpdate($jury);
-            $this->coachRepository->addOrUpdate($coach);
+            $this->userRepository->addOrUpdate($coach);
             return RestResponse::requestResponse('coach removed', 0, JsonResponse::HTTP_OK);
         }
         return RestResponse::requestResponse('coach or jury not found', 1, JsonResponse::HTTP_BAD_REQUEST);
@@ -188,24 +146,8 @@ class JuryController extends AbstractController
         $finalJury = $this->juryRepository->findFinalistJuryByList($liste);
         $results = [];
 
-        $themeDtos = [];
-        if ($this->noteService->hasGroupWithNoteAboveZero($liste->getGroupes()->toArray())){
-            foreach($this->themeRepository->findAll() as $theme){
-                $groupsInListe = $this->groupeRepository->findAllByListeTheme($liste, $theme);
-                if(count($groupsInListe)>0){
-                    $groupsInListe = $this->noteService->getTop3GroupesByTheme($groupsInListe);
-                    $dto = (new FinalThemeResponseDto())->toDto($theme, $groupsInListe);
-                    $themeDtos[] = [
-                        'id' => $dto->getId(),
-                        'libelle' => $dto->getLibelle(),
-                        'groupes' => $dto->getGroupes()
-                    ];
-                }
-            }
-        }
-
         if($finalJury){
-            $results = $this->juryFinalCoachesDto([$finalJury], $themeDtos);
+            $results = $this->juryService->juryFinalCoachesDto([$finalJury]);
         }else{
             $newJury = new Jury();
             $newJury->setListe($liste)
@@ -214,50 +156,14 @@ class JuryController extends AbstractController
                     ->setLibelle('Jury Finaliste');
             $this->juryRepository->addOrUpdate($newJury);
 
-            $results = $this->juryFinalCoachesDto([$newJury], $themeDtos);
-
-            $totalItems = count($results);
-            return RestResponse::paginateResponse($results, 0, $totalItems, 1, JsonResponse::HTTP_OK);
+            $results = $this->juryService->juryFinalCoachesDto([$newJury]);
         }
         
         $totalItems = count($results);
         return RestResponse::paginateResponse($results, 0, $totalItems, 1, JsonResponse::HTTP_OK);
     }
 
-    private function juryFinalCoachesDto($jurys, ?array $themes = []):array
-    {
-        $dtos = [];
-        foreach($jurys as $jury){
-            $ccs = [];
-            foreach($jury->getCoaches() as $coach){ $ccs[] = (new CoachResponseDto())->toDto($coach); }
-            $coachs = [];
-            foreach($ccs as $coach){
-                $coachs[] = [
-                    'id' => $coach->getId(),
-                    'nom' => $coach->getNom(),
-                    'prenom' => $coach->getPrenom(),
-                    'tel' => $coach->getTel(),
-                    'email' => $coach->getEmail(),
-                    'etat' => $coach->getEtat(),
-                    'ecole' => $coach->getEcole()
-                ];
-            }
-
-            $dtos[] = (new FinalJuryResponseDto())->toDto($jury, $coachs, $themes);
-        }
-
-        $results = [];
-        foreach($dtos as $d){
-            $results[] = [
-                'id' => $d->getId(),
-                'libelle' => $d->getLibelle(),
-                'coachs' => $d->getCoachs(),
-                'themes' => $d->getThemes()
-            ];
-        }
-
-        return $results;
-    }
+    
 
     #[Route('/api/final-export', name: 'api_final_export', methods: ['GET'])]
     public function exportExcelFinal(Request $request): BinaryFileResponse

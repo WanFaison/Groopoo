@@ -53,12 +53,19 @@ class Liste extends AbstractEntity
     #[ORM\Column(type: 'json', nullable: true)]
     private ?array $notes = null;
 
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'listes')]
+    private Collection $coachs;
+
     public function __construct()
     {
         $this->groupes = new ArrayCollection();
         $this->jours = new ArrayCollection();
         $this->setImported(false);
         $this->juries = new ArrayCollection();
+        $this->coachs = new ArrayCollection();
     }
 
 
@@ -239,6 +246,33 @@ class Liste extends AbstractEntity
     public function setNotes(?array $notes): static
     {
         $this->notes = $notes;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getCoachs(): Collection
+    {
+        return $this->coachs;
+    }
+
+    public function addCoach(User $coach): static
+    {
+        if (!$this->coachs->contains($coach)) {
+            $this->coachs->add($coach);
+            $coach->addListe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCoach(User $coach): static
+    {
+        if ($this->coachs->removeElement($coach)) {
+            $coach->removeListe($this);
+        }
 
         return $this;
     }

@@ -2,7 +2,7 @@
   <div class="flex-center mb-3 flex-column">
       <div class="d-flex justify-content-between">
         <h4 *ngIf="groupResponse" class="underline-bold">{{groupResponse.results[0].listeT}}</h4>
-        <a *ngIf="user?.role != 'ROLE_VISITEUR' && groupResponse && !listeResponse?.results?.isComplet && !listeResponse?.results?.isArchived"
+        <a *ngIf="user?.role != 'ROLE_VISITEUR' && user?.role != 'ROLE_COACH' && groupResponse && !listeResponse?.results?.isComplet && !listeResponse?.results?.isArchived"
         data-bs-toggle="modal" data-bs-target="#modifModal"
         class="nav-link mx-1 text-black"
         (click)="libelle = groupResponse.results[0].listeT;" ><i class="fas fa-lg fa-edit"></i></a>
@@ -11,10 +11,14 @@
         *ngIf="!listeResponse?.results?.isArchived">
         <div class="col-md-8">
           <button (click)="printXls('results')" class="btn btn-info col-md-4 mb-2 me-2">Exporter les Groupes</button>
+          <button (click)="printXls('alloc')" class="btn btn-info col-md-4 mb-2 me-2">Exporter par classe</button>
+
+          <div *ngIf="user?.role != 'ROLE_VISITEUR' && user?.role != 'ROLE_COACH'">
           <button (click)="printSalleXls('salle')" class="btn btn-info col-md-4 mb-2 me-2">Repartition des Salles</button>
           <button (click)="printXls()" class="btn btn-info mb-2 me-2">Liste d'Emargement</button>
+          </div>
         </div>
-        <div class="ml-4" *ngIf="user?.role != 'ROLE_VISITEUR'">
+        <div class="ml-4" *ngIf="user?.role != 'ROLE_VISITEUR' && user?.role != 'ROLE_COACH'">
           <button (click)="useListe()" class="btn btn-secondary mb-2 me-2">Réutiliser la liste</button>
           <button class="btn btn-success mb-2 me-2"
             *ngIf="!listeResponse?.results?.isComplet"
@@ -51,12 +55,19 @@
                   <th scope="col">{{'Salle: ' + grp.salle}}</th>
                   <th scope="col">{{'Coach: ' + grp.coach}}</th>
                   <th scope="col">{{'Thematique: ' + grp.theme}}</th>
+
+                  <div *ngIf="user?.role != 'ROLE_VISITEUR' && user?.role != 'ROLE_COACH' && !listeResponse?.results?.isArchived && !listeResponse?.results?.isComplet">
                   <th>
                     <button class="btn btn-success me-2"
-                    *ngIf="user?.role != 'ROLE_VISITEUR' && !listeResponse?.results?.isArchived && !listeResponse?.results?.isComplet"
                     (click)="findClasses(grp.id)"
                     data-bs-toggle="modal" data-bs-target="#addEtdModal">Ajouter Etudiant</button>
                   </th>
+                  <th>
+                    <button class="btn btn-success me-2"
+                    (click)="getAllOtherCoach(grp.id)"
+                    data-bs-toggle="modal" data-bs-target="#changeCoachModal">Changer Coach</button>
+                  </th>
+                  </div>
               </tr>
               <tr>
                   <th scope="col">Matricule</th>
@@ -76,7 +87,7 @@
                   <td>{{etd.classe}}</td> 
                   <td *ngIf="user?.role != 'ROLE_VISITEUR'">{{etd.noteEtd}}</td> 
                   <td *ngIf="user?.role != 'ROLE_VISITEUR'">{{etd.noteFinal}}</td> 
-                  <td *ngIf="!listeResponse?.results?.isComplet && !listeResponse?.results?.isArchived && user?.role != 'ROLE_VISITEUR'">
+                  <td *ngIf="!listeResponse?.results?.isComplet && !listeResponse?.results?.isArchived && user?.role != 'ROLE_VISITEUR' && user?.role != 'ROLE_COACH'">
                     <button class="btn btn-secondary me-2"
                     (click)="findEtd(etd.id)"
                     data-bs-toggle="modal" data-bs-target="#transfererModal">Transferer</button>
@@ -264,6 +275,35 @@
       <div class="modal-footer d-flex">
           <button (click)="checkCorrect()" type="button" class="btn btn-success">Confirmer</button>
           <button (click)="reloadPage()" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Quitter</button>
+      </div>
+  </div>
+  </div>
+</div>
+
+<!-- Modal change coach-->
+<div class="modal fade" id="changeCoachModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+  <div class="modal-content row">
+      <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Changer le coach</h5>
+          <button type="button" class="btn-close"
+          data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <label class="form-label custom-label" for="libelle">Choisir le coach</label>
+        <div class="input-group me-2">
+          <select [(ngModel)]="newCoach" class="form-select" aria-label=".form-select-sm example">
+            <option selected value="0">coach...</option>
+            <option *ngFor="let item of coachRequest?.results" [value]="item.id">{{ item.nom }} {{ item.prenom }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer d-flex">
+        <button (click)="changerCoach(newCoach, grp)" type="button" 
+        [class.disabled]="newCoach == 0"
+        class="btn btn-success">Confirmer</button>
+        <button type="button" class="btn btn-secondary" 
+        data-bs-dismiss="modal">Close</button>
       </div>
   </div>
   </div>

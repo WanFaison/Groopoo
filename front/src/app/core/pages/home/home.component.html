@@ -21,7 +21,7 @@
           <option *ngFor="let item of anneeResponse?.results" [value]="item.id">{{ item.libelle }}</option>
         </select>
 
-        <select *ngIf="user?.role != 'ROLE_ECOLE_ADMIN'" [(ngModel)]="ecole" class="form-select col-md-6" aria-label=".form-select-sm example">
+        <select *ngIf="user?.role != 'ROLE_ECOLE_ADMIN' && user?.role != 'ROLE_COACH'" [(ngModel)]="ecole" class="form-select col-md-6" aria-label=".form-select-sm example">
           <option selected value="0">organisation...</option>
           <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
         </select>
@@ -58,7 +58,7 @@
                   <a (click)="viewListe(item.id)" class="btn btn-info me-2" 
                   role="button" style="color: white;">
                     Consulter</a>
-                  <a *ngIf="user?.role != 'ROLE_VISITEUR'"
+                  <a *ngIf="user?.role != 'ROLE_VISITEUR' && user?.role != 'ROLE_COACH'"
                   (click)="useListe(item.id)" class="btn btn-secondary me-2" 
                   role="button" style="color: white;">
                     Réutiliser</a>
@@ -67,7 +67,7 @@
                   data-bs-toggle="modal" data-bs-target="#ynTransModal" 
                   role="button" style="color: white;">
                     Transférer</a>
-                  <a *ngIf="user?.role != 'ROLE_VISITEUR' && !item.isComplet"
+                  <a *ngIf="user?.role != 'ROLE_VISITEUR' && user?.role != 'ROLE_COACH' && !item.isComplet"
                   (click)="liste = item.id;" class="btn btn-secondary me-2"
                   data-bs-toggle="modal" data-bs-target="#ynvModal" 
                   role="button" style="color: white;">

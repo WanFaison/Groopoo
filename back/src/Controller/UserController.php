@@ -15,22 +15,36 @@ use App\Controller\Dto\Response\UserResponseDto;
 use App\Entity\User;
 use App\Enums\Role;
 use App\Repository\ProfileRepository;
+use App\Service\UserService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserController extends AbstractController
 {
+    private $entityManager;
+    private $userService;
+    private $userRepository;
+    private $ecoleRepository;
+    public function __construct(EntityManagerInterface $entityManager, UserService $userService, UserRepository $userRepository, EcoleRepository $ecoleRepository)
+    {
+        $this->entityManager = $entityManager;
+        $this->ecoleRepository = $ecoleRepository;
+        $this->userService = $userService;
+        $this->userRepository = $userRepository;
+    }
+
     #[Route('/api/lister-users', name: 'api_users', methods: ['GET'])]
-    public function listerUsers(Request $request, UserRepository $userRepository, EcoleRepository $ecoleRepository): JsonResponse
+    public function listerUsers(Request $request): JsonResponse
     {
         $page = $request->query->getInt('page', 0);
         $limit = $request->query->getInt('limit', 10);
         $keyword = $request->query->getString('keyword', '');
+        $role = $request->query->getString('role', '');
         $ecole = $request->query->getInt('ecole', 0);
         $arch = $request->query->getBoolean('arch', false);
 
-        if($ecole == 0){$ecole = null;} 
-        $users = $userRepository->findAllPaginated($page, $limit, $keyword, $ecole, $arch);
-        $results = $this->userListeDto($users);
+        $users = $this->userRepository->findAllPaginated($page, $limit, $keyword, $role, $ecole, $arch);
+        $results = $this->userService->userListeDto($users);
 
         $totalItems = $users->count();
         $totalPages = ceil($totalItems / $limit);
@@ -38,59 +52,30 @@ class UserController extends AbstractController
         return RestResponse::paginateResponse($results, $page, $totalItems, $totalPages, JsonResponse::HTTP_OK);
     }
 
-    private function userListeDto($users):array
-    {
-        $dtos = [];
-        foreach($users as $u){
-            $roles = [];
-            foreach($u->getRoles() as $r){
-                $roles[] = $r;
-            }
-
-            $dtos[] = (new UserResponseDto())->toDto($u, $roles);
-        }
-
-        $results = [];
-        foreach($dtos as $d){
-            $results[] = [
-                'id' => $d->getId(),
-                'email' => $d->getEmail(),
-                'ecole' => $d->getEcole(),
-                'ecoleT' => $d->getEcoleT(),
-                'roles' => $d->getRoles(), 
-            ];
-        }
-
-        return $results;
-    }
-
     #[Route('/api/add-user', name: 'api_add_user', methods: ['POST'])]
-    public function addUser(Request $request, UserRepository $userRepository, EcoleRepository $ecoleRepository): JsonResponse
+    public function addUser(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
+        $nom = $data['nom'] ?? null;
+        $prenom = $data['prenom'] ?? null;
         $email = $data['email'] ?? null;
         $ecole = $data['ecole'] ?? null;
-        $option1 = $data['option1'] ?? null;
-        $option2 = $data['option2'] ?? null;
-        $option3 = $data['option3'] ?? null;
+        $profil = $data['profil'] ?? null;
 
 
         if($email){
-            $user = $userRepository->createUser('passer', $email, $email);
+            $user = $this->userRepository->createUser('passer', $email, $nom, $prenom);
             $user->setArchived(false);
-            
-            if($option1){$user->addRole(Role::ADMIN);}
-            else if($option2){
-                $user->addRole(Role::ECOLE_ADMIN);
+            $user->addRole(Role::fromName($profil));
+            if($profil=='ECOLE_ADMIN' || $profil=='COACH'){
                 if(($ecole) && (count($ecole)>0)){
                     foreach($ecole as $e){
-                        $user->addEcole($ecoleRepository->find($e));
+                        $user->addEcole($this->ecoleRepository->find($e));
                     }
                 }
             }
-            else{$user->addRole(Role::VISITEUR);}
 
-            $userRepository->addOrUpdate($user);
+            $this->userRepository->addOrUpdate($user);
 
             return RestResponse::requestResponse('user created!', $email, JsonResponse::HTTP_OK);
         }
@@ -99,37 +84,38 @@ class UserController extends AbstractController
     }
 
     #[Route('/api/user-modif', name: 'api_user_modif', methods: ['GET'])]
-    public function archiveUser(Request $request, UserRepository $userRepository): JsonResponse
+    public function archiveUser(Request $request): JsonResponse
     {
         $userId = $request->query->getInt('user', 0);
         $motif = $request->query->getInt('motif', 0);
 
-        $user = $userRepository->find($userId);
+        $user = $this->userRepository->find($userId);
         if($user && $motif == 0){
             $user->setArchived(!$user->isArchived());
-            $userRepository->addOrUpdate($user);
+            $this->userRepository->addOrUpdate($user);
         }else{
-            $userRepository->deleteById($userId);
+            $this->userRepository->deleteById($userId);
         }
         
         return RestResponse::requestResponse('User has been updated', 1, JsonResponse::HTTP_OK);
     }
 
-    #[Route('/api/modif-user/{id}', name: 'api_modif_user', methods: ['POST'])]
-    public function updateUser(Request $request, UserRepository $userRepository, int $id, UserPasswordHasherInterface $passwordHasher): JsonResponse
+    #[Route('/api/modif-user', name: 'api_modif_user', methods: ['POST'])]
+    public function updateUser(Request $request, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
+        $uid = $data['id'] ?? null;
         $username = $data['username'] ?? null;
         $pswd1 = $data['pswd1'] ?? null;
         $pswd2 = $data['pswd2'] ?? null;
 
-        $user = $userRepository->find($id);
+        $user = $this->userRepository->find($uid);
         if (!$user) {
             return new JsonResponse(['error' => 'User not found'], JsonResponse::HTTP_NOT_FOUND);
         }
 
         if(!empty($username)){
-            if(($userRepository->findOneBy(['username' => $username])) && ($username != $user->getUsername())){
+            if(($this->userRepository->findOneBy(['username' => $username])) && ($username != $user->getUsername())){
                 return RestResponse::requestResponse('Ce username existe deja', 1, JsonResponse::HTTP_OK);
             }else{
                 $user->setUsername($username);
@@ -144,7 +130,7 @@ class UserController extends AbstractController
             }
         }
 
-        $userRepository->addOrUpdate($user);
+        $this->userRepository->addOrUpdate($user);
         return RestResponse::requestResponse('User updated', 0, JsonResponse::HTTP_OK);
     }
 }

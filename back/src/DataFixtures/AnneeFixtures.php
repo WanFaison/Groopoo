@@ -10,7 +10,7 @@ class AnneeFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        for ($i = 1; $i <= 3; $i++) {
+        for ($i = 1; $i <= 5; $i++) {
             $annee = new Annee();
             $annee->setLibelle((2021 + $i));
             $annee->setArchived(false);

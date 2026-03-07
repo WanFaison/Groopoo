@@ -7,6 +7,7 @@ use App\Entity\User;
 class UserResponseDto{
     private int $id;
     private string $username;
+    private string $noms;
     private string $email;
     private ?array $ecole = null;
     private ?array $ecoleT = null;
@@ -29,6 +30,17 @@ class UserResponseDto{
     public function setUsername(string $username): static
     {
         $this->username = $username;
+
+        return $this;
+    }
+
+    public function getNoms(): ?string
+    {
+        return $this->noms;
+    }
+    public function setNoms(string $noms): static
+    {
+        $this->noms = $noms;
 
         return $this;
     }
@@ -93,14 +105,15 @@ class UserResponseDto{
     {
         $dto = new UserResponseDto();
 
-        $dto->setId($user->getId());
-        $dto->setUsername($user->getUsername());
-        $dto->setEmail($user->getEmail());
-        $dto->setRoles($roles);
+        $dto->setId($user->getId())
+            ->setUsername($user->getUsername())
+            ->setNoms($user->getPrenom().' '.$user->getNom())
+            ->setEmail($user->getEmail())
+            ->setRoles($roles);
         if($user->getEcoles()){
             foreach($user->getEcoles() as $e){
-                $dto->addEcole($e->getId());
-                $dto->addEcoleT($e->getLibelle());
+                $dto->addEcole($e->getId())
+                    ->addEcoleT($e->getLibelle());
             }
         }
 

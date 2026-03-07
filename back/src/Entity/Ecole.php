@@ -42,12 +42,6 @@ class Ecole extends AbstractEntity
     private Collection $etages;
 
     /**
-     * @var Collection<int, Coach>
-     */
-    #[ORM\OneToMany(targetEntity: Coach::class, mappedBy: 'ecole')]
-    private Collection $coaches;
-
-    /**
      * @var Collection<int, Salle>
      */
     #[ORM\OneToMany(targetEntity: Salle::class, mappedBy: 'ecole')]
@@ -60,7 +54,6 @@ class Ecole extends AbstractEntity
         $this->classes = new ArrayCollection();
         $this->admins = new ArrayCollection();
         $this->etages = new ArrayCollection();
-        $this->coaches = new ArrayCollection();
         $this->salles = new ArrayCollection();
     }
 
@@ -212,35 +205,6 @@ class Ecole extends AbstractEntity
         return $this;
     }
 
-    /**
-     * @return Collection<int, Coach>
-     */
-    public function getCoaches(): Collection
-    {
-        return $this->coaches;
-    }
-
-    public function addCoach(Coach $coach): static
-    {
-        if (!$this->coaches->contains($coach)) {
-            $this->coaches->add($coach);
-            $coach->setEcole($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCoach(Coach $coach): static
-    {
-        if ($this->coaches->removeElement($coach)) {
-            // set the owning side to null (unless already changed)
-            if ($coach->getEcole() === $this) {
-                $coach->setEcole(null);
-            }
-        }
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Salle>

@@ -58,8 +58,8 @@ export class ListeServiceImpl implements ListeService{
         return this.http.get<any>(`${this.apiUrlRedo}?liste=${liste}`);
     }
 
-    findAll(page:number=0, keyword:string='', annee:number=0, ecole:number=0, archived:number=0): Observable<RestResponse<ListeModel[]>> {
-        return this.http.get<RestResponse<ListeModel[]>>(`${this.apiUrl}?page=${page}&keyword=${keyword}&annee=${annee}&ecole=${ecole}&archived=${archived}`);
+    findAll(page:number=0, keyword:string='', annee:number=0, ecole:number=0, complete:number=0, coach:number=0, archived:number=0): Observable<RestResponse<ListeModel[]>> {
+        return this.http.get<RestResponse<ListeModel[]>>(`${this.apiUrl}?page=${page}&keyword=${keyword}&annee=${annee}&ecole=${ecole}&complete=${complete}&coach=${coach}&archived=${archived}`);
     }
 
     findById(liste:number): Observable<RestResponse<ListeModel>> {

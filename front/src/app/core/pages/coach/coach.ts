@@ -5,7 +5,7 @@ import { CoachModel } from '../../models/coach.model';
 import { EcoleModel } from '../../models/ecole.model';
 import { RequestResponse, RestResponse } from '../../models/rest.response';
 import { LogUser } from '../../models/user.model';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 import { CoachServiceImpl } from '../../services/impl/coach.service.impl';
 import { PaginatorService } from '../../services/pagination.service';
@@ -13,7 +13,7 @@ import { EcoleServiceImpl } from '../../services/impl/ecole.service.impl';
 
 @Component({
   selector: 'app-coach',
-  imports: [FormsModule, ReactiveFormsModule, CommonModule],
+  imports: [RouterLink, RouterLinkActive, FormsModule, ReactiveFormsModule, CommonModule],
   templateUrl: './coach.html',
   styleUrl: './coach.css'
 })
@@ -115,9 +115,9 @@ export class Coach implements OnInit{
         tel: [this.coachRequest?.results.tel, Validators.required],
         email: [this.coachRequest?.results.email, [Validators.required, Validators.email]],
         ecole: [this.coachRequest?.results.ecoleId, Validators.required],
-        option1: this.coachRequest?.results.etat == 'Debutant' ?  true : false,
-        option2: this.coachRequest?.results.etat == 'Moyen' ?  true : false,
-        option3: this.coachRequest?.results.etat == 'Senior' ?  true : false
+        // option1: this.coachRequest?.results.etat == 'Debutant' ?  true : false,
+        // option2: this.coachRequest?.results.etat == 'Moyen' ?  true : false,
+        // option3: this.coachRequest?.results.etat == 'Senior' ?  true : false
       });
     });
   }

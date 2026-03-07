@@ -2,10 +2,12 @@
 
 namespace App\Repository;
 
+use App\Entity\Coach;
 use App\Entity\Groupe;
 use App\Entity\Liste;
 use App\Entity\Salle;
 use App\Entity\Theme;
+use App\Entity\User;
 use App\Service\PaginatorService;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -149,6 +151,49 @@ class GroupeRepository extends ServiceEntityRepository
                             ->getResult();
 
         return $query;
+    }
+
+    public function findAllByCoachListe(?User $coach=null, ?Liste $liste=null):array
+    {
+        $queryBuilder = $this->createQueryBuilder('r');
+        if ($liste) {
+            $queryBuilder->andWhere('r.liste = :liste')
+                         ->setParameter('liste', $liste);
+        }
+        if ($coach) {
+            $queryBuilder->andWhere('r.coach = :coach')
+                         ->setParameter('coach', $coach);
+        }
+        $query = $queryBuilder->andWhere('r.isArchived = :isArchived')
+                            ->setParameter('isArchived', false)
+                            ->orderBy('r.id', 'ASC')
+                            ->getQuery()
+                            ->getResult();
+
+        return $query;
+    }
+
+    public function findAllByCoachListePaginated(int $page, int $limit, ?User $coach=null, ?Liste $liste=null, ?Groupe $groupe=null):Paginator
+    {
+        $queryBuilder = $this->createQueryBuilder('r');
+        if ($liste) {
+            $queryBuilder->andWhere('r.liste = :liste')
+                         ->setParameter('liste', $liste);
+        }
+        if ($coach) {
+            $queryBuilder->andWhere('r.coach = :coach')
+                         ->setParameter('coach', $coach);
+        }
+        if ($groupe) {
+            $queryBuilder->andWhere('r.id = :id')
+                         ->setParameter('id', $groupe->getId());
+        }
+        $query = $queryBuilder->andWhere('r.isArchived = :isArchived')
+                            ->setParameter('isArchived', false)
+                            ->orderBy('r.id', 'ASC')
+                            ->getQuery();
+
+        return PaginatorService::pageInator($query, $page, $limit);
     }
     
 

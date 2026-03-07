@@ -113,6 +113,8 @@ export class HomeComponent implements OnInit{
       if (typeof window !== 'undefined' && localStorage && this.user?.role == 'ROLE_ECOLE_ADMIN'){
         this.ecole = parseInt(localStorage.getItem('ecoleListe') || '0', 10);
         this.listeService.findAll(page,keyword, annee, this.ecole).subscribe(data=>this.response=data);
+      }else if(this.user?.role == 'ROLE_COACH'){
+        this.listeService.findAll(page,keyword, annee, ecole, 1, this.user.id).subscribe(data=>this.response=data);
       }else{
         this.listeService.findAll(page,keyword, annee, ecole).subscribe(data=>this.response=data);
       }   

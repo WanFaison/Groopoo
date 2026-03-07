@@ -1,4 +1,4 @@
-<div class="container-fluid min-vh-100">
+<div class="container-fluid min-vh-100 d-flex flex-column">
     <app-nav></app-nav>
 
     <nav class="navbar navbar-expand-md navbar-bottom-border">
@@ -8,31 +8,38 @@
               <a [class.active]="state==0" class="nav-link" role="button"
               (click)="changeState(0)">Groupes</a>
             </li>
-            <li class="nav-item" *ngIf="user?.role != 'ROLE_VISITEUR'">
-              <a [class.active]="state==1 || state==6" class="nav-link" role="button"
-              (click)="changeState(1)">Journées</a>
-            </li>
-            <li class="nav-item" *ngIf="user?.role != 'ROLE_VISITEUR'">
-              <a [class.active]="state==2" class="nav-link" role="button"
-              (click)="changeState(2)">Notes </a>
-            </li>
-            <li class="nav-item" *ngIf="user?.role != 'ROLE_VISITEUR'">
-              <a [class.active]="state==3 || state==5" class="nav-link" role="button"
-              (click)="changeState(3)">Coachs & Jurys</a>
-            </li>
-            <li class="nav-item" *ngIf="user?.role != 'ROLE_VISITEUR'">
-              <a [class.active]="state==8" class="nav-link" role="button"
-              (click)="changeState(8)">Thematiques</a>
-            </li>
-            <li class="nav-item" *ngIf="user?.role != 'ROLE_VISITEUR'">
-                <a [class.active]="state==4" class="nav-link" role="button"
-                (click)="changeState(4)">Finalistes</a>
-            </li>
+
+            <div *ngIf="user?.role != 'ROLE_VISITEUR'">
+              <li class="nav-item">
+                <a [class.active]="state==1 || state==6" class="nav-link" role="button"
+                (click)="changeState(1)">Journées</a>
+              </li>
+
+              <div *ngIf="user?.role != 'ROLE_COACH'">
+              <li class="nav-item" >
+                <a [class.active]="state==2" class="nav-link" role="button"
+                (click)="changeState(2)">Notes </a>
+              </li>
+              <li class="nav-item">
+                <a [class.active]="state==3 || state==5" class="nav-link" role="button"
+                (click)="changeState(3)">Coachs & Jurys</a>
+              </li>
+              <li class="nav-item">
+                <a [class.active]="state==8" class="nav-link" role="button"
+                (click)="changeState(8)">Thematiques</a>
+              </li>
+              </div>
+            
+              <li class="nav-item">
+                  <a [class.active]="state==4" class="nav-link" role="button"
+                  (click)="changeState(4)">Finalistes</a>
+              </li>
+            </div>
           </ul>
         </div>
     </nav>
 
-    <div>
+    <div class="flex-grow-1 pb-5">
         <app-groups *ngIf="state==0"></app-groups>
         <app-jours *ngIf="state==1"></app-jours>
         <app-notes *ngIf="state==2"></app-notes>
@@ -44,5 +51,5 @@
         <app-form-theme *ngIf="state==8"></app-form-theme>
     </div>
 
-    <app-foot></app-foot>
+    <app-foot class="mt-auto"></app-foot>
 </div>

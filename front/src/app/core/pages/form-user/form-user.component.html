@@ -11,6 +11,22 @@
 
         <div class="flex-center my-3">
             <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" style="width: 22rem;">
+                <div data-mdb-input-init class="form-outline mb-2">
+                    <label class="form-label" for="nom">Nom:</label>
+                    <input formControlName="nom" type="text" id="nom" 
+                        class="form-control" />
+                    <div *ngIf="nomControl?.touched && nomControl?.errors?.['required']" class="text-danger">
+                        Nom est requis.
+                    </div>
+                </div>
+                <div data-mdb-input-init class="form-outline mb-2">
+                    <label class="form-label" for="prenom">Prenom:</label>
+                    <input formControlName="prenom" type="text" id="prenom" 
+                        class="form-control" />
+                    <div *ngIf="prenomControl?.touched && prenomControl?.errors?.['required']" class="text-danger">
+                        Prenom est requis.
+                    </div>
+                </div>
                 <div data-mdb-input-init class="form-outline mb-4">
                     <label class="form-label" for="email">Adresse email:</label>
                     <input formControlName="email" type="email" id="email" 
@@ -19,7 +35,55 @@
                         L'email est requis.
                     </div>
                 </div>
+                
                 <div class="mb-4">
+                    <label class="form-label me-3">Profil: </label>
+
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input"
+                            type="radio"
+                            name="profil"
+                            value="ADMIN"
+                            formControlName="profil"
+                            id="admin">
+                        <label class="form-check-label" for="admin">Admin</label>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input"
+                            type="radio"
+                            name="profil"
+                            value="ECOLE_ADMIN"
+                            formControlName="profil"
+                            id="ecoleAdmin">
+                        <label class="form-check-label" for="ecoleAdmin">Ecole-admin</label>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input"
+                            type="radio"
+                            name="profil"
+                            value="COACH"
+                            formControlName="profil"
+                            id="coach">
+                        <label class="form-check-label" for="coach">Coach</label>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input"
+                            type="radio"
+                            name="profil"
+                            value="VISITEUR"
+                            formControlName="profil"
+                            id="visiteur">
+                        <label class="form-check-label" for="visiteur">Visiteur</label>
+                    </div>
+                </div>
+                <div *ngIf="op2" class="text-danger">
+                    En sélectionnant « Ecole-Admin/Coach », assurez-vous de sélectionner une organisation correspondante.
+                </div>
+
+                <div *ngIf="op2" class="mb-4">
                     <label class="form-label" for="email">Organisation:</label>
                     <p class="fst-italic"><small>Maintenez le bouton Ctrl/Command(Cmd) enfoncé pour activer la sélection multiple.</small></p>
                     <select multiple formControlName="ecole" class=" form-select form-select-sm  me-2" aria-label=".form-select-sm example">
@@ -27,24 +91,7 @@
                         <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
                     </select>
                 </div>
-                <div class="mb-4">
-                    <label class="form-label me-3">Profil: </label>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" formControlName="option1">
-                        <label class="form-check-label" for="inlineCheckbox1">Admin</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox2" formControlName="option2">
-                        <label class="form-check-label" for="inlineCheckbox2">Ecole-admin</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox3" formControlName="option3">
-                        <label class="form-check-label" for="inlineCheckbox3">Visiteur</label>
-                    </div>
-                </div>
-                <div *ngIf="ecoleId.length > 0 && op2" class="text-danger">
-                    En sélectionnant « Ecole-Admin », assurez-vous de sélectionner une école correspondante.
-                </div>
+
                 <button (click)="onSubmit()" data-mdb-ripple-init type="button" 
                 [class.disabled]="ecoleId.length <1 && op2"
                 class="btn btn-primary btn-block mb-4">Ajouter</button>

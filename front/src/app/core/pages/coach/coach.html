@@ -16,7 +16,7 @@
         role="button" style="color: white;">
             Réinitialiser</a>    
             
-        <a class="btn btn-info col-md-1" data-bs-toggle="modal" data-bs-target="#addCoachModal" 
+        <a class="btn btn-info col-md-1" [routerLink]="['/app/form-user']" routerLinkActive="active" 
               role="button" style="color: white;">
               Ajouter</a>
     </div>
@@ -39,7 +39,7 @@
                 <th scope="row">{{item.nom}} {{item.prenom}}</th>
                 <td>{{item.tel}}</td>
                 <td>{{item.email}}</td>
-                <td>{{item.etat}}</td>
+                
                 <td>{{item.ecole}}</td>
                 <td>
                   <a (click)="setCoachModif(item.id)"
@@ -131,21 +131,7 @@
                         <option *ngFor="let item of ecoleResponse?.results" [value]="item.id">{{ item.libelle }}</option>
                     </select>
                 </div>
-                <div class="mb-4">
-                    <label class="form-label me-3">Etat: </label>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" formControlName="option1">
-                        <label class="form-check-label" for="inlineCheckbox1">Debutant</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox2" formControlName="option2">
-                        <label class="form-check-label" for="inlineCheckbox2">Moyen</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox3" formControlName="option3">
-                        <label class="form-check-label" for="inlineCheckbox3">Senior</label>
-                    </div>
-                </div>
+  
               </form>
 
               <div *ngIf="ajout" class="text-success">

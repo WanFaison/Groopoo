@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Liste;
 use App\Entity\Annee;
 use App\Entity\Ecole;
+use App\Entity\User;
 use App\Service\PaginatorService;
 use DateTime;
 use DateTimeInterface;
@@ -32,7 +33,7 @@ class ListeRepository extends ServiceEntityRepository
     }
 
 
-    public function findAllPaginated(int $page, int $limit, string $keyword, int $annee = null, int $ecole = null, int $archived = 0): Paginator
+    public function findAllPaginated(int $page, int $limit, string $keyword, int $annee = null, int $ecole = null, int $complete = 0, ?User $user = null, int $archived = 0): Paginator
     {
         $queryBuilder = $this->createQueryBuilder('r');
         if (!empty($keyword)) {
@@ -47,17 +48,24 @@ class ListeRepository extends ServiceEntityRepository
             $queryBuilder->andWhere('r.ecole = :ecole')
                          ->setParameter('ecole', $this->ecoleRepository->find($ecole));
         }
-        if($archived == 0){
-            $query = $queryBuilder->andWhere('r.isArchived = :isArchived') 
-                            ->setParameter('isArchived', false)
-                            ->orderBy('r.id', 'ASC')
-                            ->getQuery();
-        }else{
-            $query = $queryBuilder->andWhere('r.isArchived = :isArchived') 
-                            ->setParameter('isArchived', true)
+        if($complete == 1){
+            $query = $queryBuilder->andWhere('r.isComplete = :isComplete') 
+                            ->setParameter('isComplete', false)
                             ->orderBy('r.id', 'ASC')
                             ->getQuery();
         }
+        if($user){
+            $query = $queryBuilder->innerJoin('r.coachs', 'u')
+                                ->andWhere('u = :user')
+                                ->setParameter('user', $user)
+                                ->orderBy('r.date', 'DESC')
+                                ->getQuery();
+        }
+
+        $archived == 0? $archived = false : $archived = true;
+        $query = $queryBuilder->andWhere('r.isArchived = :isArchived') 
+                            ->setParameter('isArchived', $archived)
+                            ->getQuery();
         
         return PaginatorService::pageInator($query, $page, $limit);
     }

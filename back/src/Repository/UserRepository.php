@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use App\Entity\Ecole;
+use App\Enums\Role;
 use App\Service\PaginatorService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -44,31 +46,37 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-    public function createUser(string $password, string $username, string $email){
+    public function createUser(string $password, string $email, string $nom, string $prenom){
         $user = new User();
-        $user->setUsername($username);
-        $user->setEmail($email);
+        $username = mb_substr($prenom, 0, 1).''.$nom;
+        $index = count($this->findAllByNameEcoleRole($username));
+        $index > 0? $username = $username.''.$index : null;
+        $user->setUsername($username)
+            ->setEmail($email)
+            ->setNom($nom)
+            ->setPrenom($prenom);
 
-        $hashedPassword = $this->passwordHasher->hashPassword(
-            $user,
-            $password
-        );
+        $hashedPassword = $this->passwordHasher->hashPassword($user, $password);
         $user->setPassword($hashedPassword);
 
         return $user;
     }
     
-    public function findAllPaginated(int $page, int $limit, string $keyword, int $ecole = null, bool $arch = false): Paginator
+    public function findAllPaginated(int $page, int $limit, string $keyword, string $role='', int $ecole = 0, bool $arch = false): Paginator
     {
         $queryBuilder = $this->createQueryBuilder('r');
         if (!empty($keyword)) {
-            $queryBuilder->andWhere('r.email LIKE :keyword')
+            $queryBuilder->andWhere('r.email LIKE :keyword OR r.nom LIKE :keyword OR r.prenom LIKE :keyword OR r.username LIKE :keyword')
                 ->setParameter('keyword', '%' . $keyword . '%');
         }
-        if ($ecole) {
+        if ($ecole>0) {
             $queryBuilder->join('r.ecoles', 'e')
                      ->andWhere('e.id = :ecoleId')
                      ->setParameter('ecoleId', $ecole);
+        }
+        if(!empty($role)){
+            $queryBuilder->andWhere('r.roles LIKE :role')
+                        ->setParameter('role', '%"'.$role.'"%');
         }
         $query = $queryBuilder->andWhere('r.isArchived = :isArchived') 
                             ->setParameter('isArchived', $arch)
@@ -76,6 +84,66 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                             ->getQuery();
         
         return PaginatorService::pageInator($query, $page, $limit);
+    }
+
+    public function findAllByNameEcoleRole(string $keyword, string $role='', int $ecole = 0, bool $arch = false):array
+    {
+        $queryBuilder = $this->createQueryBuilder('r');
+        if (!empty($keyword)) {
+            $queryBuilder->andWhere('r.nom LIKE :keyword OR r.prenom LIKE :keyword OR r.username LIKE :keyword')
+                ->setParameter('keyword', '%' . $keyword . '%');
+        }
+        if ($ecole>0) {
+            $queryBuilder->join('r.ecoles', 'e')
+                     ->andWhere('e.id = :ecoleId')
+                     ->setParameter('ecoleId', $ecole);
+        }
+        if(!empty($role)){
+            $queryBuilder->andWhere('r.roles LIKE :role')
+                        ->setParameter('role', '%"'.$role.'"%');
+        }
+        $query = $queryBuilder->andWhere('r.isArchived = :isArchived') 
+                            ->setParameter('isArchived', $arch)
+                            ->orderBy('r.id', 'ASC')
+                            ->getQuery()
+                            ->getResult();
+
+        return $query;
+    }
+
+    public function findAllByEcoleOrRole(Ecole $ecole, string $role, bool $archived = false): array
+    {
+        $queryBuilder = $this->createQueryBuilder('u');
+        if($ecole){
+            $queryBuilder->innerJoin('u.ecoles', 'e')
+                        ->andWhere('e = :ecole')
+                        ->setParameter('ecole', $ecole);
+        }
+        if(!empty($role)){
+            $queryBuilder->andWhere('u.roles LIKE :role')
+                        ->setParameter('role', '%"'.$role.'"%');
+        }
+        $query = $queryBuilder->andWhere('u.isArchived = :isArchived')
+                    ->setParameter('isArchived', $archived)
+                    ->orderBy('u.id', 'ASC')
+                    ->getQuery()
+                    ->getResult();
+
+        return $query;
+    }
+
+    public function findAllCoachExceptOneById(int $coachId): array
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.id != :id')
+            ->setParameter('id', $coachId)
+            ->andWhere('c.roles LIKE :role')
+            ->setParameter('role', '%"'. Role::COACH->value .'"%')
+            ->andWhere('c.isArchived = :isArchived')
+            ->setParameter('isArchived', false)
+            ->orderBy('c.id', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 
     public function addOrUpdate(User $entity): void

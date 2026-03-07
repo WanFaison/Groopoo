@@ -12,6 +12,6 @@ export type JuryModel={
 export type JuryFinalModel={
     id: number,
     libelle: string,
-    coachs?: CoachModel[],
-    themes?: ThemeFinalistModel[]
+    coachs?: CoachModel[]
+    //themes?: ThemeFinalistModel[]
 }

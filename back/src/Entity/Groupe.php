@@ -33,7 +33,7 @@ class Groupe extends AbstractEntity
     private ?Salle $salle = null;
 
     #[ORM\ManyToOne(inversedBy: 'groupes')]
-    private ?Coach $coach = null;
+    private ?User $coach = null;
 
     #[ORM\ManyToOne(inversedBy: 'groupes')]
     private ?Jury $jury = null;
@@ -127,12 +127,12 @@ class Groupe extends AbstractEntity
         return $this;
     }
 
-    public function getCoach(): ?Coach
+    public function getCoach(): ?User
     {
         return $this->coach;
     }
 
-    public function setCoach(?Coach $coach): static
+    public function setCoach(?User $coach): static
     {
         $this->coach = $coach;
 

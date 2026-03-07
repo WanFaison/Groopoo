@@ -45,7 +45,7 @@ export class FormCritereComponent implements OnInit{
   }
   ngOnInit(): void {
     this.user = this.authService.getUser()
-    if(this.user?.role == 'ROLE_VISITEUR'){
+    if(this.user?.role == 'ROLE_VISITEUR' || 'ROLE_COACH'){
       this.router.navigate(['/app/not-found'])
     }
 

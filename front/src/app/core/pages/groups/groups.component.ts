@@ -18,6 +18,8 @@ import { AuthServiceImpl } from '../../services/impl/auth.service.impl';
 import { ClasseModel } from '../../models/classe.model';
 import { ClasseServiceImpl } from '../../services/impl/classe.service.impl';
 import { PaginatorService } from '../../services/pagination.service';
+import { CoachModel } from '../../models/coach.model';
+import { CoachServiceImpl } from '../../services/impl/coach.service.impl';
 
 @Component({
     selector: 'app-groups',
@@ -33,15 +35,16 @@ export class GroupsComponent implements OnInit{
   etdResponse2?: RestResponse<EtudiantModel>;
   groupResponse?: RestResponse<GroupeModel[]>;
   grpReq?:RestResponse<GroupeReqModel[]>
+  coachRequest?:RestResponse<CoachModel[]>
   classeResponse?:RestResponse<ClasseModel[]>
   grp:number = 0;
+  newCoach:number = 0;
   user?:LogUser;
   libelle:string = ''
   error:boolean = false;
-  coachs:Array<number> = [];
   msg: string='';
   ajout: any;
-  constructor(private router:Router, private paginatorService:PaginatorService, private fb:FormBuilder, private classeService:ClasseServiceImpl, private authService:AuthServiceImpl, private groupeService:GroupeServiceImpl, private listeService:ListeServiceImpl, private apiService:ApiService, private etudiantService:EtudiantServiceImpl) 
+  constructor(private router:Router, private coachService:CoachServiceImpl, private paginatorService:PaginatorService, private fb:FormBuilder, private classeService:ClasseServiceImpl, private authService:AuthServiceImpl, private groupeService:GroupeServiceImpl, private listeService:ListeServiceImpl, private apiService:ApiService, private etudiantService:EtudiantServiceImpl) 
   {
     this.etdForm = this.fb.group({
       nom: ['', Validators.required],
@@ -71,7 +74,8 @@ export class GroupsComponent implements OnInit{
         next: () => {
           this.liste = parseInt(localStorage.getItem('newListe') || '1', 10);
           this.listeService.findById(this.liste).subscribe(data => {this.listeResponse = data;});
-          this.groupeService.findAllReq(this.liste).subscribe(data => {this.grpReq = data;});
+          if(this.user)
+          this.groupeService.findAllReq(this.liste, this.user.id).subscribe(data => {this.grpReq = data;});
           this.refresh(this.liste);
         },
         error: (err) => {console.error('Error removing empty groups:', err);}
@@ -88,6 +92,26 @@ export class GroupsComponent implements OnInit{
   findClasses(group:number) {
     this.grp = group;
     this.classeService.findAllByEcoleOrListe(this.liste).subscribe(data=>this.classeResponse=data);
+  }
+
+  getAllOtherCoach(group:number){
+    this.grp = group;
+    this.coachService.findAllExceptOne(group).subscribe(data=>this.coachRequest=data);
+  }
+
+  changerCoach(newCoach:number, groupe:number){
+    this.groupeService.changerGrpCoach(groupe, newCoach)
+    .subscribe((response:RequestResponse) =>{
+            console.log('Response from back-end:', response);
+            if(response.data == 0){
+              this.error = true;
+              this.setMsg('Coach assigné avec success')
+            }else{
+              this.ajout = true;
+            }
+          }, error => {
+            console.error('Error:', error);
+          });
   }
   
   checkCorrect() {
@@ -152,6 +176,8 @@ export class GroupsComponent implements OnInit{
       link.href = downloadUrl;
       if(motif == 'results'){
         link.download = `${this.listeResponse?.results.libelle} Resultats.xlsx`;
+      }else if(motif == 'alloc'){
+        link.download = `${this.listeResponse?.results.libelle} Groupes par Classes.xlsx`;
       }else{
         link.download = `${this.listeResponse?.results.libelle}.xlsx`;
       }

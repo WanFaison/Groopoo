@@ -11,6 +11,7 @@ import { Organisation } from "../../pages/organisation/organisation";
 import { Salle } from "../../pages/salle/salle";
 import { Etage } from "../../pages/etage/etage";
 import { Theme } from "../../pages/theme/theme";
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-donnees',
@@ -21,11 +22,13 @@ import { Theme } from "../../pages/theme/theme";
 export class DonneesComponent implements OnInit{
   state:any= 0;
   user?:LogUser
-  constructor(private authService:AuthServiceImpl){}
+  constructor(private router:Router, private authService:AuthServiceImpl){}
 
   ngOnInit(): void {
     this.user = this.authService.getUser()
-
+    if(this.user?.role == 'ROLE_VISITEUR' || 'ROLE_COACH'){
+      this.router.navigate(['/app/not-found'])
+    }
     if(typeof window !== 'undefined' && localStorage){
       this.state = parseInt(localStorage.getItem('stateMenu') || '0', 10);
     }

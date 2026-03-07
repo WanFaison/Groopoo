@@ -24,6 +24,7 @@ export class ProfilesComponent implements OnInit{
   ecoleResponse?:RestResponse<EcoleModel[]>;
   keyword:string = '';
   ecole:number = 0;
+  role:string = '';
   userId:number = 0;
   constructor(private router:Router, private paginatorService:PaginatorService, private http:HttpClient, private authService:AuthServiceImpl, private userService:UserServiceImpl, private ecoleService:EcoleServiceImpl){}
 
@@ -59,14 +60,14 @@ export class ProfilesComponent implements OnInit{
   }
 
 
-  refresh(page:number=0,keyword:string="", ecole:number =0){
-    this.userService.findAllPg(page,keyword, ecole).subscribe(data=>this.userResponse=data);
+  refresh(page:number=0,keyword:string="", ecole:number =0, role:string=''){
+    this.userService.findAllPg(page,keyword, ecole, role).subscribe(data=>this.userResponse=data);
   }
   paginate(page:number){
     this.refresh(page)
   }
-  filter(page:number=0, keyword:string=this.keyword, ecole:number=0){
-    this.refresh(page,keyword, ecole)
+  filter(page:number=0, keyword:string=this.keyword, ecole:number=0, role:string=''){
+    this.refresh(page,keyword, ecole, role)
   }
 
   getPageRange(currentPage:any, totalPages:any): number[] {

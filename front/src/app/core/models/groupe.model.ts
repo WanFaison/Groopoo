@@ -25,3 +25,10 @@ export type GroupeReqModel = {
     id: number,
     libelle: string
 }
+
+export type GroupeFinalModel = {
+    id: number,
+    libelle: string,
+    note?: number
+    coach?: string
+}

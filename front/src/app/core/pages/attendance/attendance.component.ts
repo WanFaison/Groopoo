@@ -47,8 +47,8 @@ export class AttendanceComponent implements OnInit{
       this.liste = parseInt(localStorage.getItem('newListe') || '1', 10);
       this.jour = parseInt(localStorage.getItem('jrListe') || '1', 10);
       this.jourService.findJour(this.jour).subscribe(data=>this.jourResponse=data)
-      this.groupeService.findAllReq(this.liste).subscribe(data=>this.grpReq=data)
-      this.groupeService.findByJour(this.jour).subscribe(data=>this.groupResponse=data)
+      this.groupeService.findAllReq(this.liste, this.user.id).subscribe(data=>this.grpReq=data)
+      this.groupeService.findByJour(this.jour, this.user.id).subscribe(data=>this.groupResponse=data)
       this.listeService.findById(this.liste).subscribe(data=>this.listeResponse=data);
       this.refresh(this.jour);
     }
@@ -104,7 +104,8 @@ export class AttendanceComponent implements OnInit{
   }
 
   refresh(jour:number=0, page:number=0, limit:number = 1, groupe:number=0){
-    this.groupeService.findByJour(jour, page, limit, groupe)
+    if (this.user)
+    this.groupeService.findByJour(jour, this.user?.id, page, limit, groupe)
                       .subscribe(data=>{this.groupResponse=data});
   }
   paginate(page:number){

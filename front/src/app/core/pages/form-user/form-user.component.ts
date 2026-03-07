@@ -29,11 +29,11 @@ export class FormUserComponent implements OnInit{
   constructor(private router:Router, private http:HttpClient, private authService:AuthServiceImpl, private formBuilder: FormBuilder, private apiService:ApiService, private ecoleService:EcoleServiceImpl) 
   {
     this.profileForm = this.formBuilder.group({
+      nom: ['', [Validators.required]],
+      prenom: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       ecole: [[], Validators.required],
-      option1: false,
-      option2: false,
-      option3: false,
+      profil: ''
     });
   }
   
@@ -48,12 +48,19 @@ export class FormUserComponent implements OnInit{
       if (typeof window !== 'undefined' && window.localStorage) {
         localStorage.setItem('profileForm', JSON.stringify(this.profileForm.value));
       }
-      this.op2 = this.profileForm.get('option2')?.value;
+      const profil = this.profileForm.get('profil')?.value;
+      this.op2 = profil === "ECOLE_ADMIN" || profil === "COACH";
     });
     
     console.log(this.profileForm.value);
   }
 
+  get nomControl() {
+    return this.profileForm.get('nom');
+  }
+  get prenomControl() {
+    return this.profileForm.get('prenom');
+  }
   get emailControl() {
     return this.profileForm.get('email');
   }
@@ -72,7 +79,7 @@ export class FormUserComponent implements OnInit{
         response => {
           console.log('Data successfully sent', response);
           this.clearData();
-          this.router.navigate(['/app/users']);
+          this.user?.role == 'ROLE_ADMIN'? this.router.navigate(['/app/users']) : this.router.navigate(['/app/donnees']);
         },
         error => {
           console.error('Error sending data', error);

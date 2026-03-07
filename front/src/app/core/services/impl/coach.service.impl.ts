@@ -29,6 +29,10 @@ export class CoachServiceImpl implements CoachService{
         return this.http.get<RestResponse<CoachModel>>(`${environment.APIURL}/coach-find?coach=${coach}`);
     }
 
+    findAllExceptOne(groupe:number): Observable<RestResponse<CoachModel[]>> {
+        return this.http.get<RestResponse<CoachModel[]>>(`${environment.APIURL}/except-one-coach?groupe=${groupe}`)
+    }
+
     assignCoaches(data: any): Observable<any> {
         const headers = new HttpHeaders(environment.JSONHeaders);
         return this.http.post(`${environment.APIURL}/assign-coach`, data, {headers});

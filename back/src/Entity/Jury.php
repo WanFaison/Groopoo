@@ -18,9 +18,9 @@ class Jury extends AbstractEntity
     private ?int $effectif = null;
 
     /**
-     * @var Collection<int, Coach>
+     * @var Collection<int, User>
      */
-    #[ORM\ManyToMany(targetEntity: Coach::class, mappedBy: 'jury')]
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'jury')]
     private Collection $coaches;
 
     /**
@@ -70,7 +70,7 @@ class Jury extends AbstractEntity
         return $this->coaches;
     }
 
-    public function addCoach(Coach $coach): static
+    public function addCoach(User $coach): static
     {
         if (!$this->coaches->contains($coach)) {
             $this->coaches->add($coach);
@@ -80,7 +80,7 @@ class Jury extends AbstractEntity
         return $this;
     }
 
-    public function removeCoach(Coach $coach): static
+    public function removeCoach(User $coach): static
     {
         if ($this->coaches->removeElement($coach)) {
             $coach->removeJury($this);

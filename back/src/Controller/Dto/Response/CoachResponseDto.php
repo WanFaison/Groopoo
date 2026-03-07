@@ -7,6 +7,7 @@ use App\Entity\Annee;
 use App\Entity\Coach;
 use App\Entity\Etage;
 use App\Entity\Salle;
+use App\Entity\User;
 use App\Repository\AnneeRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -17,7 +18,7 @@ class CoachResponseDto
     private string $prenom;
     private string $tel;
     private string $email;
-    private string $etat;
+    private string $etat = '';
     private string $ecole;
     private int $ecoleId;
 
@@ -113,18 +114,20 @@ class CoachResponseDto
         return $this;
     }
 
-    public function toDto(Coach $coach): CoachResponseDto
+    public function toDto(User $coach): CoachResponseDto
     {
         $dto = new CoachResponseDto;
 
-        $dto->setId($coach->getId());
-        $dto->setNom($coach->getNom());
-        $dto->setPrenom($coach->getPrenom());
-        $dto->setTel($coach->getTelephone());
-        $dto->setEmail($coach->getEmail());
-        $dto->setEtat($coach->getEtat()->value);
-        $dto->setEcole($coach->getEcole()->getLibelle());
-        $dto->setEcoleId($coach->getEcole()->getId());
+        $dto->setId($coach->getId())
+            ->setNom($coach->getNom())
+            ->setPrenom($coach->getPrenom())
+            ->setTel($coach->getTelephone())
+            ->setEmail($coach->getEmail());
+            //->setEtat($coach->getEtat()->value);
+
+        $ecole = $coach->getEcoles()->toArray();
+        $dto->setEcole($ecole[0]->getLibelle())
+            ->setEcoleId($ecole[0]->getId());
 
         return $dto;
     }

@@ -37,7 +37,7 @@ export class ApiService {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
-    return this.http.post(`${environment.APIURL}/modif-user/${id}`, data, {headers});
+    return this.http.post(`${environment.APIURL}/modif-user`, data, {headers});
   }
 
   getExcelSheet(liste:number, motif:string = ''): Observable<any> {

@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { GroupeService } from "../groupe.service";
 import { Observable } from "rxjs";
-import { GroupeJourModel, GroupeModel, GroupeReqModel } from "../../models/groupe.model";
+import { GroupeFinalModel, GroupeJourModel, GroupeModel, GroupeReqModel } from "../../models/groupe.model";
 import { RestResponse } from "../../models/rest.response";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../../environments/environment.development";
@@ -18,12 +18,16 @@ export class GroupeServiceImpl implements GroupeService{
         return this.http.get(`${environment.APIURL}/coach-export?liste=${liste}&motif=${motif}`, { responseType: 'blob' });
     }
 
-    findByJour(jour: number, page: number=0, limit: number=1, groupe:number=0): Observable<RestResponse<GroupeJourModel[]>> {
-        return this.http.get<RestResponse<GroupeJourModel[]>>(`${environment.APIURL}/etd-groupe?jour=${jour}&page=${page}&limit=${limit}&groupe=${groupe}`);
+    changerGrpCoach(groupe:number, coach:number): Observable<any> {
+        return this.http.get(`${environment.APIURL}/change-groupe-coach?groupe=${groupe}&coach=${coach}`);
     }
 
-    findAllReq(liste: number): Observable<RestResponse<GroupeReqModel[]>> {
-        return this.http.get<RestResponse<GroupeReqModel[]>>(`${environment.APIURL}/all-groupe?liste=${liste}`);
+    findByJour(jour: number, coach: number, page: number=0, limit: number=1, groupe:number=0): Observable<RestResponse<GroupeJourModel[]>> {
+        return this.http.get<RestResponse<GroupeJourModel[]>>(`${environment.APIURL}/etd-groupe?jour=${jour}&page=${page}&limit=${limit}&coach=${coach}&groupe=${groupe}`);
+    }
+
+    findAllReq(liste: number, coach: number): Observable<RestResponse<GroupeReqModel[]>> {
+        return this.http.get<RestResponse<GroupeReqModel[]>>(`${environment.APIURL}/all-groupe?liste=${liste}&coach=${coach}`);
     }
 
     findAll(liste:number, page: number=0, limit:number =10): Observable<RestResponse<GroupeModel[]>> {
@@ -32,6 +36,18 @@ export class GroupeServiceImpl implements GroupeService{
 
     removeEmptyGroups(): Observable<any>{
         return this.http.get<any>(`${environment.APIURL}/remove-empty-groups`);
+    }
+
+    findTop100(liste: number): Observable<RestResponse<GroupeFinalModel[]>>{
+        return this.http.get<RestResponse<GroupeFinalModel[]>>(`${environment.APIURL}/top-100?liste=${liste}`)
+    }
+
+    findTop2PerCoach(liste: number): Observable<RestResponse<GroupeFinalModel[]>>{
+        return this.http.get<RestResponse<GroupeFinalModel[]>>(`${environment.APIURL}/top-2?liste=${liste}`)
+    }
+
+    getFinalisteSheet(liste: number, mode:string, number: number): Observable<any> {
+        return this.http.get(`${environment.APIURL}/finaliste-export?liste=${liste}&mode=${mode}&number=${number}`, { responseType: 'blob' });
     }
 
 }

@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Classe;
 use App\Entity\Etudiant;
+use App\Entity\Liste;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
@@ -54,6 +56,32 @@ class EtudiantRepository extends ServiceEntityRepository
                     ->setMaxResults(1)         
                     ->getQuery()
                     ->getOneOrNullResult(); 
+    }
+
+    public function findAllByListe(Liste $liste): array
+    {
+        return $this->createQueryBuilder('e')
+            ->innerJoin('e.groupe', 'g')
+            ->innerJoin('g.liste', 'l')
+            ->where('l = :liste')
+            ->setParameter('liste', $liste)
+            ->setParameter('isArchived', false)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findAllByClasseAndListe(Classe $classe, Liste $liste): array
+    {
+        return $this->createQueryBuilder('e')
+            ->innerJoin('e.groupe', 'g')
+            ->innerJoin('g.liste', 'l')
+            ->where('l = :liste')
+            ->where('e.classe = :classe')
+            ->setParameter('liste', $liste)
+            ->setParameter('classe', $classe)
+            ->setParameter('isArchived', false)
+            ->getQuery()
+            ->getResult();
     }
 
     public function checkExist(string $matricule): bool

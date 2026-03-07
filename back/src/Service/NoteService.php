@@ -59,15 +59,6 @@ class NoteService{
         return $note;
     }
 
-    public function getTop10(array $groupes): array
-    {
-        usort($groupes, function ($a, $b) {
-            return $b->getNote() <=> $a->getNote(); 
-        });
-
-        return array_slice($groupes, 0, 10);
-    }
-
     public function setToFinal(array $groupes, bool $final): array
     {
         foreach($groupes as $grp){
@@ -76,15 +67,6 @@ class NoteService{
         }
         $this->entityManager->flush();
         return $groupes;
-    }
-
-    public function getTop3GroupesByTheme(array $groupes): array
-    {
-        usort($groupes, function ($a, $b) {
-            return $b->getNote() <=> $a->getNote();
-        });
-
-        return array_slice($groupes, 0, 3);
     }
 
     public function hasGroupWithNoteAboveZero(array $groupes): bool

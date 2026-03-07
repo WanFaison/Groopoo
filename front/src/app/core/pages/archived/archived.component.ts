@@ -39,7 +39,7 @@ export class ArchivedComponent implements OnInit{
 
   ngOnInit(): void {
     this.user = this.authService.getUser()
-    if(this.user?.role == 'ROLE_VISITEUR'){
+    if(this.user?.role == 'ROLE_VISITEUR' || 'ROLE_COACH'){
       this.router.navigate(['/app/not-found'])
     }
     this.anneeService.findAll().subscribe(data=>this.anneeResponse=data);
@@ -75,9 +75,9 @@ export class ArchivedComponent implements OnInit{
     if(this.user){
       if (typeof window !== 'undefined' && localStorage && this.user?.role == 'ROLE_ECOLE_ADMIN'){
         this.ecole = parseInt(localStorage.getItem('ecoleListe') || '0', 10);
-        this.listeService.findAll(page,keyword, annee, this.ecole, 1).subscribe(data=>this.response=data);
+        this.listeService.findAll(page,keyword, annee, this.ecole, 0, 0, 1).subscribe(data=>this.response=data);
       }else{
-        this.listeService.findAll(page,keyword, annee, ecole, 1).subscribe(data=>this.response=data);
+        this.listeService.findAll(page,keyword, annee, ecole, 0, 0, 1).subscribe(data=>this.response=data);
       }
       
     }

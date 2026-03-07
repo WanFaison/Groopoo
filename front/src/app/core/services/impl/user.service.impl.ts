@@ -23,8 +23,8 @@ export class UserServiceImpl implements UserService{
         return this.http.get<any>(`${this.apiUrlModif}?user=${user}&motif=${motif}`);
     }
 
-    findAllPg(page: number=0, keyword: string='', ecole: number=0): Observable<RestResponse<UserModel[]>> {
-        return this.http.get<RestResponse<UserModel[]>>(`${this.apiUrlPg}?page=${page}&keyword=${keyword}&ecole=${ecole}`);
+    findAllPg(page: number=0, keyword: string='', ecole: number=0, role:string = ''): Observable<RestResponse<UserModel[]>> {
+        return this.http.get<RestResponse<UserModel[]>>(`${this.apiUrlPg}?page=${page}&keyword=${keyword}&ecole=${ecole}&role=${role}`);
     }
 
 }

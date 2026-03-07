@@ -28,6 +28,7 @@ export class FormUserUpdateComponent implements OnInit{
   constructor(private router:Router, private formBuilder: FormBuilder, private authService:AuthServiceImpl, private http:HttpClient, private apiService:ApiService){
     this.user = this.authService.getUser();
     this.updateForm = this.formBuilder.group({
+      id: this.user.id,
       username: [this.user?.username, Validators.required],
       pswd1: ['', Validators.required],
       pswd2: ['', [Validators.required, Validators.minLength(6)]]

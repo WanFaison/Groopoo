@@ -39,7 +39,7 @@ export class ArchivedComponent implements OnInit{
 
   ngOnInit(): void {
     this.user = this.authService.getUser()
-    if(this.user?.role == 'ROLE_VISITEUR' || 'ROLE_COACH'){
+    if(this.user?.role == 'ROLE_VISITEUR' || this.user?.role =='ROLE_COACH'){
       this.router.navigate(['/app/not-found'])
     }
     this.anneeService.findAll().subscribe(data=>this.anneeResponse=data);

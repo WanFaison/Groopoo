@@ -63,7 +63,7 @@
                   <th scope="row">{{coach.nom}} {{coach.prenom}}</th>
                   <td>{{coach.tel}}</td>
                   <td>{{coach.email}}</td>
-                  <td>{{coach.etat}}</td>
+                  
                   <td *ngIf="!listeResponse?.results?.isComplet && !listeResponse?.results?.isArchived">
                     <button class="btn btn-secondary me-2"
                     (click)="findCoach(coach.id)"

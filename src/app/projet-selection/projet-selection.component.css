@@ -1,0 +1,31 @@
+
+  
+  .icon-btn {
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+  
+  .icon-btn.add {
+    color: orange; 
+  }
+  
+  .icon-btn.remove {
+    color: red; 
+  } 
+  
+   .icon-btn:hover {
+    opacity: 0.7;
+  }
+  
+   .card {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  @media (max-width: 768px) {
+    .section {
+      width: 90% !important;
+    }
+    .btn {
+      width: 100% !important;
+    }
+  }
